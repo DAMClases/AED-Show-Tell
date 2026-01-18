@@ -43,4 +43,18 @@ def set_up_collections(database_object)->tuple:
     return (tuple(collection))
 
 database_object = connect_to_database()
-set_up_collections(database_object)
+collections = set_up_collections(database_object)
+
+def check_login_successfull(collections, username, passwd)->None:
+    '''Comprueba desde el front de la aplicación (Menú de login) si el usuario y contraseña se encuentra
+    en la colección de usuarios de la base de datos. Si los datos son encontrados, se devuelven a la capa de front
+    y se procesa un cambio de ventana.
+    
+    Checks from the frontend layer (Login menu) if the username and password are located 
+    in the users collection of the database. If data are found, they are sent back to the
+    frontend layer and a new window is managed.'''
+    for user in collections[4].find():
+        for username, password in user:
+            if username == username and passwd == passwd:
+                return user
+        pass
