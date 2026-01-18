@@ -1,0 +1,72 @@
+[
+  {
+    "_id": "matricula_001",
+    "alumno_id": "alumno_001",
+    "curso_id": "curso_001",
+    "fecha_matricula": "2025-09-01",
+    "estado": "activa"
+  },
+  {
+    "_id": "matricula_002",
+    "alumno_id": "alumno_002",
+    "curso_id": "curso_001",
+    "fecha_matricula": "2025-09-05",
+    "estado": "activa"
+  },
+  {
+    "_id": "matricula_003",
+    "alumno_id": "alumno_003",
+    "curso_id": "curso_002",
+    "fecha_matricula": "2025-09-10",
+    "estado": "activa"
+  },
+  {
+    "_id": "matricula_004",
+    "alumno_id": "alumno_004",
+    "curso_id": "curso_002",
+    "fecha_matricula": "2025-09-12",
+    "estado": "activa"
+  },
+  {
+    "_id": "matricula_005",
+    "alumno_id": "alumno_005",
+    "curso_id": "curso_003",
+    "fecha_matricula": "2025-09-15",
+    "estado": "activa"
+  },
+  {
+    "_id": "matricula_006",
+    "alumno_id": "alumno_006",
+    "curso_id": "curso_003",
+    "fecha_matricula": "2025-09-18",
+    "estado": "activa"
+  },
+  {
+    "_id": "matricula_007",
+    "alumno_id": "alumno_007",
+    "curso_id": "curso_004",
+    "fecha_matricula": "2025-09-20",
+    "estado": "activa"
+  },
+  {
+    "_id": "matricula_008",
+    "alumno_id": "alumno_008",
+    "curso_id": "curso_005",
+    "fecha_matricula": "2025-09-22",
+    "estado": "activa"
+  },
+  {
+    "_id": "matricula_009",
+    "alumno_id": "alumno_009",
+    "curso_id": "curso_006",
+    "fecha_matricula": "2025-09-25",
+    "estado": "activa"
+  },
+  {
+    "_id": "matricula_010",
+    "alumno_id": "alumno_010",
+    "curso_id": "curso_007",
+    "fecha_matricula": "2025-09-28",
+    "estado": "activa"
+  }
+]

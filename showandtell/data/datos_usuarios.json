@@ -1,0 +1,18 @@
+[
+    {
+    "_id": "passwd001",
+    "nombre_de_usuario": "anlopmart",
+    "contrasenia": "micontraseniasegura",
+    "rol": "alumno",
+    "id_asociado": "alumno_001",
+    "email_recuperacion": "anlopalumno001@shndtel.com"
+    },
+    {
+    "_id": "passwd002",
+    "nombre_de_usuario": "jimgar",
+    "contrasenia": "estoescontraseniasegura",
+    "rol": "docente",
+    "id_asociado": "docente_001",
+    "email_recuperacion": "jujimgardocente001@shndtel.com"  
+    }
+]

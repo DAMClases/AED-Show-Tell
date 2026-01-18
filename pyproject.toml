@@ -1,0 +1,18 @@
+[project]
+name = "showandtell"
+version = "0.1.0"
+description = "Aplicacion para AED, de directa relevancia con las bases de datos documentales"
+authors = [
+    {name = "JeroMono",email = "jero.monoloco@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pymongo (>=4.16.0,<5.0.0)",
+    "flet (>=0.80.2,<0.81.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
