@@ -1,9 +1,12 @@
 import flet as ft
-# from .database.controller import *
+from database.controller import *
 
 async def main(page: ft.Page):
     # --- CONFIGURACIÓN DE VENTANA BÁSICA PARA EL LOGIN ---
     # --- This page provides screen settings for the view ---
+    database_object = connect_to_database()
+    collections = set_up_collections(database_object)
+    print(collections)
     page.window.width = 600
     page.window.height = 700
     page.window.resizable = False
@@ -14,7 +17,7 @@ async def main(page: ft.Page):
     page.padding = 0
     page.theme_mode = ft.ThemeMode.DARK
 
-    def validar_login(e):
+    def check_login(e):
         username = campo_usuario.value
         passwd = campo_passwd.value
 
@@ -30,9 +33,24 @@ async def main(page: ft.Page):
             campo_usuario.error = "Campo obligatorio"
             campo_passwd.error = None
         else:
-            campo_usuario.error = None
-            campo_passwd.error = None
-            print(f"Usuario: {campo_usuario.value} | Pass: {campo_passwd.value}")
+            try:
+                change_view_signal = check_login_successfull(collections, username, passwd)
+                if change_view_signal:
+                    match change_view_signal['rol']:
+                        case 'alumno':
+                            print("Login exitoso")
+                        case 'docente':
+                            print("Login exitoso")
+                        case 'admin':
+                            print("Login exitoso")
+                else:
+                    print("No se ha encontrado el usuario asociado.")
+            except:
+                print("Paso por except del front")
+            finally:    
+                campo_usuario.error = None
+                campo_passwd.error = None
+
         page.update()
 
     # --- CAMPOS ---
@@ -73,7 +91,7 @@ async def main(page: ft.Page):
         height=40, 
         bgcolor=ft.Colors.DEEP_PURPLE_500, 
         color=ft.Colors.WHITE, 
-        on_click=validar_login,
+        on_click=check_login,
         style=ft.ButtonStyle(
             shape=ft.RoundedRectangleBorder(radius=8),
         )
