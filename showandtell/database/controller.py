@@ -38,7 +38,7 @@ def set_up_collections(database_object)->tuple:
 
     Prepares and stores all collections into a tuple. It returns all the items in order to separate them afterwards.'''
 
-    collections_names = ('alumnos', 'cursos', 'docentes', 'matriculas', 'usuarios')
+    collections_names = ('alumnos', 'cursos', 'docentes', 'usuarios', 'admin')
     collections = []
     for collection in collections_names:
         collections.append(database_object[collection])

@@ -8,7 +8,9 @@
     "email": "anlopalumno001@shndtel.com",
     "direccion": "Av. del Sol 45, Valencia",
     "estado": "alta",
-    "fecha_alta": "2025-09-01"
+    "fecha_alta": "2025-09-01",
+    "password":"password",
+    "cursos" : [{"curso":"curso_001", "fecha_matricula":"27/03/2025", "estado":"pendiente"}]
   },
   {
     "_id": "alumno_002",
@@ -19,7 +21,9 @@
     "email": "caruipalumno002@shndtel.com",
     "direccion": "Calle Norte 10, Madrid",
     "estado": "alta",
-    "fecha_alta": "2025-09-05"
+    "fecha_alta": "2025-09-05",
+    "password":"password",
+    "cursos" : [{"curso":"curso_001", "fecha_matricula":"05/09/2025", "estado":"pagado"},{"curso":"curso_002", "fecha_matricula":"05/09/2025", "estado":"pagado"}]
   },
   {
     "_id": "alumno_003",
@@ -30,7 +34,9 @@
     "email": "lugompalumno003@shndtel.com",
     "direccion": "Plaza Centro 4, Toledo",
     "estado": "alta",
-    "fecha_alta": "2025-09-10"
+    "fecha_alta": "2025-09-10",
+    "password":"password",
+    "cursos" : [{"curso":"curso_002", "fecha_matricula":"10/09/2025", "estado":"pagado"},{"curso":"curso_003", "fecha_matricula":"10/09/2025", "estado":"pagado"}]
   },
   {
     "_id": "alumno_004",
@@ -41,7 +47,9 @@
     "email": "daferalumno004@shndtel.com",
     "direccion": "Calle Real 18, Burgos",
     "estado": "alta",
-    "fecha_alta": "2025-09-12"
+    "fecha_alta": "2025-09-12",
+    "password":"password",
+    "cursos" : [{"curso":"curso_002", "fecha_matricula":"12/09/2025", "estado":"pagado"},{"curso":"curso_003", "fecha_matricula":"12/09/2025", "estado":"pagado"}]
   },
   {
     "_id": "alumno_005",
@@ -52,7 +60,9 @@
     "email": "masangialumno005@shndtel.com",
     "direccion": "Av. Andalucía 77, Córdoba",
     "estado": "alta",
-    "fecha_alta": "2025-09-15"
+    "fecha_alta": "2025-09-15",
+    "password":"password",
+    "cursos" : [{"curso":"curso_004", "fecha_matricula":"15/09/2025", "estado":"pagado"},{"curso":"curso_005", "fecha_matricula":"15/09/2025", "estado":"pagado"},{"curso":"curso_003", "fecha_matricula":"15/09/2025", "estado":"pagado"}]
   },
   {
     "_id": "alumno_006",
@@ -63,7 +73,9 @@
     "email": "panieralumno006@shndtel.com",
     "direccion": "Calle Río 9, Lugo",
     "estado": "alta",
-    "fecha_alta": "2025-09-18"
+    "fecha_alta": "2025-09-18",
+    "password":"password",
+    "cursos" : [{"curso":"curso_004", "fecha_matricula":"18/09/2025", "estado":"cancelado"},{"curso":"curso_005", "fecha_matricula":"18/09/2025", "estado":"pagado"},{"curso":"curso_003", "fecha_matricula":"18/09/2025", "estado":"pagado"}]
   },
   {
     "_id": "alumno_007",
@@ -74,7 +86,9 @@
     "email": "savidmalumno007@shndtel.com",
     "direccion": "Calle Verde 3, Girona",
     "estado": "alta",
-    "fecha_alta": "2025-09-20"
+    "fecha_alta": "2025-09-20",
+    "password":"password",
+    "cursos" : [{"curso":"curso_001", "fecha_matricula":"20/09/2025", "estado":"pagado"},{"curso":"curso_002", "fecha_matricula":"20/09/2025", "estado":"pagado"},{"curso":"curso_003", "fecha_matricula":"20/09/2025", "estado":"pagado"}]
   },
   {
     "_id": "alumno_008",
@@ -85,7 +99,9 @@
     "email": "ivortblalumno008@shndtel.com",
     "direccion": "Av. Norte 22, Oviedo",
     "estado": "alta",
-    "fecha_alta": "2025-09-22"
+    "fecha_alta": "2025-09-22",
+    "password":"password",
+    "cursos" : [{"curso":"curso_004", "fecha_matricula":"22/09/2025", "estado":"pagado"},{"curso":"curso_005", "fecha_matricula":"22/09/2025", "estado":"pagado"},{"curso":"curso_006", "fecha_matricula":"22/09/2025", "estado":"pagado"}]
   },
   {
     "_id": "alumno_009",
@@ -96,7 +112,9 @@
     "email": "pacamdialumno009@shndtel.com",
     "direccion": "Calle Sur 30, Almería",
     "estado": "alta",
-    "fecha_alta": "2025-09-25"
+    "fecha_alta": "2025-09-25",
+    "password":"password",
+    "cursos" : [{"curso":"curso_004", "fecha_matricula":"25/09/2025", "estado":"pagado"},{"curso":"curso_006", "fecha_matricula":"25/09/2025", "estado":"pagado"},{"curso":"curso_008", "fecha_matricula":"25/09/2025", "estado":"pagado"}]
   },
   {
     "_id": "alumno_010",
@@ -107,6 +125,8 @@
     "email": "jomolvealumno010@shndtel.com",
     "direccion": "Calle Sierra 6, Jaén",
     "estado": "alta",
-    "fecha_alta": "2025-09-28"
+    "fecha_alta": "2025-09-28",
+    "password":"password",
+    "cursos" : [{"curso":"curso_004", "fecha_matricula":"28/09/2025", "estado":"pagado"},{"curso":"curso_005", "fecha_matricula":"28/09/2025", "estado":"pagado"},{"curso":"curso_003", "fecha_matricula":"28/09/2025", "estado":"pagado"}]
   }
 ]

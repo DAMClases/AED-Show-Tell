@@ -10,7 +10,8 @@
     { "curso_id": "curso_002", "titulo": "Programación Orientada a Objetos" }
   ],
   "estado": "Alta",
-  "fecha_alta": "2025-05-02"
+  "fecha_alta": "2025-05-02",
+  "password":"password"
 },
 {
   "_id": "docente_002",
@@ -23,7 +24,8 @@
     { "curso_id": "curso_003", "titulo": "Bases de Datos NoSQL" }
   ],
   "estado": "Alta",
-  "fecha_alta": "2025-04-15"
+  "fecha_alta": "2025-04-15",
+  "password":"password"
 },
 {
   "_id": "docente_003",
@@ -36,7 +38,8 @@
     { "curso_id": "curso_004", "titulo": "Desarrollo Web con HTML y CSS" }
   ],
   "estado": "Alta",
-  "fecha_alta": "2025-03-20"
+  "fecha_alta": "2025-03-20",
+  "password":"password"
 },
 {
   "_id": "docente_004",
@@ -49,7 +52,8 @@
     { "curso_id": "curso_005", "titulo": "JavaScript Avanzado" }
   ],
   "estado": "Alta",
-  "fecha_alta": "2025-02-10"
+  "fecha_alta": "2025-02-10",
+  "password":"password"
 },
 {
   "_id": "docente_005",
@@ -62,7 +66,8 @@
     { "curso_id": "curso_006", "titulo": "Python para Principiantes" }
   ],
   "estado": "Alta",
-  "fecha_alta": "2025-01-25"
+  "fecha_alta": "2025-01-25",
+  "password":"password"
 },
 {
   "_id": "docente_006",
@@ -75,7 +80,8 @@
     { "curso_id": "curso_007", "titulo": "Análisis de Datos con Excel" }
   ],
   "estado": "Alta",
-  "fecha_alta": "2025-06-01"
+  "fecha_alta": "2025-06-01",
+  "password":"password"
 },
 {
   "_id": "docente_007",
@@ -88,7 +94,8 @@
     { "curso_id": "curso_008", "titulo": "Introducción a Linux" }
   ],
   "estado": "Alta",
-  "fecha_alta": "2025-06-10"
+  "fecha_alta": "2025-06-10",
+  "password":"password"
 },
 {
   "_id": "docente_008",
@@ -101,7 +108,8 @@
     { "curso_id": "curso_009", "titulo": "Ciberseguridad Básica" }
   ],
   "estado": "Alta",
-  "fecha_alta": "2025-07-01"
+  "fecha_alta": "2025-07-01",
+  "password":"password"
 },
 {
   "_id": "docente_009",
@@ -114,7 +122,8 @@
     { "curso_id": "curso_010", "titulo": "Redes Informáticas" }
   ],
   "estado": "Alta",
-  "fecha_alta": "2025-07-15"
+  "fecha_alta": "2025-07-15",
+  "password":"password"
 },
 {
   "_id": "docente_010",
@@ -125,5 +134,6 @@
   "direccion": "Av. Marítima 5, Cádiz",
   "cursos": [],
   "estado": "Alta",
-  "fecha_alta": "2025-08-01"
+  "fecha_alta": "2025-08-01",
+  "password":"password"
 }]

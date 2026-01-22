@@ -1,0 +1,20 @@
+[{
+  "_id": "admin_001",
+  "nombre": "Cristopher",
+  "apellidos": "Mendez Cervantes",
+  "telefono": "612345678",
+  "email": "cristophermc@gmail.com",
+  "direccion": "Calle Mayor 12, Madrid",
+  "password":"password"
+},
+{
+  "_id": "admin_002",
+  "nombre": "Jerónimo",
+  "apellidos": "Errecart Cardozo",
+  "telefono": "6487554235",
+  "email": "jeronimoerrecartcardozo@gmail.com",
+  "direccion": "Calle Mayor 12, Madrid",
+  "password":"password"
+}
+
+]

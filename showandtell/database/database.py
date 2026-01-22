@@ -10,6 +10,19 @@ def create_database()->object:
     
     Creates the database.'''
     connection_addr = pymongo.MongoClient("mongodb://localhost:27017")
+    # Borramos las colecciones si ya existen para evitar conflictos
+    db = connection_addr['academia']
+    db.drop_collection('alumnos')
+    db.drop_collection('cursos')
+    db.drop_collection('docentes')
+    db.drop_collection('usuarios')
+    db.drop_collection('admin')
+
+    # Borramos la base de datos si ya existe para evitar conflictos
+    connection_addr.drop_database('academia')
+    # Creamos la base de datos
+    
+
     try:
         if connection_addr.admin.command('ping'):
             database_object = connection_addr['academia']
@@ -22,7 +35,7 @@ def create_collections(database_object:object)->tuple:
     
     It creates the needed collections for production's purpose.'''
     
-    collections_names = ('alumnos', 'cursos', 'docentes', 'matriculas', 'usuarios')
+    collections_names = ('alumnos', 'cursos', 'docentes', 'usuarios', 'admin')
     collections = []
     for collection in collections_names:
         collections.append(database_object[collection])
@@ -32,7 +45,7 @@ def load_sample_data(collections:tuple[object])->None:
     '''Carga datos de ejemplo en las diferentes colecciones de la base de datos.
     Loads sample data into database's collections.'''
 
-    collections_names = ('alumnos', 'cursos', 'docentes', 'matriculas', 'usuarios')
+    collections_names = ('alumnos', 'cursos', 'docentes', 'usuarios', 'admin')
     current_index = 0
     try:
         print(os.getcwd())

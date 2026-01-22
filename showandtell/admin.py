@@ -1,0 +1,314 @@
+import flet as ft
+from datetime import datetime
+from database.crud import *
+
+# --- SIMULACIÓN DE BASE DE DATOS (Datos en memoria) ---
+courses_data = [
+    {"id": 1, "name": "Python desde Cero", "price": 99.99},
+    {"id": 2, "name": "Desarrollo Web Fullstack", "price": 199.50},
+    {"id": 3, "name": "Data Science con Pandas", "price": 150.00},
+]
+
+enrollments_data = [
+    {"id": 101, "student": "Juan Pérez", "course_id": 1, "status": "Pagado", "date": "2023-10-25"},
+    {"id": 102, "student": "María García", "course_id": 2, "status": "Pendiente", "date": "2023-10-26"},
+    {"id": 103, "student": "Carlos López", "course_id": 1, "status": "Cancelado", "date": "2023-10-27"},
+    {"id": 104, "student": "Ana Ruiz", "course_id": 3, "status": "Pendiente", "date": "2023-10-28"},
+]
+
+def get_course_name(course_id):
+    for course in courses_data:
+        if course['id'] == course_id:
+            return course['name']
+    return "Desconocido"
+
+# --- Componentes de UI Reutilizables ---
+
+def StatusBadge(status):
+    """Crea una etiqueta de color según el estado"""
+    colors = {
+        "pagado": ft.Colors.GREEN_400,
+        "pendiente": ft.Colors.ORANGE_400,
+        "cancelado": ft.Colors.RED_400,
+    }
+    color = colors.get(status, ft.Colors.GREY_400)
+    return ft.Container(
+        content=ft.Text(status, color=ft.Colors.WHITE, size=12, weight="bold"),
+        bgcolor=color,
+        # Ajuste: Uso de clase Padding y BorderRadius para evitar advertencias
+        padding=ft.Padding(10, 5, 10, 5),
+        border_radius=ft.BorderRadius(15, 15, 15, 15),
+        alignment=ft.Alignment(0, 0)
+    )
+
+def MetricCard(title, value, icon, color):
+    """Tarjeta pequeña para el Dashboard"""
+    return ft.Card(
+        content=ft.Container(
+            padding=20,
+            content=ft.Row([
+                ft.Icon(icon, color=color, size=40),
+                ft.Column([
+                    ft.Text(title, size=14, color=ft.Colors.GREY_500),
+                    ft.Text(str(value), size=24, weight="bold")
+                ], spacing=5)
+            ], alignment="spaceBetween") # Ajuste: String para evitar problemas de atributo
+        )
+    )
+
+def CursoCard(curso):
+    """Tarjeta para mostrar información del curso"""
+    return ft.Card(
+        content=ft.Container(
+            padding=20,
+            content=ft.Column([
+                ft.Text(curso['titulo'], size=18, weight="bold"),
+                ft.Text(f"Precio: ${curso['precio']:.2f}", size=14, color=ft.Colors.GREY_600),
+                ft.Text(f"Duración: {curso['duracion_horas']} horas", size=14, color=ft.Colors.GREY_600),
+                ft.Button("Ver Detalles", bgcolor=ft.Colors.BLUE_500, color=ft.Colors.WHITE)
+            ], spacing=10)
+        )
+    )
+
+# --- APLICACIÓN PRINCIPAL ---
+
+def main(page: ft.Page):
+    page.title = "Panel Admin - Matrículas"
+    page.theme_mode = ft.ThemeMode.LIGHT
+    page.padding = 0
+    
+    content_area = ft.Container(expand=True, padding=20)
+
+    # --- Lógica de Actualización de Estados ---
+    
+    def change_enrollment_status(e, enrollment_id, new_status):
+        for enrollment in enrollments_data:
+            if enrollment['id'] == enrollment_id:
+                enrollment['status'] = new_status
+                break
+        
+        if page.dialog:
+            page.dialog.open = False
+        
+        load_matricula_view()
+        page.update()
+
+    def show_status_dialog(enrollment_id, current_status):
+        dlg = ft.AlertDialog(
+            title=ft.Text("Cambiar Estado de Matrícula"),
+            content=ft.Column([
+                 ft.Button("Marcar como PAGADO", 
+                                  on_click=lambda e: change_enrollment_status(e, enrollment_id, "Pagado"),
+                                  bgcolor=ft.Colors.GREEN_400, color=ft.Colors.WHITE),
+                 ft.Button("Marcar como PENDIENTE", 
+                                  on_click=lambda e: change_enrollment_status(e, enrollment_id, "Pendiente"),
+                                  bgcolor=ft.Colors.ORANGE_400, color=ft.Colors.WHITE),
+                 ft.Button("Marcar como CANCELADO", 
+                                  on_click=lambda e: change_enrollment_status(e, enrollment_id, "Cancelado"),
+                                  bgcolor=ft.Colors.RED_400, color=ft.Colors.WHITE),
+            ], tight=True, spacing=10),
+        )
+        
+
+        page.dialog = dlg
+        dlg.open = True
+        page.update()
+
+    # --- VISTAS (Páginas internas) ---
+
+    def load_dashboard_view():
+        matriculas = obtener_todas_las_matriculas()
+        total_enrollments = len(matriculas)
+        datos_cursos = obtener_datos_cursos()
+        pending_count = sum(1 for e in matriculas if e['status'] == "pendiente")
+        revenue = sum(next(c['precio'] for c in datos_cursos if c['_id'] == e['curso_id']) for e in matriculas if e['status'] == "pagado")
+
+        content_area.content = ft.Column([
+            ft.Text("Dashboard", size=30, weight="bold"),
+            ft.Divider(),
+            ft.Row([
+                MetricCard("Total Matrículas", total_enrollments, ft.Icons.PEOPLE, ft.Colors.BLUE),
+                MetricCard("Pendientes de Pago", pending_count, ft.Icons.PENDING_ACTIONS, ft.Colors.ORANGE),
+                MetricCard("Ingresos Totales", f"${revenue:.2f}", ft.Icons.ATTACH_MONEY, ft.Colors.GREEN),
+            ], wrap=True, spacing=20),
+             ft.Container(height=30),
+             ft.Text("Accesos rápidos", size=20),
+             ft.Text("Aquí irían gráficos o últimas actividades...", color=ft.Colors.GREY_400)
+        ], scroll="auto")
+        content_area.update()
+
+    def load_matricula_view():
+        rows = []
+        matriculas = obtener_todas_las_matriculas()
+        for matricula in matriculas:
+            rows.append(
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text(matricula["curso_id"])),
+                        ft.DataCell(ft.Text(matricula["estudiante"], weight="bold")),
+                        ft.DataCell(ft.Text(matricula["curso_nombre"])),
+                        ft.DataCell(StatusBadge(matricula["status"])),
+                        ft.DataCell(ft.Text(matricula["fecha_matricula"])),
+                        ft.DataCell(
+                            ft.IconButton(
+                                ft.Icons.EDIT, 
+                                tooltip="Cambiar Estado",
+                                on_click=lambda e, id=matricula["curso_id"], status=matricula["status"]: show_status_dialog(id, status)
+                            )
+                        ),
+                    ]
+                )
+            )
+
+        table = ft.DataTable(
+            columns=[
+                ft.DataColumn(ft.Text("ID")),
+                ft.DataColumn(ft.Text("Estudiante")),
+                ft.DataColumn(ft.Text("Curso")),
+                ft.DataColumn(ft.Text("Estado")),
+                ft.DataColumn(ft.Text("Fecha")),
+                ft.DataColumn(ft.Text("Acciones")),
+            ],
+            rows=rows,
+            border=ft.Border(ft.BorderSide(1, "grey200"), ft.BorderSide(1, "grey200"), ft.BorderSide(1, "grey200"), ft.BorderSide(1, "grey200")),
+            heading_text_style=ft.TextStyle(weight="bold", color=ft.Colors.BLUE_GREY_900),
+        )
+
+        content_area.content = ft.Column([
+            ft.Row([
+                ft.Text("Gestión de Matrículas", size=30, weight="bold"),
+                ft.Button("Nueva Matrícula Manual", icon=ft.Icons.ADD) 
+            ], alignment="spaceBetween"),
+            ft.Divider(),
+            # Usamos una Column envuelta para permitir el scroll de la tabla
+            ft.Column([table], scroll="auto", expand=True), 
+        ], expand=True)
+        content_area.update()
+
+    def load_cursos_view():
+        
+        datos_cursos = obtener_datos_cursos()
+        course_cards = [CursoCard(curso) for curso in datos_cursos]
+        content_area.content = ft.Column([
+            ft.Row([
+            ft.Text("Gestión de Cursos", size=30, weight="bold"),
+            ft.Button("Agregar Nuevo Curso", icon=ft.Icons.ADD)
+            ], alignment="spaceBetween"),
+            ft.Divider(),
+            ft.Row(course_cards, wrap=True, spacing=20, run_spacing=20)
+        ], scroll="auto")
+        content_area.update()
+
+    # Ventas de edición
+
+    def editar_matricula(matricula_id):
+        ft.Card(
+            content=ft.Container(
+                padding=20,
+                content=ft.Column([
+                    ft.Text(f"Editar Matrícula ID: {matricula_id}", size=18, weight="bold"),
+                    # Aquí irían los campos de edición
+                    ft.Text("Funcionalidad en desarrollo...", color=ft.Colors.GREY_600)
+                ], spacing=10)
+            )
+        )
+
+
+    # --- Layout Principal (Sidebar + Contenido) ---
+    
+    def build_admin_layout():
+        def on_nav_change(e):
+            idx = e.control.selected_index
+            if idx == 0: load_dashboard_view()
+            elif idx == 1: load_matricula_view()
+            elif idx == 2:load_cursos_view()
+
+
+        sidebar = ft.NavigationRail(
+            selected_index=0,
+            label_type="all",
+            min_width=100,
+            min_extended_width=200,
+            group_alignment=-0.9,
+            destinations=[
+                ft.NavigationRailDestination(icon=ft.Icons.DASHBOARD_OUTLINED, selected_icon=ft.Icons.DASHBOARD, label="Dashboard"),
+                ft.NavigationRailDestination(icon=ft.Icons.RECEIPT_LONG_OUTLINED, selected_icon=ft.Icons.RECEIPT_LONG, label="Matrículas"),
+                ft.NavigationRailDestination(icon=ft.Icons.BOOK_OUTLINED, selected_icon=ft.Icons.BOOK, label="Cursos"),
+            ],
+            on_change=on_nav_change
+        )
+
+        layout = ft.Row([sidebar, ft.VerticalDivider(width=1), content_area], expand=True)
+        page.add(layout)
+        load_dashboard_view()
+
+    def build_user_layout():
+        def on_nav_change(e):
+            idx = e.control.selected_index
+            if idx == 0: load_dashboard_view()
+            elif idx == 1:
+                content_area.content = ft.Text("Vista de Cursos...")
+                content_area.update()
+
+        sidebar = ft.NavigationRail(
+            selected_index=0,
+            label_type="all",
+            min_width=100,
+            min_extended_width=200,
+            group_alignment=-0.9,
+            destinations=[
+                ft.NavigationRailDestination(icon=ft.Icons.DASHBOARD_OUTLINED, selected_icon=ft.Icons.DASHBOARD, label="Dashboard"),
+                ft.NavigationRailDestination(icon=ft.Icons.BOOK_OUTLINED, selected_icon=ft.Icons.BOOK, label="Cursos"),
+            ],
+            on_change=on_nav_change
+        )
+
+        layout = ft.Row([sidebar, ft.VerticalDivider(width=1), content_area], expand=True)
+        page.add(layout)
+        load_dashboard_view()
+    # --- Pantalla de Login ---
+    
+    def login_screen():
+        user_input = ft.TextField(label="Usuario", width=300)
+        pass_input = ft.TextField(label="Contraseña", password=True, width=300)
+        error_text = ft.Text("", color=ft.Colors.RED)
+
+        def login_click(e):
+            resultado_login = buscar_usuario_por_email(user_input.value, pass_input.value)
+            
+            page.clean()
+            build_admin_layout()
+            return
+            if resultado_login[0]:
+                page.clean()
+                match resultado_login[1]:
+                    case 'usuario':
+                        build_user_layout()
+                    case 'docente':
+                        pass
+                    case 'admin':
+                        build_admin_layout()
+            else:
+                error_text.value = "Error: Usuario/Contraseña incorrectos."
+                page.update()
+
+        page.add(
+            ft.Container(
+                content=ft.Column([
+                    ft.Icon(ft.Icons.ADMIN_PANEL_SETTINGS, size=60, color=ft.Colors.BLUE),
+                    ft.Text("Acceso Administrativo", size=24, weight="bold"),
+                    user_input,
+                    pass_input,
+                    error_text,
+                    ft.Button("Entrar", on_click=login_click, width=300)
+                ], alignment="center", horizontal_alignment="center", spacing=20),
+                alignment=ft.Alignment(0, 0),
+                expand=True
+            )
+        )
+
+    login_screen()
+
+# Ajuste: ft.run() es el estándar actual sobre ft.app()
+if __name__ == "__main__":
+    ft.run(main)
