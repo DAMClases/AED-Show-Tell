@@ -1,0 +1,112 @@
+[
+  {
+    "_id": "curso_001",
+    "titulo": "Introducción a Java",
+    "descripcion": "Curso básico para aprender los fundamentos del lenguaje Java.",
+    "duracion_horas": 40,
+    "precio": 34.99,
+    "instructor": {
+      "docente_id": "docente_001",
+      "nombre": "Juan Jiménez García"
+    }
+  },
+  {
+    "_id": "curso_002",
+    "titulo": "Programación Orientada a Objetos",
+    "descripcion": "Principios y buenas prácticas de la programación orientada a objetos.",
+    "duracion_horas": 35,
+    "precio": 4.99,
+    "instructor": {
+      "docente_id": "docente_001",
+      "nombre": "Juan Jiménez García"
+    }
+  },
+  {
+    "_id": "curso_003",
+    "titulo": "Bases de Datos NoSQL",
+    "descripcion": "Introducción a bases de datos NoSQL con MongoDB.",
+    "duracion_horas": 30,
+    "precio": 34.99,
+    "instructor": {
+      "docente_id": "docente_002",
+      "nombre": "María López Sánchez"
+    }
+  },
+  {
+    "_id": "curso_004",
+    "titulo": "Desarrollo Web con HTML y CSS",
+    "descripcion": "Creación de sitios web estáticos con HTML5 y CSS3.",
+    "duracion_horas": 25,
+    "precio": 13.99,
+    "instructor": {
+      "docente_id": "docente_003",
+      "nombre": "Carlos Ruiz Moreno"
+    }
+  },
+  {
+    "_id": "curso_005",
+    "titulo": "JavaScript Avanzado",
+    "descripcion": "Programación avanzada en JavaScript para aplicaciones web.",
+    "duracion_horas": 45,
+    "precio": 12.99,
+    "instructor": {
+      "docente_id": "docente_004",
+      "nombre": "Laura Pérez Gómez"
+    }
+  },
+  {
+    "_id": "curso_006",
+    "titulo": "Python para Principiantes",
+    "descripcion": "Curso introductorio al lenguaje de programación Python.",
+    "duracion_horas": 40,
+    "precio": 19.99,
+    "instructor": {
+      "docente_id": "docente_005",
+      "nombre": "David Martín Alonso"
+    }
+  },
+  {
+    "_id": "curso_007",
+    "titulo": "Análisis de Datos con Excel",
+    "descripcion": "Uso avanzado de Excel para análisis y visualización de datos.",
+    "duracion_horas": 20,
+    "precio": 24.99,
+    "instructor": {
+      "docente_id": "docente_006",
+      "nombre": "Sonia Vega Torres"
+    }
+  },
+  {
+    "_id": "curso_008",
+    "titulo": "Introducción a Linux",
+    "descripcion": "Fundamentos del sistema operativo Linux.",
+    "duracion_horas": 30,
+    "precio": 9.99,
+    "instructor": {
+      "docente_id": "docente_007",
+      "nombre": "Pedro Navarro Díaz"
+    }
+  },
+  {
+    "_id": "curso_009",
+    "titulo": "Ciberseguridad Básica",
+    "descripcion": "Conceptos básicos de seguridad informática.",
+    "duracion_horas": 25,
+    "precio": 4.99,
+    "instructor": {
+      "docente_id": "docente_008",
+      "nombre": "Elena Romero Gil"
+    }
+  },
+  {
+    "_id": "curso_010",
+    "titulo": "Redes Informáticas",
+    "descripcion": "Introducción a redes, protocolos y arquitectura de red.",
+    "duracion_horas": 35,
+    "precio": 14.99,
+    "instructor": {
+      "docente_id": "docente_009",
+      "nombre": "Miguel Hernández Cruz"
+    }
+  }
+]

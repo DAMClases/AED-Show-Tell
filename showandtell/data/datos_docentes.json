@@ -1,0 +1,139 @@
+[{
+  "_id": "docente_001",
+  "nombre": "Juan",
+  "apellidos": "Jiménez García",
+  "telefono": "612345678",
+  "email": "jujimgardocente001@shndtel.com",
+  "direccion": "Calle Mayor 12, Madrid",
+  "cursos": [
+    { "curso_id": "curso_001", "titulo": "Introducción a Java" },
+    { "curso_id": "curso_002", "titulo": "Programación Orientada a Objetos" }
+  ],
+  "estado": "Alta",
+  "fecha_alta": "2025-05-02",
+  "password":"password"
+},
+{
+  "_id": "docente_002",
+  "nombre": "María",
+  "apellidos": "López Sánchez",
+  "telefono": "623456789",
+  "email": "malopsadocente002@shndtel.com",
+  "direccion": "Av. Libertad 34, Sevilla",
+  "cursos": [
+    { "curso_id": "curso_003", "titulo": "Bases de Datos NoSQL" }
+  ],
+  "estado": "Alta",
+  "fecha_alta": "2025-04-15",
+  "password":"password"
+},
+{
+  "_id": "docente_003",
+  "nombre": "Carlos",
+  "apellidos": "Ruiz Moreno",
+  "telefono": "634567891",
+  "email": "caruimordocente003@shndtel.com",
+  "direccion": "Calle Sol 8, Valencia",
+  "cursos": [
+    { "curso_id": "curso_004", "titulo": "Desarrollo Web con HTML y CSS" }
+  ],
+  "estado": "Alta",
+  "fecha_alta": "2025-03-20",
+  "password":"password"
+},
+{
+  "_id": "docente_004",
+  "nombre": "Laura",
+  "apellidos": "Pérez Gómez",
+  "telefono": "645678912",
+  "email": "lapergomdocente004@shndtel.com",
+  "direccion": "Calle Luna 19, Zaragoza",
+  "cursos": [
+    { "curso_id": "curso_005", "titulo": "JavaScript Avanzado" }
+  ],
+  "estado": "Alta",
+  "fecha_alta": "2025-02-10",
+  "password":"password"
+},
+{
+  "_id": "docente_005",
+  "nombre": "David",
+  "apellidos": "Martín Alonso",
+  "telefono": "656789123",
+  "email": "damaraldocente005@shndtel.com",
+  "direccion": "Plaza Norte 3, Bilbao",
+  "cursos": [
+    { "curso_id": "curso_006", "titulo": "Python para Principiantes" }
+  ],
+  "estado": "Alta",
+  "fecha_alta": "2025-01-25",
+  "password":"password"
+},
+{
+  "_id": "docente_006",
+  "nombre": "Sonia",
+  "apellidos": "Vega Torres",
+  "telefono": "667891234",
+  "email": "sovegtoedocente006@shndtel.com",
+  "direccion": "Calle Sur 22, Málaga",
+  "cursos": [
+    { "curso_id": "curso_007", "titulo": "Análisis de Datos con Excel" }
+  ],
+  "estado": "Alta",
+  "fecha_alta": "2025-06-01",
+  "password":"password"
+},
+{
+  "_id": "docente_007",
+  "nombre": "Pedro",
+  "apellidos": "Navarro Díaz",
+  "telefono": "678912345",
+  "email": "penavdiadocente007@shndtel.com",
+  "direccion": "Av. Central 90, Murcia",
+  "cursos": [
+    { "curso_id": "curso_008", "titulo": "Introducción a Linux" }
+  ],
+  "estado": "Alta",
+  "fecha_alta": "2025-06-10",
+  "password":"password"
+},
+{
+  "_id": "docente_008",
+  "nombre": "Elena",
+  "apellidos": "Romero Gil",
+  "telefono": "689123456",
+  "email": "elromgildocente008@shndtel.com",
+  "direccion": "Calle Este 11, Granada",
+  "cursos": [
+    { "curso_id": "curso_009", "titulo": "Ciberseguridad Básica" }
+  ],
+  "estado": "Alta",
+  "fecha_alta": "2025-07-01",
+  "password":"password"
+},
+{
+  "_id": "docente_009",
+  "nombre": "Miguel",
+  "apellidos": "Hernández Cruz",
+  "telefono": "691234567",
+  "email": "miherrcrdocente009@shndtel.com",
+  "direccion": "Calle Oeste 7, León",
+  "cursos": [
+    { "curso_id": "curso_010", "titulo": "Redes Informáticas" }
+  ],
+  "estado": "Alta",
+  "fecha_alta": "2025-07-15",
+  "password":"password"
+},
+{
+  "_id": "docente_010",
+  "nombre": "Natalia",
+  "apellidos": "Serrano Ruiz",
+  "telefono": "692345678",
+  "email": "naserruidocente010@shndtel.com",
+  "direccion": "Av. Marítima 5, Cádiz",
+  "cursos": [],
+  "estado": "Alta",
+  "fecha_alta": "2025-08-01",
+  "password":"password"
+}]
