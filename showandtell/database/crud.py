@@ -124,3 +124,33 @@ def obtener_curso_por_id(curso_id) -> dict:
     db = client['academia']
     curso = db.cursos.find_one({"_id": curso_id})
     return curso
+
+
+def obtener_informacion_perfil_usuario_alumno(mail:str):
+    '''Encuentra la información asociada al usuario alumno para utilizar en el menú "Perfil de usuario"'''
+    CONNECTION_STRING = "mongodb://localhost:27017/"
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+    db = client['academia']
+    usuario = db.alumnos.find_one({"email": mail})
+    print(usuario)
+
+def obtener_informacion_perfil_usuario_docente(mail:str):
+    '''Encuentra la información asociada al usuario docente para utilizar en el menú "Perfil de usuario"'''
+    CONNECTION_STRING = "mongodb://localhost:27017/"
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+    db = client['academia']
+    usuario = db.admin.find_one({"email": mail})
+    print(usuario)
+
+def obtener_informacion_perfil_usuario_admin(mail:str):
+    '''Encuentra la información asociada al usuario admin para utilizar en el menú "Perfil de usuario"'''
+    CONNECTION_STRING = "mongodb://localhost:27017/"
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+    db = client['academia']
+    usuario = db.docentes.find_one({"email": mail})
+    print(usuario)
+
+
+obtener_informacion_perfil_usuario_alumno(mail="masangialumno005@shndtel.com")
+obtener_informacion_perfil_usuario_docente(mail="jujimgardocente001@shndtel.com")
+obtener_informacion_perfil_usuario_admin(mail="cristophermc@gmail.com")
