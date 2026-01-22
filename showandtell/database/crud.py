@@ -73,6 +73,7 @@ def obtener_todas_las_matriculas():
                 matriculas.append({
                     'curso_id': curso['curso'],
                     'estudiante': alumno['nombre'],
+                    'alumno_id': alumno['_id'],
                     'curso_nombre': curso_info['titulo'] if curso_info else 'Desconocido',
                     'fecha_matricula': curso['fecha_matricula'],
                     'status': curso['estado']
@@ -94,3 +95,32 @@ def obtener_datos_cursos() -> list:
         cursos.append(curso)
     
     return cursos
+
+def actualizar_estado_curso(alumno_id, curso_id, nuevo_estado):
+    CONNECTION_STRING = "mongodb://localhost:27017/"
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        
+        # 3. Seleccionar la base de datos
+    db = client['academia']
+    # Conectamos a la colección de alumnos
+    # Buscamos al alumno por su _id Y que tenga ese curso en su lista
+    filtro = {
+        "_id": alumno_id, 
+        "cursos.curso": curso_id
+    }
+    
+    # Usamos el operador $ para actualizar solo el elemento del array que coincidió
+    actualizacion = {
+        "$set": { "cursos.$.estado": nuevo_estado }
+    }
+    
+    db.alumnos.update_one(filtro, actualizacion)
+
+def obtener_curso_por_id(curso_id) -> dict:
+    CONNECTION_STRING = "mongodb://localhost:27017/"
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        
+        # 3. Seleccionar la base de datos
+    db = client['academia']
+    curso = db.cursos.find_one({"_id": curso_id})
+    return curso

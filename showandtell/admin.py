@@ -56,20 +56,6 @@ def MetricCard(title, value, icon, color):
         )
     )
 
-def CursoCard(curso):
-    """Tarjeta para mostrar información del curso"""
-    return ft.Card(
-        content=ft.Container(
-            padding=20,
-            content=ft.Column([
-                ft.Text(curso['titulo'], size=18, weight="bold"),
-                ft.Text(f"Precio: ${curso['precio']:.2f}", size=14, color=ft.Colors.GREY_600),
-                ft.Text(f"Duración: {curso['duracion_horas']} horas", size=14, color=ft.Colors.GREY_600),
-                ft.Button("Ver Detalles", bgcolor=ft.Colors.BLUE_500, color=ft.Colors.WHITE)
-            ], spacing=10)
-        )
-    )
-
 # --- APLICACIÓN PRINCIPAL ---
 
 def main(page: ft.Page):
@@ -81,36 +67,57 @@ def main(page: ft.Page):
 
     # --- Lógica de Actualización de Estados ---
     
-    def change_enrollment_status(e, enrollment_id, new_status):
-        for enrollment in enrollments_data:
-            if enrollment['id'] == enrollment_id:
-                enrollment['status'] = new_status
-                break
-        
-        if page.dialog:
-            page.dialog.open = False
-        
+    def change_enrollment_status(e, alumno_id, curso_id, new_status):
+
+        actualizar_estado_curso(alumno_id, curso_id, new_status)
+                
         load_matricula_view()
         page.update()
 
-    def show_status_dialog(enrollment_id, current_status):
-        dlg = ft.AlertDialog(
-            title=ft.Text("Cambiar Estado de Matrícula"),
-            content=ft.Column([
-                 ft.Button("Marcar como PAGADO", 
-                                  on_click=lambda e: change_enrollment_status(e, enrollment_id, "Pagado"),
-                                  bgcolor=ft.Colors.GREEN_400, color=ft.Colors.WHITE),
-                 ft.Button("Marcar como PENDIENTE", 
-                                  on_click=lambda e: change_enrollment_status(e, enrollment_id, "Pendiente"),
-                                  bgcolor=ft.Colors.ORANGE_400, color=ft.Colors.WHITE),
-                 ft.Button("Marcar como CANCELADO", 
-                                  on_click=lambda e: change_enrollment_status(e, enrollment_id, "Cancelado"),
-                                  bgcolor=ft.Colors.RED_400, color=ft.Colors.WHITE),
-            ], tight=True, spacing=10),
-        )
-        
+    def show_course_details(curso_id):
+        curso = obtener_curso_por_id(curso_id)
+        if not curso:
+            print(f"Curso con ID {curso_id} no encontrado.")
+            return
 
-        page.dialog = dlg
+        dlg = ft.AlertDialog(
+            title=ft.Text(f"Detalles del Curso: {curso['titulo']}"),
+            content=ft.Column([
+                ft.Text(f"ID: {curso['_id']}"),
+                ft.Text(f"Descripción: {curso['descripcion']}"),
+                ft.Text(f"Precio: ${curso['precio']:.2f}"),
+                ft.Text(f"Duración: {curso['duracion_horas']} horas"),
+            ], spacing=10),
+            actions=[
+                ft.Button("CERRAR", on_click=lambda _: (setattr(dlg, "open", False), page.update()))
+            ],
+        )
+
+        page.overlay.append(dlg)
+        dlg.open = True
+        page.update()
+
+    def show_status_dialog(alumno_id, curso_id, current_status):
+        # Print de depuración para ver en la terminal
+        print(f"Abriendo diálogo para Alumno: {alumno_id}, Curso: {curso_id}")
+
+        def on_click_status(e, new_status):
+            change_enrollment_status(e, alumno_id, curso_id, new_status)
+            dlg.open = False
+            page.update()
+
+        dlg = ft.AlertDialog(
+            title=ft.Text(f"Editar: {curso_id}"),
+            content=ft.Text(f"Alumno: {alumno_id}"),
+            actions=[
+                ft.Button("PAGADO", on_click=lambda e: on_click_status(e, "pagado"), bgcolor="green", color="white"),
+                ft.Button("PENDIENTE", on_click=lambda e: on_click_status(e, "pendiente"), bgcolor="orange", color="white"),
+                ft.Button("CANCELADO", on_click=lambda e: on_click_status(e, "cancelado"), bgcolor="red", color="white"),
+                ft.Button("CERRAR", on_click=lambda _: (setattr(dlg, "open", False), page.update()))
+            ],
+        )
+
+        page.overlay.append(dlg)
         dlg.open = True
         page.update()
 
@@ -140,7 +147,11 @@ def main(page: ft.Page):
     def load_matricula_view():
         rows = []
         matriculas = obtener_todas_las_matriculas()
+        
         for matricula in matriculas:
+            id_alumno = matricula.get("alumno_id")
+            cod_curso = matricula.get("curso_id")
+            estado_actual = matricula.get("status")
             rows.append(
                 ft.DataRow(
                     cells=[
@@ -150,12 +161,13 @@ def main(page: ft.Page):
                         ft.DataCell(StatusBadge(matricula["status"])),
                         ft.DataCell(ft.Text(matricula["fecha_matricula"])),
                         ft.DataCell(
-                            ft.IconButton(
-                                ft.Icons.EDIT, 
-                                tooltip="Cambiar Estado",
-                                on_click=lambda e, id=matricula["curso_id"], status=matricula["status"]: show_status_dialog(id, status)
-                            )
-                        ),
+                        ft.IconButton(
+                            ft.Icons.EDIT,
+                            # PASAMOS AMBOS IDs: Alumno y Curso
+                            on_click=lambda e, a_id=id_alumno, c_id=cod_curso, s=estado_actual: 
+                                show_status_dialog(a_id, c_id, s)
+                        )
+                    ),
                     ]
                 )
             )
@@ -198,6 +210,20 @@ def main(page: ft.Page):
             ft.Row(course_cards, wrap=True, spacing=20, run_spacing=20)
         ], scroll="auto")
         content_area.update()
+
+    def CursoCard(curso):
+        """Tarjeta para mostrar información del curso"""
+        return ft.Card(
+            content=ft.Container(
+                padding=20,
+                content=ft.Column([
+                    ft.Text(curso['titulo'], size=18, weight="bold"),
+                    ft.Text(f"Precio: ${curso['precio']:.2f}", size=14, color=ft.Colors.GREY_600),
+                    ft.Text(f"Duración: {curso['duracion_horas']} horas", size=14, color=ft.Colors.GREY_600),
+                    ft.Button("Ver Detalles", bgcolor=ft.Colors.BLUE_500, color=ft.Colors.WHITE, on_click=lambda e, c_id=curso['_id']: show_course_details(c_id))
+                ], spacing=10)
+            )
+        )
 
     # Ventas de edición
 
