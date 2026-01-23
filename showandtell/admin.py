@@ -62,7 +62,10 @@ def main(page: ft.Page):
     page.title = "Panel Admin - Matrículas"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.padding = 0
-    
+    current_user = { ####
+        "email": None,
+        "role": None,
+    }
     content_area = ft.Container(expand=True, padding=20)
 
     # --- Lógica de Actualización de Estados ---
@@ -211,7 +214,8 @@ def main(page: ft.Page):
         ], scroll="auto")
         content_area.update()
     def load_usuario_view():
-        datos_usuario = obtener_informacion_perfil_usuario_admin(mail="cristophermc@gmail.com")
+
+        datos_usuario = obtener_informacion_perfil_usuario_admin(current_user["email"])
         contenido_mostrable = info_panel(datos_usuario)
         content_area.content = ft.Column([
             ft.Row([
@@ -242,7 +246,7 @@ def main(page: ft.Page):
                 ft.Text(f"Nombre de usuario: {usuario['email']}", size=14, weight="bold"),
                 ft.Divider(),
                 ft.Text(f"Teléfono: {usuario['telefono']}", size=14, color=ft.Colors.GREY_600),
-                ft.Text(f"Teléfono: {usuario['direccion']}", size=14, color=ft.Colors.GREY_600),
+                ft.Text(f"Dirección: {usuario['direccion']}", size=14, color=ft.Colors.GREY_600),
                 ft.Text(f"E-mail: {usuario['email']}", size=14, color=ft.Colors.GREY_600)], spacing=10))
     
     # Ventas de edición
@@ -321,14 +325,13 @@ def main(page: ft.Page):
     def login_screen():
         page.overlay.clear() #
         page.clean()    #
-
         user_input = ft.TextField(label="Usuario", width=300)
         pass_input = ft.TextField(label="Contraseña", password=True, width=300)
         error_text = ft.Text("", color=ft.Colors.RED)
 
         def login_click(e):
             resultado_login = buscar_usuario_por_email(user_input.value, pass_input.value)
-            
+            current_user["email"] = user_input.value
             page.clean()
             build_admin_layout()
             return

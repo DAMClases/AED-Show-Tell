@@ -3,7 +3,7 @@
 ##########################################################
 
 from xmlrpc import client
-from pymongo import MongoClient
+from pymongo import MongoClient, errors
 def get_database():
  
    # Provide the mongodb atlas url to connect python to mongodb using pymongo
@@ -149,6 +149,21 @@ def obtener_informacion_perfil_usuario_admin(mail:str):
     return usuario
 
 ################################# 22 - 01 - 2026 : Por la tarde ####################################
+
+################################# 23 - 01 - 2026 : En la mañana ####################################
+
+def registrar_nuevo_curso(datos_curso:dict)->bool:
+    '''Registra un nuevo curso desde el panel de administración.'''
+    try:
+        CONNECTION_STRING = "mongodb://localhost:27017/"
+        client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        db = client['academia']
+        insercion = db.cursos.insert_one(datos_curso)
+        if insercion.inserted_id:
+            return True
+        return False
+    except errors.PyMongoError:
+        return False
 
 
 
