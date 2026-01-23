@@ -3,11 +3,14 @@
 ##########################################################
 
 from xmlrpc import client
-from pymongo import MongoClient
+from pymongo import MongoClient, errors
+
+CONNECTION_STRING = "mongodb://localhost:27017/"
+
 def get_database():
  
    # Provide the mongodb atlas url to connect python to mongodb using pymongo
-    CONNECTION_STRING = "mongodb://localhost:27017/"
+    
  
     try:
         # 2. Inicializar el cliente
@@ -28,7 +31,7 @@ get_database()
 def buscar_usuario_por_email(email, password) -> tuple[bool, str]:
     '''Función que busca un usuario en la colección "alumnos" por su email.'''
 
-    CONNECTION_STRING = "mongodb://localhost:27017/"
+    
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
         
     db = client['academia']
@@ -57,7 +60,7 @@ def obtener_todas_las_matriculas():
     '''Función que obtiene todas las matrículas de la colección "matriculas".
     Function that retrieves all enrollments from the "matriculas" collection.'''
     
-    CONNECTION_STRING = "mongodb://localhost:27017/"
+    
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
         
         # 3. Seleccionar la base de datos
@@ -83,7 +86,7 @@ def obtener_datos_cursos() -> list:
     '''Función que obtiene todos los cursos de la colección "cursos".
     Function that retrieves all courses from the "cursos" collection.'''
     
-    CONNECTION_STRING = "mongodb://localhost:27017/"
+    
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
         
         # 3. Seleccionar la base de datos
@@ -95,7 +98,7 @@ def obtener_datos_cursos() -> list:
     return cursos
 
 def actualizar_estado_curso(alumno_id, curso_id, nuevo_estado):
-    CONNECTION_STRING = "mongodb://localhost:27017/"
+    
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
         
         # 3. Seleccionar la base de datos
@@ -115,7 +118,7 @@ def actualizar_estado_curso(alumno_id, curso_id, nuevo_estado):
     db.alumnos.update_one(filtro, actualizacion)
 
 def obtener_curso_por_id(curso_id) -> dict:
-    CONNECTION_STRING = "mongodb://localhost:27017/"
+    
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
         
         # 3. Seleccionar la base de datos
@@ -126,7 +129,7 @@ def obtener_curso_por_id(curso_id) -> dict:
 
 def obtener_informacion_perfil_usuario_alumno(mail:str):
     '''Encuentra la información asociada al usuario alumno para utilizar en el menú "Perfil de usuario"'''
-    CONNECTION_STRING = "mongodb://localhost:27017/"
+    
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
     db = client['academia']
     usuario = db.alumnos.find_one({"email": mail})
@@ -134,7 +137,7 @@ def obtener_informacion_perfil_usuario_alumno(mail:str):
 
 def obtener_informacion_perfil_usuario_docente(mail:str):
     '''Encuentra la información asociada al usuario docente para utilizar en el menú "Perfil de usuario"'''
-    CONNECTION_STRING = "mongodb://localhost:27017/"
+    
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
     db = client['academia']
     usuario = db.docentes.find_one({"email": mail})
@@ -142,12 +145,83 @@ def obtener_informacion_perfil_usuario_docente(mail:str):
 
 def obtener_informacion_perfil_usuario_admin(mail:str):
     '''Encuentra la información asociada al usuario admin para utilizar en el menú "Perfil de usuario"'''
-    CONNECTION_STRING = "mongodb://localhost:27017/"
+    
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
     db = client['academia']
     usuario = db.admin.find_one({"email": mail})
     return usuario
 
+def crear_curso(titulo, descripcion, duracion, precio, docente_id, docente_nombre) -> str:
+    
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        
+    db = client['academia']
+    nuevo_curso = {
+        "titulo": titulo,
+        "descripcion": descripcion,
+        "duracion_horas": duracion,
+        "precio": precio,
+        "instructor": {"docente_id": docente_id, "nombre": docente_nombre}
+    }
+    resultado = db.cursos.insert_one(nuevo_curso)
+    return resultado.inserted_id
+
+def crear_matricula(alumno_id, curso_id, status, fecha_matricula=None) -> None:
+    
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        
+    db = client['academia']
+    nueva_matricula = {
+        "curso": curso_id,
+        "fecha_matricula": fecha_matricula,
+        "estado": "en progreso"
+    }
+    db.alumnos.update_one(
+        {"_id": alumno_id},
+        {"$push": {"cursos": nueva_matricula}}
+    )
+
+def obtener_docentes() -> list:
+    
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        
+    db = client['academia']
+    docentes = []
+    for docente in db.docentes.find():
+        docentes.append(docente)
+    
+    return docentes
+
+def obtener_docente_por_id(docente_id) -> dict:
+    
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        
+    db = client['academia']
+    docente = db.docentes.find_one({"_id": docente_id})
+    return docente
+
+def registrar_nuevo_alumno(datos_alumno:dict)->bool:
+    '''Registra un nuevo alumno desde el panel de administración.'''
+    try:
+        client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        db = client['academia']
+        insercion = db.alumnos.insert_one(datos_alumno)
+        if insercion.inserted_id:
+            return True
+        return False
+    except errors.PyMongoError:
+        return False
+
+def obtener_todos_los_alumnos():
+    '''Obtiene todos los alumnos registrados en la base de datos.'''
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        
+    db = client['academia']
+    alumnos = []
+    for alumno in db.alumnos.find():
+        alumnos.append(alumno)
+    
+    return alumnos
 ################################# 22 - 01 - 2026 : Por la tarde ####################################
 
 

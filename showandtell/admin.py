@@ -62,7 +62,11 @@ def main(page: ft.Page):
     page.title = "Panel Admin - Matrículas"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.padding = 0
-    
+
+    current_user = { ####
+        "email": None,
+        "role": None,
+    }
     content_area = ft.Container(expand=True, padding=20)
 
     # --- Lógica de Actualización de Estados ---
@@ -87,6 +91,7 @@ def main(page: ft.Page):
                 ft.Text(f"Descripción: {curso['descripcion']}"),
                 ft.Text(f"Precio: ${curso['precio']:.2f}"),
                 ft.Text(f"Duración: {curso['duracion_horas']} horas"),
+                ft.Text(f"Instructor: {curso['instructor']['nombre']}"),
             ], spacing=10),
             actions=[
                 ft.Button("CERRAR", on_click=lambda _: (setattr(dlg, "open", False), page.update()))
@@ -98,7 +103,6 @@ def main(page: ft.Page):
         page.update()
 
     def show_status_dialog(alumno_id, curso_id, current_status):
-        # Print de depuración para ver en la terminal
         print(f"Abriendo diálogo para Alumno: {alumno_id}, Curso: {curso_id}")
 
         def on_click_status(e, new_status):
@@ -189,7 +193,7 @@ def main(page: ft.Page):
         content_area.content = ft.Column([
             ft.Row([
                 ft.Text("Gestión de Matrículas", size=30, weight="bold"),
-                ft.Button("Nueva Matrícula Manual", icon=ft.Icons.ADD) 
+                ft.Button("Nueva Matrícula Manual", icon=ft.Icons.ADD,on_click=lambda e: show_add_enrollment_dialog()) 
             ], alignment="spaceBetween"),
             ft.Divider(),
             # Usamos una Column envuelta para permitir el scroll de la tabla
@@ -197,6 +201,7 @@ def main(page: ft.Page):
         ], expand=True)
         content_area.update()
 
+    # Cursos
     def load_cursos_view():
         
         datos_cursos = obtener_datos_cursos()
@@ -204,15 +209,15 @@ def main(page: ft.Page):
         content_area.content = ft.Column([
             ft.Row([
             ft.Text("Gestión de Cursos", size=30, weight="bold"),
-            ft.Button("Agregar Nuevo Curso", icon=ft.Icons.ADD)
+            ft.Button("Agregar Nuevo Curso", icon=ft.Icons.ADD, on_click=lambda e: show_add_course_dialog())
             ], alignment="spaceBetween"),
             ft.Divider(),
             ft.Row(course_cards, wrap=True, spacing=20, run_spacing=20)
         ], scroll="auto")
         content_area.update()
-    def load_usuario_view():
-        # TODO: Cambiar email hardcodeado por el del usuario logueado
-        datos_usuario = obtener_informacion_perfil_usuario_admin(mail="cristophermc@gmail.com")
+
+    def load_usuario_view():    
+        datos_usuario = obtener_informacion_perfil_usuario_admin(current_user["email"])
         contenido_mostrable = info_panel(datos_usuario)
         content_area.content = ft.Column([
             ft.Row([
@@ -230,6 +235,7 @@ def main(page: ft.Page):
                     ft.Text(curso['titulo'], size=18, weight="bold"),
                     ft.Text(f"Precio: ${curso['precio']:.2f}", size=14, color=ft.Colors.GREY_600),
                     ft.Text(f"Duración: {curso['duracion_horas']} horas", size=14, color=ft.Colors.GREY_600),
+                    ft.Text(f"Instructor: {curso['instructor']['nombre']}", size=14, color=ft.Colors.GREY_600),
                     ft.Button("Ver Detalles", bgcolor=ft.Colors.BLUE_500, color=ft.Colors.WHITE, on_click=lambda e, c_id=curso['_id']: show_course_details(c_id))
                 ], spacing=10)
             )
@@ -246,7 +252,187 @@ def main(page: ft.Page):
                 ft.Text(f"Dirección: {usuario['direccion']}", size=14, color=ft.Colors.GREY_600),
                 ft.Text(f"E-mail: {usuario['email']}", size=14, color=ft.Colors.GREY_600)], spacing=10))
     
-    # Ventas de edición
+    def show_add_course_dialog():
+
+        titulo = ft.TextField(label="Título del curso")
+        descripcion = ft.TextField(label="Descripción", multiline=True)
+        precio = ft.TextField(label="Precio", keyboard_type=ft.KeyboardType.NUMBER)
+        duracion = ft.TextField(label="Duración (horas)", keyboard_type=ft.KeyboardType.NUMBER)
+        
+        docente_id_seleccionado = None
+
+        def set_docente(docente_id):
+            nonlocal docente_id_seleccionado
+            docente_id_seleccionado = docente_id
+        
+        docente_id = AutocompletarCampo(set_docente, "Docente")
+
+        def guardar_curso(e):
+            crear_curso(
+                titulo=titulo.value,
+                descripcion=descripcion.value,
+                precio=float(precio.value),
+                duracion=int(duracion.value),
+                docente_id=docente_id.value,
+                docente_nombre=obtener_docente_por_id(docente_id.value)['nombre'] + " " + obtener_docente_por_id(docente_id.value)['apellidos']
+            )
+            dlg.open = False
+            load_cursos_view()
+            page.update()
+
+        dlg = ft.AlertDialog(
+            title=ft.Text("Agregar Nuevo Curso"),
+            content=ft.Column([
+                titulo,
+                descripcion,
+                precio,
+                duracion,
+                docente_id
+            ], tight=True),
+            actions=[
+                ft.Button("Guardar", on_click=guardar_curso),
+                ft.Button("Cancelar", on_click=lambda _: setattr(dlg, "open", False))
+            ]
+        )
+
+        page.overlay.append(dlg)
+        dlg.open = True
+        page.update()
+
+    # Autocompletar
+    def AutocompletarCampo(on_select, campo:str):
+        match campo:
+            case "Curso":
+                datos = obtener_datos_cursos()
+            case "Docente":
+                datos = obtener_docentes()
+            case "Alumno":
+                datos = obtener_todos_los_alumnos()
+
+
+        input = ft.TextField(label=campo,
+                             on_change=lambda e: on_change(e),
+        )
+
+        list_view = ft.ListView(
+            height=220,
+            spacing=5
+        )
+
+        dropdown = ft.Container(
+            content=list_view,
+            bgcolor=ft.Colors.SURFACE,
+            border=ft.Border.all(1, ft.Colors.OUTLINE),
+            border_radius=6,
+            padding=5,
+            visible=False,
+            shadow=ft.BoxShadow(
+                blur_radius=10,
+                color=ft.Colors.with_opacity(0.15, ft.Colors.BLACK),
+            ),
+        )
+
+
+        def on_change(e):
+            texto = input.value.lower().strip()
+            list_view.controls.clear()
+
+            if not texto:
+                dropdown.visible = False
+                input.page.update()
+                return
+
+            
+            for dato in datos:
+                match campo:
+                    case "Curso":
+                        texto_busqueda = dato["titulo"]
+                    case "Docente":
+                        texto_busqueda = f"{dato['nombre']} {dato['apellidos']}"
+                    case "Alumno":
+                        texto_busqueda = f"{dato['nombre']} {dato['apellidos']}"
+                if texto in texto_busqueda.lower():
+                    list_view.controls.append(
+                        ft.ListTile(
+                            title=ft.Text(texto_busqueda),
+                            on_click=lambda e, c=dato: select(c)
+                        )
+                    )
+
+            dropdown.visible = len(list_view.controls) > 0
+            input.page.update()
+
+        def select(dato):
+            input.value = dato["titulo"] if campo=="Curso" else f"{dato['nombre']} {dato['apellidos']}"
+            input.data = dato["_id"]
+            dropdown.visible = False
+            input.page.update()
+            on_select(dato["_id"])
+
+        return ft.Column(
+            [
+                input,
+                dropdown,
+            ],
+            spacing=2,
+        )
+
+    # Matrículas
+    
+    def show_add_enrollment_dialog():
+
+        curso_id_seleccionado = None
+        alumno_id_seleccionado = None
+
+        def set_curso(cid):
+            nonlocal curso_id_seleccionado
+            curso_id_seleccionado = cid
+        
+        def set_alumno(alumno_id):
+            nonlocal alumno_id_seleccionado
+            alumno_id_seleccionado = alumno_id
+
+        curso_autocomplete = AutocompletarCampo(set_curso, "Curso")
+        alumno_autocomplete = AutocompletarCampo(set_alumno, "Alumno")
+
+        estado = ft.Dropdown(
+            label="Estado",
+            options=[
+                ft.dropdown.Option("pendiente"),
+                ft.dropdown.Option("pagado"),
+                ft.dropdown.Option("cancelado"),
+            ],
+            value="pendiente"
+        )
+
+        def guardar_matricula(e):
+            crear_matricula(
+                alumno_id=alumno_id_seleccionado,
+                curso_id=curso_id_seleccionado,
+                status=estado.value,
+                fecha_matricula=datetime.now().strftime("%Y-%m-%d")
+            )
+            dlg.open = False
+            load_matricula_view()
+            page.update()
+
+        dlg = ft.AlertDialog(
+            title=ft.Text("Nueva Matrícula Manual"),
+            content=ft.Column([
+                alumno_autocomplete,
+                curso_autocomplete,
+                estado
+            ], tight=True),
+            actions=[
+                ft.Button("Guardar", on_click=guardar_matricula),
+                ft.Button("Cancelar", on_click=lambda _: setattr(dlg, "open", False))
+            ]
+        )
+
+        page.overlay.append(dlg)
+        dlg.open = True
+        page.update()
+    # Ventanas de edición
 
     def editar_matricula(matricula_id):
         ft.Card(
@@ -320,8 +506,8 @@ def main(page: ft.Page):
     # --- Pantalla de Login ---
     
     def login_screen():
-        page.overlay.clear() #
-        page.clean()    #
+        page.overlay.clear()
+        page.clean()
 
         user_input = ft.TextField(label="Usuario", width=300)
         pass_input = ft.TextField(label="Contraseña", password=True, width=300)
@@ -329,11 +515,15 @@ def main(page: ft.Page):
 
         def login_click(e):
             resultado_login = buscar_usuario_por_email(user_input.value, pass_input.value)
-            
+            current_user["email"] = "cristophermc@gmail.com"
+            current_user["role"] = "admin"
             page.clean()
             build_admin_layout()
             return
             if resultado_login[0]:
+                
+                current_user["email"] = user_input.value
+                current_user["role"] = resultado_login[1]
                 page.clean()
                 match resultado_login[1]:
                     case 'usuario':
