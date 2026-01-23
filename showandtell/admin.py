@@ -211,6 +211,7 @@ def main(page: ft.Page):
         ], scroll="auto")
         content_area.update()
     def load_usuario_view():
+        # TODO: Cambiar email hardcodeado por el del usuario logueado
         datos_usuario = obtener_informacion_perfil_usuario_admin(mail="cristophermc@gmail.com")
         contenido_mostrable = info_panel(datos_usuario)
         content_area.content = ft.Column([
@@ -242,7 +243,7 @@ def main(page: ft.Page):
                 ft.Text(f"Nombre de usuario: {usuario['email']}", size=14, weight="bold"),
                 ft.Divider(),
                 ft.Text(f"Teléfono: {usuario['telefono']}", size=14, color=ft.Colors.GREY_600),
-                ft.Text(f"Teléfono: {usuario['direccion']}", size=14, color=ft.Colors.GREY_600),
+                ft.Text(f"Dirección: {usuario['direccion']}", size=14, color=ft.Colors.GREY_600),
                 ft.Text(f"E-mail: {usuario['email']}", size=14, color=ft.Colors.GREY_600)], spacing=10))
     
     # Ventas de edición
