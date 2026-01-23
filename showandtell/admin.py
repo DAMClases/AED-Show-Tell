@@ -210,7 +210,17 @@ def main(page: ft.Page):
             ft.Row(course_cards, wrap=True, spacing=20, run_spacing=20)
         ], scroll="auto")
         content_area.update()
-
+    def load_usuario_view():
+        # TODO: Cambiar email hardcodeado por el del usuario logueado
+        datos_usuario = obtener_informacion_perfil_usuario_admin(mail="cristophermc@gmail.com")
+        contenido_mostrable = info_panel(datos_usuario)
+        content_area.content = ft.Column([
+            ft.Row([
+            ft.Text("Información de la cuenta", size=30, weight="bold"),], alignment="spaceBetween"),
+            ft.Divider(),
+            ft.Row(contenido_mostrable, expand=True)], 
+        scroll="auto")
+        content_area.update()
     def CursoCard(curso):
         """Tarjeta para mostrar información del curso"""
         return ft.Card(
@@ -224,7 +234,18 @@ def main(page: ft.Page):
                 ], spacing=10)
             )
         )
-
+    def info_panel(usuario):
+        '''Vista que he construido para generar los datos del usuario.'''
+        return ft.Container(
+            ft.Column([
+                ft.Text(f"Nombre: {usuario['nombre']}", size=14, weight="bold"),
+                ft.Text(f"Apellidos: {usuario['apellidos']}", size=14, weight="bold"),
+                ft.Text(f"Nombre de usuario: {usuario['email']}", size=14, weight="bold"),
+                ft.Divider(),
+                ft.Text(f"Teléfono: {usuario['telefono']}", size=14, color=ft.Colors.GREY_600),
+                ft.Text(f"Dirección: {usuario['direccion']}", size=14, color=ft.Colors.GREY_600),
+                ft.Text(f"E-mail: {usuario['email']}", size=14, color=ft.Colors.GREY_600)], spacing=10))
+    
     # Ventas de edición
 
     def editar_matricula(matricula_id):
@@ -248,6 +269,8 @@ def main(page: ft.Page):
             if idx == 0: load_dashboard_view()
             elif idx == 1: load_matricula_view()
             elif idx == 2:load_cursos_view()
+            elif idx == 3:load_usuario_view()
+            elif idx == 4:login_screen()
 
 
         sidebar = ft.NavigationRail(
@@ -260,6 +283,8 @@ def main(page: ft.Page):
                 ft.NavigationRailDestination(icon=ft.Icons.DASHBOARD_OUTLINED, selected_icon=ft.Icons.DASHBOARD, label="Dashboard"),
                 ft.NavigationRailDestination(icon=ft.Icons.RECEIPT_LONG_OUTLINED, selected_icon=ft.Icons.RECEIPT_LONG, label="Matrículas"),
                 ft.NavigationRailDestination(icon=ft.Icons.BOOK_OUTLINED, selected_icon=ft.Icons.BOOK, label="Cursos"),
+                ft.NavigationRailDestination(icon=ft.Icons.PERSON, label="Perfil de usuario"),
+                ft.NavigationRailDestination(icon=ft.Icons.LOGOUT, label="Cerrar sesión")
             ],
             on_change=on_nav_change
         )
@@ -295,6 +320,9 @@ def main(page: ft.Page):
     # --- Pantalla de Login ---
     
     def login_screen():
+        page.overlay.clear() #
+        page.clean()    #
+
         user_input = ft.TextField(label="Usuario", width=300)
         pass_input = ft.TextField(label="Contraseña", password=True, width=300)
         error_text = ft.Text("", color=ft.Colors.RED)

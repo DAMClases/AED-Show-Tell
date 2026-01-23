@@ -26,13 +26,11 @@ def get_database():
 get_database()
 
 def buscar_usuario_por_email(email, password) -> tuple[bool, str]:
-    '''Función que busca un usuario en la colección "alumnos" por su email.
-    Function that searches for a user in the "alumnos" collection by their email.'''
-    
+    '''Función que busca un usuario en la colección "alumnos" por su email.'''
+
     CONNECTION_STRING = "mongodb://localhost:27017/"
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
         
-        # 3. Seleccionar la base de datos
     db = client['academia']
     admin = db.admin.find_one(
         {"email": email, "password": password},
@@ -132,23 +130,26 @@ def obtener_informacion_perfil_usuario_alumno(mail:str):
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
     db = client['academia']
     usuario = db.alumnos.find_one({"email": mail})
-    print(usuario)
+    return usuario
 
 def obtener_informacion_perfil_usuario_docente(mail:str):
     '''Encuentra la información asociada al usuario docente para utilizar en el menú "Perfil de usuario"'''
     CONNECTION_STRING = "mongodb://localhost:27017/"
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
     db = client['academia']
-    usuario = db.admin.find_one({"email": mail})
-    print(usuario)
+    usuario = db.docentes.find_one({"email": mail})
+    return usuario
 
 def obtener_informacion_perfil_usuario_admin(mail:str):
     '''Encuentra la información asociada al usuario admin para utilizar en el menú "Perfil de usuario"'''
     CONNECTION_STRING = "mongodb://localhost:27017/"
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
     db = client['academia']
-    usuario = db.docentes.find_one({"email": mail})
-    print(usuario)
+    usuario = db.admin.find_one({"email": mail})
+    return usuario
+
+################################# 22 - 01 - 2026 : Por la tarde ####################################
+
 
 
 obtener_informacion_perfil_usuario_alumno(mail="masangialumno005@shndtel.com")
