@@ -97,17 +97,11 @@ def obtener_datos_cursos() -> list:
 def actualizar_estado_curso(alumno_id, curso_id, nuevo_estado):
     CONNECTION_STRING = "mongodb://localhost:27017/"
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
-        
-        # 3. Seleccionar la base de datos
     db = client['academia']
-    # Conectamos a la colección de alumnos
-    # Buscamos al alumno por su _id Y que tenga ese curso en su lista
     filtro = {
         "_id": alumno_id, 
         "cursos.curso": curso_id
     }
-    
-    # Usamos el operador $ para actualizar solo el elemento del array que coincidió
     actualizacion = {
         "$set": { "cursos.$.estado": nuevo_estado }
     }
@@ -165,7 +159,38 @@ def registrar_nuevo_curso(datos_curso:dict)->bool:
     except errors.PyMongoError:
         return False
 
+def registrar_nuevo_alumno(datos_alumno:dict)->bool:
+    '''Registra un nuevo alumno desde el panel de administración.'''
+    try:
+        CONNECTION_STRING = "mongodb://localhost:27017/"
+        client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        db = client['academia']
+        insercion = db.alumnos.insert_one(datos_alumno)
+        if insercion.inserted_id:
+            return True
+        return False
+    except errors.PyMongoError:
+        return False
+    
+def registrar_nueva_inscripcion_de_alumno(datos_inscripcion:dict)->bool:
+    '''La idea es traer una estructura:
+    ['alumno_id', {curso:'FOO', fecha_matricula:'FOO', estado:'FOO'}]}
+    
+    Con esto hacemos el CRUD haciendo validación previa'''
 
+    try:
+        CONNECTION_STRING = "mongodb://localhost:27017/"
+        client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        db = client['academia']
+        # if not db.alumnos.find_one(datos_inscripcion[2]['curso']): ##### Por implementar y mejorar
+        #     pass
+        
+        insercion = db.alumnos.insert_one(datos_inscripcion['cursos'])
+        if insercion.inserted_id:
+            return True
+        return False
+    except errors.PyMongoError:
+        return False
 
 obtener_informacion_perfil_usuario_alumno(mail="masangialumno005@shndtel.com")
 obtener_informacion_perfil_usuario_docente(mail="jujimgardocente001@shndtel.com")
