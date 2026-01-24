@@ -222,6 +222,11 @@ def obtener_todos_los_alumnos():
         alumnos.append(alumno)
     
     return alumnos
+
+def get_course_name(course_id):
+    curso = obtener_curso_por_id(course_id)
+    return curso['titulo'] if curso else "Desconocido"
+
 ################################# 22 - 01 - 2026 : Por la tarde ####################################
 
 
