@@ -1,7 +1,7 @@
 import flet as ft
 from datetime import datetime
 from database.crud import *
-from showandtell.tabs.login import login_screen, setup as setup_login
+from tabs.login import login_screen, setup as setup_login
 
 
 # --- APLICACIÓN PRINCIPAL ---

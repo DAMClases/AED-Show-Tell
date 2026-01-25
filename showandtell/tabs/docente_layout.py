@@ -1,10 +1,10 @@
 import flet as ft
 from database.crud import *
-from tabs.dashboard_admin import load_dashboard_view, setup as setup_dashboard
+from tabs.dashboard_docente import load_dashboard_docente_view, setup as setup_dashboard
 from tabs.matriculas_admin import load_matricula_view, setup as setup_matricula
 from tabs.login import login_screen
 from tabs.user_config import load_usuario_view, setup as setup_usuario
-from tabs.cursos_admin import load_cursos_view, setup as setup_cursos
+from tabs.cursos_docente import load_cursos_disponibles_view, setup as setup_cursos
 
 
 content_area: ft.Container
@@ -15,7 +15,8 @@ def setup(container: ft.Container, pg: ft.Page):
     content_area = container
     page = pg
 
-def build_admin_layout(current_user: dict):
+def build_docente_layout(current_user: dict):
+    '''Navegaciones del docente - carga del setup de configuración de pantalla'''
     
     setup_dashboard(content_area, page)
     setup_matricula(content_area, page)
@@ -24,11 +25,12 @@ def build_admin_layout(current_user: dict):
 
     def on_nav_change(e):
         idx = e.control.selected_index
-        if idx == 0: load_dashboard_view()
-        elif idx == 1: load_matricula_view()
-        elif idx == 2:load_cursos_view()
-        elif idx == 3:load_usuario_view(current_user)
+        if idx == 0: load_dashboard_docente_view(current_user)
+        elif idx == 1: load_cursos_disponibles_view(current_user)
+        elif idx == 2: None
+        elif idx == 3: load_usuario_view(current_user)
         elif idx == 4:login_screen(current_user)
+
 
 
     sidebar = ft.NavigationRail(
@@ -39,8 +41,8 @@ def build_admin_layout(current_user: dict):
         group_alignment=-0.9,
         destinations=[
             ft.NavigationRailDestination(icon=ft.Icons.DASHBOARD_OUTLINED, selected_icon=ft.Icons.DASHBOARD, label="Dashboard"),
-            ft.NavigationRailDestination(icon=ft.Icons.RECEIPT_LONG_OUTLINED, selected_icon=ft.Icons.RECEIPT_LONG, label="Matrículas"),
-            ft.NavigationRailDestination(icon=ft.Icons.BOOK_OUTLINED, selected_icon=ft.Icons.BOOK, label="Cursos"),
+            ft.NavigationRailDestination(icon=ft.Icons.SCHOOL, selected_icon=ft.Icons.SCHOOL, label="Cursos"),
+            ft.NavigationRailDestination(icon=ft.Icons.INFO_ROUNDED, selected_icon=ft.Icons.INFO_ROUNDED, label="Alumnos"),
             ft.NavigationRailDestination(icon=ft.Icons.PERSON, label="Perfil de usuario"),
             ft.NavigationRailDestination(icon=ft.Icons.LOGOUT, label="Cerrar sesión")
         ],
@@ -49,4 +51,4 @@ def build_admin_layout(current_user: dict):
 
     layout = ft.Row([sidebar, ft.VerticalDivider(width=1), content_area], expand=True)
     page.add(layout)
-    load_dashboard_view()
+    load_dashboard_docente_view(current_user)

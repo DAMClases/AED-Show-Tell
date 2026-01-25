@@ -151,12 +151,20 @@ def obtener_informacion_perfil_usuario_admin(mail:str):
     usuario = db.admin.find_one({"email": mail})
     return usuario
 
-def crear_curso(titulo, descripcion, duracion, precio, docente_id, docente_nombre) -> str:
+def obtener_informacion_perfil_usuario_docente(mail:str):
+    '''Encuentra la información asociada al usuario admin para utilizar en el menú "Perfil de usuario"'''
+    
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+    db = client['academia']
+    usuario = db.docentes.find_one({"email": mail})
+    return usuario
+def crear_curso(id, titulo, descripcion, duracion, precio, docente_id, docente_nombre) -> str:
     
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
         
     db = client['academia']
     nuevo_curso = {
+        "_id": id,
         "titulo": titulo,
         "descripcion": descripcion,
         "duracion_horas": duracion,
@@ -164,6 +172,7 @@ def crear_curso(titulo, descripcion, duracion, precio, docente_id, docente_nombr
         "instructor": {"docente_id": docente_id, "nombre": docente_nombre}
     }
     resultado = db.cursos.insert_one(nuevo_curso)
+    resultado_docente = db.docentes.update_one({"_id": docente_id},{"$push": {"cursos": {"curso_id": id, "titulo": titulo}}})    
     return resultado.inserted_id
 
 def crear_matricula(alumno_id, curso_id, status, fecha_matricula=None) -> None:
@@ -227,10 +236,69 @@ def get_course_name(course_id):
     curso = obtener_curso_por_id(course_id)
     return curso['titulo'] if curso else "Desconocido"
 
+
+
 ################################# 22 - 01 - 2026 : Por la tarde ####################################
 
+def obtener_todos_los_cursos_docente(mail:str):
+    '''Para el dashboard del docente y que haga bien el recuento.'''
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000) 
+    db = client['academia']
+    docente = db.docentes.find_one({"email":mail})
+    print(docente)
+    cursos = docente['cursos']
+    print(cursos)
+    return cursos
 
+def obtener_todos_los_cursos_asociados_alumno(lista_ids:list[str])->int:
+    '''Para el dashboard del docente y que haga bien el recuento de alumnos.'''
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000) 
+    db = client['academia']
+    recuento_alumnos = []
+    for id_curso in lista_ids:
+        alumnos = len(list(db.alumnos.find({"cursos.curso": id_curso})))
+        recuento_alumnos.append(alumnos)
+    return recuento_alumnos
 
-obtener_informacion_perfil_usuario_alumno(mail="masangialumno005@shndtel.com")
-obtener_informacion_perfil_usuario_docente(mail="jujimgardocente001@shndtel.com")
-obtener_informacion_perfil_usuario_admin(mail="cristophermc@gmail.com")
+def obtener_informacion_curso(lista_ids:list[str])->list[dict]:
+    '''Obtiene la proyeccion de la informacion de los cursos que tiene un docente'''
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000) 
+    db = client['academia']
+    info_completa = []
+    for id_curso in lista_ids:
+        info = db.cursos.find_one({"_id":id_curso}, {"_id":0, "titulo":0, "precio":0, "instructor":0})
+        info_completa.append(info)
+    return info_completa
+
+def obtener_ultimo_id_curso():
+    '''Como me he fijado, la función de agregar un curso, tal y como la planteamos, no agrega bien el ID
+    de un curso porque MongoDB asigna una referencia distinta. Si usamos un pipeline podemos filtrar rápidamente
+    cual fue el último ID que entró y luego le agregamos un procesamiento manual. 
+    
+    De esta forma, siempre sale correlativo y seriado.'''
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000) 
+    db = client['academia']
+    pipeline = [
+        {"$match": {"_id": {"$regex": "^curso_"}}},
+        {"$addFields": {
+            "numero": {"$toInt": {"$substr": ["$_id", 6, -1]}}  # Extrae número después de 'curso_'
+        }},
+        {"$group": {"_id": None, "max_num": {"$max": "$numero"}}}
+    ]
+    
+    resultado = list(db.cursos.aggregate(pipeline))
+    
+    if resultado:
+        ultimo_num = resultado[0]["max_num"]
+        siguiente_num = ultimo_num + 1
+        print(siguiente_num)
+    else:
+        siguiente_num = 1
+        print(siguiente_num)
+    print(f"curso_{siguiente_num:03d}")
+    return f"curso_{siguiente_num:03d}"
+# obtener_informacion_perfil_usuario_alumno(mail="masangialumno005@shndtel.com")
+# obtener_informacion_perfil_usuario_docente(mail="jujimgardocente001@shndtel.com")
+# obtener_informacion_perfil_usuario_admin(mail="cristophermc@gmail.com")
+# obtener_todos_los_cursos_docente(mail="jujimgardocente001@shndtel.com")
+# obtener_informacion_curso(["curso_001", "curso_002"])

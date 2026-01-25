@@ -10,16 +10,28 @@ def setup(container: ft.Container, pg: ft.Page):
     content_area = container
     page = pg
 
-def load_usuario_view(current_user: dict):    
-    datos_usuario = obtener_informacion_perfil_usuario_admin(current_user["email"])
-    contenido_mostrable = info_panel(datos_usuario)
-    content_area.content = ft.Column([
-        ft.Row([
-        ft.Text("Información de la cuenta", size=30, weight="bold"),], alignment="spaceBetween"),
-        ft.Divider(),
-        ft.Row(contenido_mostrable, expand=True)], 
-    scroll="auto")
-    content_area.update()
+def load_usuario_view(current_user: dict):
+    match current_user["role"]:
+        case "admin":
+            datos_usuario = obtener_informacion_perfil_usuario_admin(current_user["email"])
+            contenido_mostrable = info_panel(datos_usuario)
+            content_area.content = ft.Column([
+                ft.Row([
+                ft.Text("Información de la cuenta", size=30, weight="bold"),], alignment="spaceBetween"),
+                ft.Divider(),
+                ft.Row(contenido_mostrable, expand=True)], 
+            scroll="auto")
+            content_area.update()
+        case "docente":
+            datos_usuario = obtener_informacion_perfil_usuario_docente(current_user["email"])
+            contenido_mostrable = info_panel(datos_usuario)
+            content_area.content = ft.Column([
+                ft.Row([
+                ft.Text("Información de la cuenta", size=30, weight="bold"),], alignment="spaceBetween"),
+                ft.Divider(),
+                ft.Row(contenido_mostrable, expand=True)], 
+            scroll="auto")
+            content_area.update()
     
 def info_panel(usuario):
     '''Vista que he construido para generar los datos del usuario.'''

@@ -14,7 +14,7 @@ def setup(container: ft.Container, pg: ft.Page):
 def load_cursos_view():
     
     datos_cursos = obtener_datos_cursos()
-    from showandtell.utils.elements import CursoCard
+    from utils.elements import CursoCard
     course_cards = [CursoCard(page,curso) for curso in datos_cursos]
     content_area.content = ft.Column([
         ft.Row([
@@ -27,7 +27,7 @@ def load_cursos_view():
     content_area.update()
 
 def show_add_course_dialog():
-
+    from utils.elements import AutocompletarCampo
     titulo = ft.TextField(label="Título del curso")
     descripcion = ft.TextField(label="Descripción", multiline=True)
     precio = ft.TextField(label="Precio", keyboard_type=ft.KeyboardType.NUMBER)
@@ -42,10 +42,14 @@ def show_add_course_dialog():
     docente_id = AutocompletarCampo(set_docente, "Docente")
 
     def guardar_curso(e):
+        precio_str = precio.value.replace(',', '.')
+        precio_valor = float(precio_str)
+        id_curso_correlativo = obtener_ultimo_id_curso()
         crear_curso(
+            id = id_curso_correlativo,
             titulo=titulo.value,
             descripcion=descripcion.value,
-            precio=float(precio.value),
+            precio=precio_valor,
             duracion=int(duracion.value),
             docente_id=docente_id_seleccionado,
             docente_nombre=obtener_docente_por_id(docente_id_seleccionado)['nombre'] + " " + obtener_docente_por_id(docente_id_seleccionado)['apellidos']
