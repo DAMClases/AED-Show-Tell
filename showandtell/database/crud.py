@@ -281,10 +281,9 @@ def obtener_ultimo_id_curso():
     pipeline = [
         {"$match": {"_id": {"$regex": "^curso_"}}},
         {"$addFields": {
-            "numero": {"$toInt": {"$substr": ["$_id", 6, -1]}}  # Extrae número después de 'curso_'
+            "numero": {"$toInt": {"$substr": ["$_id", 6, -1]}}
         }},
-        {"$group": {"_id": None, "max_num": {"$max": "$numero"}}}
-    ]
+        {"$group": {"_id": None, "max_num": {"$max": "$numero"}}}]
     
     resultado = list(db.cursos.aggregate(pipeline))
     
@@ -297,8 +296,40 @@ def obtener_ultimo_id_curso():
         print(siguiente_num)
     print(f"curso_{siguiente_num:03d}")
     return f"curso_{siguiente_num:03d}"
+
+def obtener_alumnos_de_un_curso(lista_ids:list[str])->list[dict]:
+    '''Devuelve una lista de diccionarios con los alumnos de un curso.'''
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000) 
+    db = client['academia']
+    info_completa = []
+    for id_curso in lista_ids:
+        info = list(db.alumnos.find({"cursos.curso":id_curso}))
+        for alumno in info:
+            alumno["curso_filtrado"] = id_curso
+        info_completa.append(info)
+    datos_de_regreso = []
+    for paquete in info_completa:
+        for diccionario in paquete:
+            datos_de_regreso.append(diccionario)
+    return(datos_de_regreso)
+
+def obtener_titulo_curso(id_curso:str)->str:
+    '''Obtiene el título de un curso dado el ID.'''
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000) 
+    db = client['academia']
+    datos_curso = db.cursos.find_one({"_id": id_curso})
+    return datos_curso['titulo']
+
+def obtener_informacion_alumno(id_alumno:str)->str:
+    '''Obtiene el título de un curso dado el ID.'''
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000) 
+    db = client['academia']
+    datos_alumno = db.alumnos.find_one({"_id": id_alumno})
+    return datos_alumno
 # obtener_informacion_perfil_usuario_alumno(mail="masangialumno005@shndtel.com")
 # obtener_informacion_perfil_usuario_docente(mail="jujimgardocente001@shndtel.com")
 # obtener_informacion_perfil_usuario_admin(mail="cristophermc@gmail.com")
 # obtener_todos_los_cursos_docente(mail="jujimgardocente001@shndtel.com")
 # obtener_informacion_curso(["curso_001", "curso_002"])
+# obtener_alumnos_de_un_curso(["curso_001", "curso_002"])
+# obtener_titulo_curso("curso_001")

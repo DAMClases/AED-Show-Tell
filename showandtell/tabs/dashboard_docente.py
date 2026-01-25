@@ -13,16 +13,17 @@ def setup(container: ft.Container, pg: ft.Page):
 
 def load_dashboard_docente_view(current_user:dict):
     cursos_asociados = obtener_todos_los_cursos_docente(current_user['email'])
+    cursos_id = [curso["curso_id"] for curso in cursos_asociados]
     total_enrollments = len(cursos_asociados)
-    datos_cursos = obtener_datos_cursos()
-    # pending_count = sum(1 for e in matriculas if e['status'] == "pendiente")
-    # revenue = sum(next(c['precio'] for c in datos_cursos if c['_id'] == e['curso_id']) for e in matriculas if e['status'] == "pagado")
+    total_alumnos = obtener_alumnos_de_un_curso(cursos_id)
+    total_alumnos = len(total_alumnos)
 
     content_area.content = ft.Column([
         ft.Text("Dashboard", size=30, weight="bold"),
         ft.Divider(),
         ft.Row([
             MetricCard("Total de cursos impartidos", total_enrollments, ft.Icons.SCHOOL, ft.Colors.BLUE),
+            MetricCard("Total de alumnos", total_alumnos, ft.Icons.PERSON, ft.Colors.PURPLE),
             # MetricCard("Pendientes de Pago", pending_count, ft.Icons.PENDING_ACTIONS, ft.Colors.ORANGE),
             # MetricCard("Ingresos Totales", f"${revenue:.2f}", ft.Icons.ATTACH_MONEY, ft.Colors.GREEN),
         ], wrap=True, spacing=20),

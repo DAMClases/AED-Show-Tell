@@ -5,7 +5,7 @@ from tabs.matriculas_admin import load_matricula_view, setup as setup_matricula
 from tabs.login import login_screen
 from tabs.user_config import load_usuario_view, setup as setup_usuario
 from tabs.cursos_docente import load_cursos_disponibles_view, setup as setup_cursos
-
+from tabs.alumnos_docente import show_all_alumnos, setup as setup_alumnos
 
 content_area: ft.Container
 page: ft.Page
@@ -19,15 +19,15 @@ def build_docente_layout(current_user: dict):
     '''Navegaciones del docente - carga del setup de configuración de pantalla'''
     
     setup_dashboard(content_area, page)
-    setup_matricula(content_area, page)
-    setup_usuario(content_area, page)
     setup_cursos(content_area, page)
+    setup_usuario(content_area, page)
+    setup_alumnos(content_area, page)
 
     def on_nav_change(e):
         idx = e.control.selected_index
         if idx == 0: load_dashboard_docente_view(current_user)
         elif idx == 1: load_cursos_disponibles_view(current_user)
-        elif idx == 2: None
+        elif idx == 2: show_all_alumnos(current_user)
         elif idx == 3: load_usuario_view(current_user)
         elif idx == 4:login_screen(current_user)
 

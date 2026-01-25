@@ -79,7 +79,7 @@ def show_add_course_dialog_docente():
                 duracion,
             ], tight=True),
             actions=[
-                ft.Button("Guardar", on_click=None),
+                ft.Button("Guardar", on_click=guardar_nuevo_curso()),
                 ft.Button("Cancelar", on_click=lambda _: setattr(dlg, "open", False))
             ]
         )
