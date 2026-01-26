@@ -37,7 +37,7 @@ def MetricCard(title, value, icon, color):
     )
 
 # Autocompletar
-def AutocompletarCampo(on_select, campo:str):
+def AutocompletarCampo(on_select, campo:str, valor_inicial=None):
     match campo:
         case "Curso":
             datos = obtener_datos_cursos()
@@ -50,6 +50,8 @@ def AutocompletarCampo(on_select, campo:str):
     input = ft.TextField(label=campo,
                             on_change=lambda e: on_change(e),
     )
+    if valor_inicial:
+        input.value = valor_inicial
 
     list_view = ft.ListView(
         height=220,

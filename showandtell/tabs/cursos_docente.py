@@ -70,6 +70,24 @@ def show_add_course_dialog_docente():
     
 
 
+    def guardar_nuevo_curso():
+        precio_str = precio.value.replace(',', '.')
+        precio_valor = float(precio_str)
+        id_curso_correlativo = obtener_ultimo_id_curso()
+        docente_id_seleccionado = obtener_informacion_perfil_usuario_docente(page.login_data["user_email"])['_id']
+        crear_curso(
+            id = id_curso_correlativo,
+            titulo=titulo.value,
+            descripcion=descripcion.value,
+            precio=precio_valor,
+            duracion=int(duracion.value),
+            docente_id=docente_id_seleccionado,
+            docente_nombre=obtener_docente_por_id(docente_id_seleccionado)['nombre'] + " " + obtener_docente_por_id(docente_id_seleccionado)['apellidos']
+        )
+        dlg.open = False
+        #load_cursos_view()
+        page.update()
+
     dlg = ft.AlertDialog(
             title=ft.Text("Añadir nuevo curso"),
             content=ft.Column([
@@ -79,15 +97,14 @@ def show_add_course_dialog_docente():
                 duracion,
             ], tight=True),
             actions=[
-                ft.Button("Guardar", on_click=guardar_nuevo_curso()),
+                ft.Button("Guardar", on_click=guardar_nuevo_curso),
                 ft.Button("Cancelar", on_click=lambda _: setattr(dlg, "open", False))
             ]
         )
-    def guardar_nuevo_curso(e):
-        pass
     page.overlay.append(dlg)
     dlg.open = True
     page.update() 
+
 # def show_add_course_dialog():
 #     from utils.elements import AutocompletarCampo
 #     titulo = ft.TextField(label="Título del curso")

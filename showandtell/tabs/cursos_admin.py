@@ -19,14 +19,14 @@ def load_cursos_view():
     content_area.content = ft.Column([
         ft.Row([
         ft.Text("Gestión de Cursos", size=30, weight="bold"),
-        ft.Button("Agregar Nuevo Curso", icon=ft.Icons.ADD, on_click=lambda e: show_add_course_dialog())
+        ft.Button("Agregar Nuevo Curso", icon=ft.Icons.ADD, on_click=lambda e: mostrar_añadir_curso_dialog())
         ], alignment="spaceBetween"),
         ft.Divider(),
         ft.Row(course_cards, wrap=True, spacing=20, run_spacing=20)
     ], scroll="auto")
     content_area.update()
 
-def show_add_course_dialog():
+def mostrar_añadir_curso_dialog():
     from utils.elements import AutocompletarCampo
     titulo = ft.TextField(label="Título del curso")
     descripcion = ft.TextField(label="Descripción", multiline=True)
@@ -77,6 +77,62 @@ def show_add_course_dialog():
     dlg.open = True
     page.update()
 
+def mostrar_editar_curso_dialog(curso):
+    from utils.elements import AutocompletarCampo
+    titulo = ft.TextField(label="Título del curso")
+    descripcion = ft.TextField(label="Descripción", multiline=True)
+    precio = ft.TextField(label="Precio", keyboard_type=ft.KeyboardType.NUMBER)
+    duracion = ft.TextField(label="Duración (horas)", keyboard_type=ft.KeyboardType.NUMBER)
+
+    titulo.value = curso['titulo']
+    descripcion.value = curso['descripcion']
+    precio.value = str(curso['precio'])
+    duracion.value = str(curso['duracion_horas'])
+
+    def set_docente(docente_id):
+        nonlocal docente_id_seleccionado
+        docente_id_seleccionado = docente_id
+
+    docente_id = AutocompletarCampo(set_docente, "Docente", curso['instructor']['nombre'])
+
+    docente_id_seleccionado = curso['instructor']['docente_id']
+
+    def editar_curso_info(e):
+        precio_str = precio.value.replace(',', '.')
+        precio_valor = float(precio_str)
+        id_curso_correlativo = curso['_id']
+        editar_curso(
+            id = id_curso_correlativo,
+            titulo=titulo.value,
+            descripcion=descripcion.value,
+            precio=precio_valor,
+            duracion=int(duracion.value),
+            docente_id=docente_id_seleccionado,
+            docente_nombre=obtener_docente_por_id(docente_id_seleccionado)['nombre'] + " " + obtener_docente_por_id(docente_id_seleccionado)['apellidos']
+        )
+        dlg.open = False
+        load_cursos_view()
+        page.update()
+
+    dlg = ft.AlertDialog(
+        title=ft.Text("Editar Curso"),
+        content=ft.Column([
+            titulo,
+            descripcion,
+            precio,
+            duracion,
+            docente_id
+        ], tight=True),
+        actions=[
+            ft.Button("Actualizar", on_click=editar_curso_info),
+            ft.Button("Cancelar", on_click=lambda _: setattr(dlg, "open", False))
+        ]
+    )
+
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update()
+
 def show_course_details(curso_id):
     curso = obtener_curso_por_id(curso_id)
     if not curso:
@@ -93,6 +149,7 @@ def show_course_details(curso_id):
             ft.Text(f"Instructor: {curso['instructor']['nombre']}"),
         ], spacing=10),
         actions=[
+            ft.Button("Editar", icon=ft.Icons.EDIT, on_click=lambda e: mostrar_editar_curso_dialog(curso)),
             ft.Button("CERRAR", on_click=lambda _: (setattr(dlg, "open", False), page.update()))
         ],
     )

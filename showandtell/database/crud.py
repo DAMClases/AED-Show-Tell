@@ -175,6 +175,30 @@ def crear_curso(id, titulo, descripcion, duracion, precio, docente_id, docente_n
     resultado_docente = db.docentes.update_one({"_id": docente_id},{"$push": {"cursos": {"curso_id": id, "titulo": titulo}}})    
     return resultado.inserted_id
 
+def editar_curso(id, titulo, descripcion, duracion, precio, docente_id, docente_nombre) -> None:
+    
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+    curso = obtener_curso_por_id(id)
+    update_fields = {}
+    if titulo != curso['titulo']:
+        update_fields["titulo"] = titulo
+    if descripcion != curso['descripcion']:
+        update_fields["descripcion"] = descripcion
+    if duracion != curso['duracion_horas']:
+        update_fields["duracion_horas"] = duracion
+    if precio != curso['precio']:
+        update_fields["precio"] = precio
+    if docente_id != curso['instructor']['docente_id'] and docente_nombre != curso['instructor']['nombre']:
+        update_fields["instructor"] = {"docente_id": docente_id, "nombre": docente_nombre}
+
+    db = client['academia']
+    db.cursos.update_one(
+        {"_id": id},
+        {
+            "$set": update_fields
+        }
+    )
+
 def crear_matricula(alumno_id, curso_id, status, fecha_matricula=None) -> None:
     
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)

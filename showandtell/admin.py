@@ -52,7 +52,7 @@ def MetricCard(title, value, icon, color):
                     ft.Text(title, size=14, color=ft.Colors.GREY_500),
                     ft.Text(str(value), size=24, weight="bold")
                 ], spacing=5)
-            ], alignment="spaceBetween") # Ajuste: String para evitar problemas de atributo
+            ], alignment="spaceBetween")
         )
     )
 

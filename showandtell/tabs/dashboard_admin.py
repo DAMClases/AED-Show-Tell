@@ -25,9 +25,6 @@ def load_dashboard_view():
             MetricCard("Total Matrículas", total_enrollments, ft.Icons.PEOPLE, ft.Colors.BLUE),
             MetricCard("Pendientes de Pago", pending_count, ft.Icons.PENDING_ACTIONS, ft.Colors.ORANGE),
             MetricCard("Ingresos Totales", f"${revenue:.2f}", ft.Icons.ATTACH_MONEY, ft.Colors.GREEN),
-        ], wrap=True, spacing=20),
-            ft.Container(height=30),
-            ft.Text("Accesos rápidos", size=20),
-            ft.Text("Aquí irían gráficos o últimas actividades...", color=ft.Colors.GREY_400)
+        ], wrap=True, spacing=20)
     ], scroll="auto")
     content_area.update()
