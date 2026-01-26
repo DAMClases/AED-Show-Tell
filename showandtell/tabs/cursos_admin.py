@@ -133,7 +133,7 @@ def mostrar_editar_curso_dialog(curso):
     dlg.open = True
     page.update()
 
-def show_course_details(curso_id):
+def mostrar_detalles_curso(curso_id):
     curso = obtener_curso_por_id(curso_id)
     if not curso:
         print(f"Curso con ID {curso_id} no encontrado.")
@@ -150,7 +150,27 @@ def show_course_details(curso_id):
         ], spacing=10),
         actions=[
             ft.Button("Editar", icon=ft.Icons.EDIT, on_click=lambda e: mostrar_editar_curso_dialog(curso)),
+            ft.Button("Borrar", icon=ft.Icons.DELETE, bgcolor=ft.Colors.RED, color=ft.Colors.WHITE, on_click=lambda e: (mostrar_confirmacion_eliminar_curso(curso_id), setattr(dlg, "open", False), page.update())),
             ft.Button("CERRAR", on_click=lambda _: (setattr(dlg, "open", False), page.update()))
+        ],
+    )
+
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update()
+
+def mostrar_confirmacion_eliminar_curso(curso_id):
+    curso = obtener_curso_por_id(curso_id)
+    if not curso:
+        print(f"Curso con ID {curso_id} no encontrado.")
+        return
+
+    dlg = ft.AlertDialog(
+        title=ft.Text("Confirmar Eliminación"),
+        content=ft.Text(f"¿Estás seguro de que deseas eliminar el curso '{curso['titulo']}'? Esta acción no se puede deshacer."),
+        actions=[
+            ft.Button("Eliminar", bgcolor=ft.Colors.RED, color=ft.Colors.WHITE, on_click=lambda e: (eliminar_curso(curso_id), setattr(dlg, "open", False), load_cursos_view(), page.update())),
+            ft.Button("Cancelar", on_click=lambda _: (setattr(dlg, "open", False), page.update()))
         ],
     )
 

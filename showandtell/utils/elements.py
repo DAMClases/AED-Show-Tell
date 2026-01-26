@@ -1,6 +1,6 @@
 import flet as ft
 from database.crud import *
-from tabs.cursos_admin import show_course_details
+from tabs.cursos_admin import mostrar_detalles_curso
 
 # --- Componentes de UI Reutilizables ---
 
@@ -127,7 +127,7 @@ def CursoCard(page, curso):
                 ft.Text(f"Precio: ${curso['precio']:.2f}", size=14, color=ft.Colors.GREY_600),
                 ft.Text(f"Duración: {curso['duracion_horas']} horas", size=14, color=ft.Colors.GREY_600),
                 ft.Text(f"Instructor: {curso['instructor']['nombre']}", size=14, color=ft.Colors.GREY_600),
-                ft.Button("Ver Detalles", bgcolor=ft.Colors.BLUE_500, color=ft.Colors.WHITE, on_click=lambda e, c_id=curso['_id']: show_course_details(c_id))
+                ft.Button("Ver Detalles", bgcolor=ft.Colors.BLUE_500, color=ft.Colors.WHITE, on_click=lambda e, c_id=curso['_id']: mostrar_detalles_curso(c_id))
             ], spacing=10)
         )
     )

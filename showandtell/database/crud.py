@@ -158,6 +158,7 @@ def obtener_informacion_perfil_usuario_docente(mail:str):
     db = client['academia']
     usuario = db.docentes.find_one({"email": mail})
     return usuario
+
 def crear_curso(id, titulo, descripcion, duracion, precio, docente_id, docente_nombre) -> str:
     
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
@@ -197,6 +198,25 @@ def editar_curso(id, titulo, descripcion, duracion, precio, docente_id, docente_
         {
             "$set": update_fields
         }
+    )
+
+def eliminar_curso(curso_id) -> None:
+    
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        
+    db = client['academia']
+    db.cursos.delete_one({"_id": curso_id})
+
+    # Además, eliminar el curso de la lista de cursos de los docentes
+    db.docentes.update_many(
+        {},
+        {"$pull": {"cursos": {"curso_id": curso_id}}}
+    )
+    
+    # Además, eliminar el curso de la lista de cursos de los alumnos
+    db.alumnos.update_many(
+        {},
+        {"$pull": {"cursos": {"curso": curso_id}}}
     )
 
 def crear_matricula(alumno_id, curso_id, status, fecha_matricula=None) -> None:
