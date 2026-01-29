@@ -253,6 +253,46 @@ def obtener_docente_por_id(docente_id) -> dict:
     docente = db.docentes.find_one({"_id": docente_id})
     return docente
 
+def crear_docente(nombre, apellidos, telefono, email, direccion, estado, fecha_alta, password) -> str:
+    
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        
+    db = client['academia']
+    nuevo_docente = {
+        "nombre": nombre,
+        "apellidos": apellidos,
+        "telefono": telefono,
+        "email": email,
+        "direccion": direccion,
+        "cursos": [],
+        "estado": estado,
+        "fecha_alta": fecha_alta,
+        "password": password
+    }
+    resultado = db.docentes.insert_one(nuevo_docente)
+    return resultado.inserted_id
+
+def actualizar_docente(docente_id, nombre, apellidos, telefono, email, direccion, estado, fecha_alta, password) -> None:
+    
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        
+    db = client['academia']
+    db.docentes.update_one(
+        {"_id": docente_id},
+        {
+            "$set": {
+                "nombre": nombre,
+                "email": email,
+                "apellidos": apellidos,
+                "telefono": telefono,
+                "direccion": direccion,
+                "estado": estado,
+                "fecha_alta": fecha_alta,
+                "password": password
+            }
+        }
+    )
+
 def registrar_nuevo_alumno(datos_alumno:dict)->bool:
     '''Registra un nuevo alumno desde el panel de administración.'''
     try:
@@ -275,6 +315,34 @@ def obtener_todos_los_alumnos():
         alumnos.append(alumno)
     
     return alumnos
+
+def obtener_alumno_por_id(alumno_id) -> dict:
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        
+    db = client['academia']
+    alumno = db.alumnos.find_one({"_id": alumno_id})
+    return alumno
+
+def actualizar_alumno(alumno_id, nombre, apellidos, telefono, email, direccion, estado, fecha_alta, password) -> None:
+    
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        
+    db = client['academia']
+    db.alumnos.update_one(
+        {"_id": alumno_id},
+        {
+            "$set": {
+                "nombre": nombre,
+                "apellidos": apellidos,
+                "telefono": telefono,
+                "email": email,
+                "direccion": direccion,
+                "estado": estado,
+                "fecha_alta": fecha_alta,
+                "password": password
+            }
+        }
+    )
 
 def get_course_name(course_id):
     curso = obtener_curso_por_id(course_id)
