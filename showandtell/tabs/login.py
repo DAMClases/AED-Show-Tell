@@ -32,6 +32,7 @@ def login_screen(current_user: dict):
         if resultado_login[0]:
             from tabs.admin_layout import build_admin_layout, setup as setup_admin
             from tabs.docente_layout import build_docente_layout, setup as setup_docente
+            from tabs.user_layout import build_user_layout, setup as setup_user
             page.login_data["user_email"]= user_input.value
             page.login_data["user_role"] = resultado_login[1]
             current_user["email"] = user_input.value
@@ -39,7 +40,8 @@ def login_screen(current_user: dict):
             page.clean()
             match resultado_login[1]:
                 case 'usuario':
-                    pass
+                    setup_user(content_area, page)
+                    build_user_layout(current_user)
                 case 'docente':
                     setup_docente(content_area, page)
                     build_docente_layout(current_user)
