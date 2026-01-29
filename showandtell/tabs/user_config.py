@@ -33,7 +33,7 @@ def load_usuario_view(current_user: dict):
             scroll="auto")
             content_area.update()
         case "usuario":
-            datos_usuario = obtener_informacion_perfil_usuario_docente(current_user["email"])
+            datos_usuario = obtener_informacion_perfil_usuario_alumno(current_user["email"])
             contenido_mostrable = info_panel(datos_usuario)
             content_area.content = ft.Column([
                 ft.Row([
