@@ -77,7 +77,8 @@ def mostrar_añadir_curso_dialog():
     dlg.open = True
     page.update()
 
-def mostrar_editar_curso_dialog(curso):
+def mostrar_editar_curso_dialog(curso_id, dlg_detalles_curo):
+    curso = obtener_curso_por_id(curso_id)
     from utils.elements import AutocompletarCampo
     titulo = ft.TextField(label="Título del curso")
     descripcion = ft.TextField(label="Descripción", multiline=True)
@@ -97,7 +98,7 @@ def mostrar_editar_curso_dialog(curso):
 
     docente_id_seleccionado = curso['instructor']['docente_id']
 
-    def editar_curso_info(e):
+    def editar_curso_info(e, dlg_detalles_curso):
         precio_str = precio.value.replace(',', '.')
         precio_valor = float(precio_str)
         id_curso_correlativo = curso['_id']
@@ -111,7 +112,17 @@ def mostrar_editar_curso_dialog(curso):
             docente_nombre=obtener_docente_por_id(docente_id_seleccionado)['nombre'] + " " + obtener_docente_por_id(docente_id_seleccionado)['apellidos']
         )
         dlg.open = False
+        detalles_col = dlg_detalles_curso.content
+        dlg_detalles_curo.content.controls = [
+            ft.Text(f"ID: {id_curso_correlativo}"),
+            ft.Text(f"Descripción: {descripcion.value}"),
+            ft.Text(f"Precio: ${precio_valor:.2f}"),
+            ft.Text(f"Duración: {duracion.value} horas"),
+            ft.Text(f"Instructor: {obtener_docente_por_id(docente_id_seleccionado)['nombre'] + " " + obtener_docente_por_id(docente_id_seleccionado)['apellidos']}"),
+        ]
+        dlg_detalles_curso.title = ft.Text(f"Detalles del Curso: {titulo.value}")
         load_cursos_view()
+        dlg_detalles_curo.update()
         page.update()
 
     dlg = ft.AlertDialog(
@@ -124,7 +135,7 @@ def mostrar_editar_curso_dialog(curso):
             docente_id
         ], tight=True),
         actions=[
-            ft.Button("Actualizar", on_click=editar_curso_info),
+            ft.Button("Actualizar", on_click=lambda e: editar_curso_info(e, dlg_detalles_curo)),
             ft.Button("Cancelar", on_click=lambda _: setattr(dlg, "open", False))
         ]
     )
@@ -149,7 +160,7 @@ def mostrar_detalles_curso(curso_id):
             ft.Text(f"Instructor: {curso['instructor']['nombre']}"),
         ], spacing=10),
         actions=[
-            ft.Button("Editar", icon=ft.Icons.EDIT, on_click=lambda e: mostrar_editar_curso_dialog(curso)),
+            ft.Button("Editar", icon=ft.Icons.EDIT, on_click=lambda e: mostrar_editar_curso_dialog(curso_id,dlg)),
             ft.Button("Borrar", icon=ft.Icons.DELETE, bgcolor=ft.Colors.RED, color=ft.Colors.WHITE, on_click=lambda e: (mostrar_confirmacion_eliminar_curso(curso_id), setattr(dlg, "open", False), page.update())),
             ft.Button("CERRAR", on_click=lambda _: (setattr(dlg, "open", False), page.update()))
         ],
