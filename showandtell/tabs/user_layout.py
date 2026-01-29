@@ -21,7 +21,7 @@ def build_user_layout(current_user:dict):
         idx = e.control.selected_index
         if idx == 0: load_dashboard_user_view(current_user)
         elif idx == 1: None
-        elif idx == 2: load_usuario_view()
+        elif idx == 2: load_usuario_view(current_user)
         elif idx == 3: login_screen(current_user)
 
             # content_area.content = ft.Text("Vista     de Cursos...")

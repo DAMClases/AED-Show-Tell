@@ -159,6 +159,13 @@ def obtener_informacion_perfil_usuario_docente(mail:str):
     usuario = db.docentes.find_one({"email": mail})
     return usuario
 
+def obtener_informacion_perfil_usuario_docente(mail:str):
+    '''Encuentra la información asociada al usuario alumno para utilizar en el menú "Perfil de usuario"'''
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+    db = client['academia']
+    usuario = db.alumnos.find_one({"email": mail})
+    return usuario
+
 def crear_curso(id, titulo, descripcion, duracion, precio, docente_id, docente_nombre) -> str:
     
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
@@ -293,6 +300,10 @@ def obtener_todos_los_cursos_docente(mail:str):
     cursos = docente['cursos']
     print(cursos)
     return cursos
+def obtener_todos_los_cursos_de_un_alumno():
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000) 
+    db = client['academia']
+    
 
 def obtener_todos_los_cursos_asociados_alumno(lista_ids:list[str])->int:
     '''Para el dashboard del docente y que haga bien el recuento de alumnos.'''
@@ -370,6 +381,8 @@ def obtener_informacion_alumno(id_alumno:str)->str:
     db = client['academia']
     datos_alumno = db.alumnos.find_one({"_id": id_alumno})
     return datos_alumno
+
+
 # obtener_informacion_perfil_usuario_alumno(mail="masangialumno005@shndtel.com")
 # obtener_informacion_perfil_usuario_docente(mail="jujimgardocente001@shndtel.com")
 # obtener_informacion_perfil_usuario_admin(mail="cristophermc@gmail.com")
