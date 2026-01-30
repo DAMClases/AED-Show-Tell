@@ -20,7 +20,7 @@ def load_dashboard_user_view(current_user:dict):
         ft.Divider(),
         ft.Row([
             MetricCard("Total de cursos", len(cursos_asociados), ft.Icons.SCHOOL, ft.Colors.BLUE),
-            MetricCard("Cursos disponibles en la plataforma", len(cursos_disponibles), ft.Icons.PERSON, ft.Colors.PURPLE),
+            MetricCard("Cursos disponibles en la plataforma", len(cursos_disponibles), ft.Icons.SCHOOL_SHARP, ft.Colors.GREEN),
         ], wrap=True, spacing=20),
             ft.Container(height=30),
     ], scroll="auto")

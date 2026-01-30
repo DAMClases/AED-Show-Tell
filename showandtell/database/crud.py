@@ -96,6 +96,20 @@ def obtener_datos_cursos() -> list:
         cursos.append(curso)
     
     return cursos
+def obtener_datos_cursos_concretos(cursos:list)-> list:
+    '''Función que obtiene todos los cursos de la colección "cursos".
+    Function that retrieves all courses from the "cursos" collection.'''
+    
+    print("debug",cursos)
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        
+        # 3. Seleccionar la base de datos
+    db = client['academia']
+    datos_cursos = []
+    for curso in cursos:
+        valor = db.cursos.find_one({'_id': curso}, {'_id':0})
+        datos_cursos.append(valor)
+    return datos_cursos
 
 def actualizar_estado_curso(alumno_id, curso_id, nuevo_estado):
     
@@ -394,6 +408,7 @@ def obtener_informacion_alumno(id_alumno:str)->str:
     datos_alumno = db.alumnos.find_one({"_id": id_alumno})
     return datos_alumno
 def obtener_cursos_de_alumno(email:str)->list:
+    '''Obtiene los cursos de un alumno'''
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000) 
     db = client['academia']
     info = db.alumnos.find_one({"email": email},{"cursos.curso": 1, "_id": 0})
@@ -419,6 +434,6 @@ def obtener_cursos_disponibles_plataforma(lista_cursos:dict[list[dict]])->list:
 # obtener_informacion_curso(["curso_001", "curso_002"])
 # obtener_alumnos_de_un_curso(["curso_001", "curso_002"])
 # obtener_titulo_curso("curso_001")
-# obtener_cursos_de_alumno("anlopalumno001@shndtel.com")
+obtener_cursos_de_alumno("anlopalumno001@shndtel.com")
 # obtener_titulos_cursos([{'curso': 'curso_001'}, {'curso': 'curso_002'}])
 # obtener_cursos_disponibles_plataforma(['curso_001', 'curso_002'])
