@@ -25,6 +25,7 @@ def load_cursos_disponibles_view(current_user:dict):
     print(datos_cursos)
     indice = 0
     for _ in cursos:
+        informacion_adicional = datos_cursos[indice]
         rows.append(
             ft.DataRow(
                 cells=[
@@ -32,8 +33,9 @@ def load_cursos_disponibles_view(current_user:dict):
                     ft.DataCell(ft.Text(datos_cursos[indice]['descripcion'], weight="bold")),
                     ft.DataCell(ft.Text(datos_cursos[indice]['duracion_horas'], weight="bold")),
                     ft.DataCell(ft.Text(datos_cursos[indice]['precio'], weight="bold")),
-                    ft.DataCell(ft.Text((None), weight="bold")),
-                    ft.DataCell(ft.IconButton(ft.Icons.EDIT, on_click=None))]),
+                    ft.DataCell(ft.IconButton(ft.Icons.INFO_ROUNDED, 
+                                              on_click=lambda e, 
+                                              info=informacion_adicional: show_course_information(info)))]),
         )
         indice +=1
         
@@ -53,103 +55,33 @@ def load_cursos_disponibles_view(current_user:dict):
 
     content_area.content = ft.Column([
         ft.Row([
-            ft.Text("Gestión de cursos", size=30, weight="bold"),
-            ft.Button("Añadir un curso", icon=ft.Icons.ADD,on_click=lambda e: None()) 
-        ], alignment="spaceBetween"),
+            ft.Text("Gestión de cursos", size=30, weight="bold")], alignment="spaceBetween"),
         ft.Divider(),
         ft.Column([table], scroll="auto", expand=True), 
     ], expand=True)
     content_area.update()
 
-#################################### Añadir un curso nuevo #################################
-
-# def show_add_course_dialog_docente():
-#     '''La modificación de este submenú es que el docente estará bloqueado y cargado previamente.'''
-#     titulo = ft.TextField(label="Título del curso")
-#     descripcion = ft.TextField(label="Descripción del curso", multiline=True)
-#     precio = ft.TextField(label="Precio", keyboard_type=ft.KeyboardType.NUMBER)
-#     duracion = ft.TextField(label="Duración", keyboard_type=ft.KeyboardType.NUMBER)
-
-#     def guardar_nuevo_curso():
-#         precio_str = precio.value.replace(',', '.')
-#         precio_valor = float(precio_str)
-#         id_curso_correlativo = obtener_ultimo_id_curso()
-#         docente_id_seleccionado = obtener_informacion_perfil_usuario_docente(page.login_data["user_email"])['_id']
-#         crear_curso(
-#             id = id_curso_correlativo,
-#             titulo=titulo.value,
-#             descripcion=descripcion.value,
-#             precio=precio_valor,
-#             duracion=int(duracion.value),
-#             docente_id=docente_id_seleccionado,
-#             docente_nombre=obtener_docente_por_id(docente_id_seleccionado)['nombre'] + " " + obtener_docente_por_id(docente_id_seleccionado)['apellidos']
-#         )
-#         dlg.open = False
-#         #load_cursos_view()
-#         page.update()
-
-#     dlg = ft.AlertDialog(
-#             title=ft.Text("Añadir nuevo curso"),
-#             content=ft.Column([
-#                 titulo,
-#                 descripcion,
-#                 precio,
-#                 duracion,
-#             ], tight=True),
-#             actions=[
-#                 ft.Button("Guardar", on_click=guardar_nuevo_curso),
-#                 ft.Button("Cancelar", on_click=lambda _: setattr(dlg, "open", False))
-#             ]
-#         )
-#     page.overlay.append(dlg)
-#     dlg.open = True
-#     page.update() 
-
-# def show_add_course_dialog():
-#     from utils.elements import AutocompletarCampo
-#     titulo = ft.TextField(label="Título del curso")
-#     descripcion = ft.TextField(label="Descripción", multiline=True)
-#     precio = ft.TextField(label="Precio", keyboard_type=ft.KeyboardType.NUMBER)
-#     duracion = ft.TextField(label="Duración (horas)", keyboard_type=ft.KeyboardType.NUMBER)
-    
-#     docente_id_seleccionado = None
-
-#     def set_docente(docente_id):
-#         nonlocal docente_id_seleccionado
-#         docente_id_seleccionado = docente_id
-    
-#     docente_id = AutocompletarCampo(set_docente, "Docente")
-
-#     def guardar_curso(e):
-#         crear_curso(
-#             titulo=titulo.value,
-#             descripcion=descripcion.value,
-#             precio=float(precio.value),
-#             duracion=int(duracion.value),
-#             docente_id=docente_id_seleccionado,
-#             docente_nombre=obtener_docente_por_id(docente_id_seleccionado)['nombre'] + " " + obtener_docente_por_id(docente_id_seleccionado)['apellidos']
-#         )
-#         dlg.open = False
-#         load_cursos_view()
-#         page.update()
-
-#     dlg = ft.AlertDialog(
-#         title=ft.Text("Agregar Nuevo Curso"),
-#         content=ft.Column([
-#             titulo,
-#             descripcion,
-#             precio,
-#             duracion,
-#             docente_id
-#         ], tight=True),
-#         actions=[
-#             ft.Button("Guardar", on_click=guardar_curso),
-#             ft.Button("Cancelar", on_click=lambda _: setattr(dlg, "open", False))
-#         ]
-#     )
-
-#     page.overlay.append(dlg)
-#     dlg.open = True
-#     page.update()
+def show_course_information(datos):
+    '''Abre la tarjeta individual de la información de cada curso.'''
+    print(datos)
+    titulo = ft.Text(f"Título: {datos['titulo']}")
+    descripcion = ft.Text(f"Descripcion: {datos['descripcion']}")
+    precio = ft.Text(f"Precio: {datos['precio']}")
+    duracion = ft.Text(f"Duración del curso: {datos['duracion_horas']}")
+    dlg = ft.AlertDialog(
+            title=ft.Text("Información adicional"),
+            content=ft.Column([
+                titulo,
+                descripcion,
+                precio,
+                duracion,
+            ], tight=True),
+            actions=[
+                ft.Button("Cancelar", on_click=lambda _: setattr(dlg, "open", False))
+            ]
+        )
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update() 
 
 
