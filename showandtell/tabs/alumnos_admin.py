@@ -30,7 +30,7 @@ def load_alumnos_view():
                         ft.IconButton(
                             ft.Icons.EDIT,
                             on_click=lambda e, d_id=alumno["_id"]: 
-                                show_edit_alumno_dialog(d_id)
+                                mostrar_detalles_alumno(d_id)
                         )
                     ),
                 ]
@@ -107,7 +107,7 @@ def show_add_alumno_dialog():
         ],
         actions_alignment=ft.MainAxisAlignment.END,
     )
-    page.dialog = dlg
+    page.overlay.append(dlg)
     dlg.open = True
     page.update()
 
@@ -115,16 +115,40 @@ def cerrar_dialog(dialog):
     dialog.open = False
     page.update()
 
-def show_edit_alumno_dialog(alumno_id):
+def mostrar_detalles_alumno(alumno_id):
     alumno = obtener_alumno_por_id(alumno_id)
-    nombre = ft.TextField(label="Nombre", value=alumno["nombre"])
-    apellidos = ft.TextField(label="Apellidos", value=alumno["apellidos"])
-    telefono = ft.TextField(label="Teléfono", value=alumno["telefono"])
-    email = ft.TextField(label="Email", value=alumno["email"])
-    direccion = ft.TextField(label="Dirección", value=alumno["direccion"])
-    estado = ft.TextField(label="Estado", value=alumno["estado"])
-    fecha_alta = ft.TextField(label="Fecha de alta", value=alumno["fecha_alta"])
-    password = ft.TextField(label="Contraseña", value=alumno["password"], password=True)
+    nombre = ft.Text(f"Nombre {alumno["nombre"]}")
+    apellidos = ft.Text(f"Apellidos {alumno["apellidos"]}")
+    telefono = ft.Text(f"Teléfono {alumno["telefono"]}")
+    email = ft.Text(f"Email {alumno["email"]}")
+    direccion = ft.Text(f"Dirección {alumno["direccion"]}")
+    estado = ft.Text(f"Estado {alumno["estado"]}")
+    fecha_alta = ft.Text(f"Fecha de alta {alumno["fecha_alta"]}")
+    password = ft.Text(f"Contraseña {"*" * len(alumno["password"])}", password=True)
+
+    dlg = ft.AlertDialog(
+        title = ft.Text(f"Detalle de Alumno: {alumno['nombre']} {alumno['apellidos']}"),
+       content = ft.Column([
+        alumno,
+        nombre,
+        apellidos,
+        telefono,
+        email,
+        direccion,
+        estado,
+        fecha_alta,
+        password
+        ], spacing=10),
+        actions=[
+            ft.Button("Editar", icon=ft.Icons.EDIT, on_click=lambda e: mostrar_editar_alumno_dialog(alumno_id,dlg)),
+            ft.Button("Borrar", icon=ft.Icons.DELETE, bgcolor=ft.Colors.RED, color=ft.Colors.WHITE, on_click=lambda e: (mostrar_confirmacion_eliminar_curso(curso_id), setattr(dlg, "open", False), page.update())),
+            ft.Button("CERRAR", on_click=lambda _: (setattr(dlg, "open", False), page.update()))
+        ],
+    )
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update()
+
     def guardar_cambios(e):
         actualizar_alumno(
             alumno_id,
@@ -138,5 +162,62 @@ def show_edit_alumno_dialog(alumno_id):
             password=password.value
         )
         # dlg.open = False
-        load_docentes_view()
+        load_alumnos_view()
         page.update()
+    
+
+
+def mostrar_editar_alumno_dialog(alumno_id, dlg_detalles_alumno):
+    alumno = obtener_alumno_por_id(alumno_id)
+    nombre = ft.TextField(label="Nombre", value=alumno["nombre"])
+    apellidos = ft.TextField(label="Apellidos", value=alumno["apellidos"])
+    telefono = ft.TextField(label="Teléfono", value=alumno["telefono"])
+    email = ft.TextField(label="Email", value=alumno["email"])
+    direccion = ft.TextField(label="Dirección", value=alumno["direccion"])
+    estado = ft.TextField(label="Estado", value=alumno["estado"])
+    fecha_alta = ft.TextField(label="Fecha de alta", value=alumno["fecha_alta"])
+    password = ft.TextField(label="Contraseña", value=alumno["password"], password=True)
+
+    nombre.value = alumno['nombre']
+    apellidos.value = alumno['apellidos']
+    telefono.value = alumno['telefono']
+    email.value = alumno['email']
+    direccion.value = alumno['direccion']
+    estado.value = alumno['estado']
+    fecha_alta.value = alumno['fecha_alta']
+    password.value = alumno['password']
+
+    dlg = ft.AlertDialog(
+        title = ft.Text(f"Detalle de Alumno: {alumno['nombre']} {alumno['apellidos']}"),
+       content = ft.Column([
+        alumno,
+        nombre,
+        apellidos,
+        telefono,
+        email,
+        direccion,
+        estado,
+        fecha_alta,
+        password
+        ], spacing=10)
+    )
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update()
+
+    def guardar_cambios(e):
+        actualizar_alumno(
+            alumno_id,
+            nombre=nombre.value,
+            apellidos=apellidos.value,
+            telefono=telefono.value,
+            email=email.value,
+            direccion=direccion.value,
+            estado=estado.value,
+            fecha_alta=fecha_alta.value,
+            password=password.value
+        )
+        # dlg.open = False
+        load_alumnos_view()
+        page.update()
+    

@@ -147,6 +147,6 @@ def show_edit_docente_dialog(docente_id):
         ],
         actions_alignment=ft.MainAxisAlignment.END,
     )
-    page.dialog = dlg
+    page.overlay.append(dlg)
     dlg.open = True
     page.update()
