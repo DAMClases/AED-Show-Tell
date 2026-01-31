@@ -426,14 +426,31 @@ def obtener_cursos_disponibles_plataforma(lista_cursos:dict[list[dict]])->list:
         listado_de_nombres_cursos_disponibles.append(curso_d["titulo"])
     return listado_de_nombres_cursos_disponibles
 
+def obtener_informacion_docente_curso(titulo:str)->str:
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+    db = client['academia']
+    docente = db.cursos.find_one({"titulo": titulo}, {'_id':0, 'instructor.nombre':1})
+    return (docente['instructor']['nombre'])
+    # return docente
+
+def obtener_mail_docente_nombre(nombre:str)->str:
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+    db = client['academia']
+    nombre = nombre.split(' ')
+    mail = db.docentes.find_one({'nombre': nombre[0]}, {"_id":0, "email":1})
+    return (mail['email'])
+    # return mail
 
 # obtener_informacion_perfil_usuario_alumno(mail="masangialumno005@shndtel.com")
-# obtener_informacion_perfil_usuario_docente(mail="jujimgardocente001@shndtel.com")
+
+
 # obtener_informacion_perfil_usuario_admin(mail="cristophermc@gmail.com")
 # obtener_todos_los_cursos_docente(mail="jujimgardocente001@shndtel.com")
 # obtener_informacion_curso(["curso_001", "curso_002"])
 # obtener_alumnos_de_un_curso(["curso_001", "curso_002"])
 # obtener_titulo_curso("curso_001")
-obtener_cursos_de_alumno("anlopalumno001@shndtel.com")
+# obtener_cursos_de_alumno("anlopalumno001@shndtel.com")
 # obtener_titulos_cursos([{'curso': 'curso_001'}, {'curso': 'curso_002'}])
 # obtener_cursos_disponibles_plataforma(['curso_001', 'curso_002'])
+obtener_informacion_docente_curso("Introducción a Java")
+obtener_mail_docente_nombre("Juan Jiménez García")

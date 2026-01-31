@@ -13,6 +13,7 @@ def setup(container: ft.Container, pg: ft.Page):
 def login_screen(current_user: dict):
     page.overlay.clear()
     page.clean()
+
     user_input = ft.TextField(label="Usuario", width=300)
     pass_input = ft.TextField(label="Contraseña", password=True, width=300)
     error_text = ft.Text("", color=ft.Colors.RED)
@@ -56,11 +57,11 @@ def login_screen(current_user: dict):
         ft.Container(
             content=ft.Column([
                 ft.Icon(ft.Icons.ADMIN_PANEL_SETTINGS, size=60, color=ft.Colors.BLUE),
-                ft.Text("Acceso Administrativo", size=24, weight="bold"),
+                ft.Text("Iniciar sesión", size=24, weight="bold"),
                 user_input,
                 pass_input,
                 error_text,
-                ft.Button("Entrar", on_click=login_click, width=300)
+                ft.Button("Iniciar sesión", on_click=login_click, width=300, icon=ft.Icons.LOGIN)
             ], alignment="center", horizontal_alignment="center", spacing=20),
             alignment=ft.Alignment(0, 0),
             expand=True

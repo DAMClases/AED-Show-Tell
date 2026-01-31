@@ -15,28 +15,31 @@ def load_cursos_disponibles_view(current_user:dict):
     '''Carga la vista estilo tree de los datos de los cursos que tiene
     asociado un alumno.'''
     cursos = obtener_cursos_de_alumno(current_user['email'])
-    print("debug de usuarios", cursos)
     id_cursos = []
     for _, valor in cursos.items():
         for val in valor:
             id_cursos.append(val['curso'])
     rows = []
     datos_cursos = obtener_datos_cursos_concretos(id_cursos)
-    print(datos_cursos)
     indice = 0
-    for _ in cursos:
-        informacion_adicional = datos_cursos[indice]
+    for curso in datos_cursos:
         rows.append(
             ft.DataRow(
                 cells=[
-                    ft.DataCell(ft.Text(datos_cursos[indice]['titulo'])),
-                    ft.DataCell(ft.Text(datos_cursos[indice]['descripcion'], weight="bold")),
-                    ft.DataCell(ft.Text(datos_cursos[indice]['duracion_horas'], weight="bold")),
-                    ft.DataCell(ft.Text(datos_cursos[indice]['precio'], weight="bold")),
-                    ft.DataCell(ft.IconButton(ft.Icons.INFO_ROUNDED, 
-                                              on_click=lambda e, 
-                                              info=informacion_adicional: show_course_information(info)))]),
+                    ft.DataCell(ft.Text(curso['titulo'])),
+                    ft.DataCell(ft.Text(curso['descripcion'], weight="bold")),
+                    ft.DataCell(ft.Text(str(curso['duracion_horas']), weight="bold")),
+                    ft.DataCell(ft.Text(str(curso['precio']), weight="bold")),
+                    ft.DataCell(
+                        ft.IconButton(
+                            ft.Icons.INFO_ROUNDED,
+                            on_click=lambda e, info=curso: show_course_information(info)
+                        )
+                    ),
+                ]
+            )
         )
+
         indice +=1
         
     table = ft.DataTable(
@@ -63,15 +66,19 @@ def load_cursos_disponibles_view(current_user:dict):
 
 def show_course_information(datos):
     '''Abre la tarjeta individual de la información de cada curso.'''
-    print(datos)
-    titulo = ft.Text(f"Título: {datos['titulo']}")
+    datos_de_docente = obtener_informacion_docente_curso(datos['titulo'])
+    profesor = ft.Text(f"Instructor: {datos_de_docente}")
+    email_instructor = ft.Text(f"Correo electrónico adjunto: {obtener_mail_docente_nombre(datos_de_docente)}")
+    titulo = ft.Text(f"Título: {datos['titulo']}", size=20)
     descripcion = ft.Text(f"Descripcion: {datos['descripcion']}")
     precio = ft.Text(f"Precio: {datos['precio']}")
-    duracion = ft.Text(f"Duración del curso: {datos['duracion_horas']}")
+    duracion = ft.Text(f"Duración del curso: {datos['duracion_horas']} horas")
     dlg = ft.AlertDialog(
             title=ft.Text("Información adicional"),
             content=ft.Column([
                 titulo,
+                profesor,
+                email_instructor,
                 descripcion,
                 precio,
                 duracion,
