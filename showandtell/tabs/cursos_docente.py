@@ -22,6 +22,7 @@ def load_cursos_disponibles_view(current_user:dict):
     datos_curso = obtener_informacion_curso(cursos_id)
     indice = 0
     for _ in cursos:
+        datos_fila_edit = [cursos[indice]['titulo'], datos_curso[indice]['descripcion'], datos_curso[indice]['duracion_horas']]
         rows.append(
             ft.DataRow(
                 cells=[
@@ -30,6 +31,7 @@ def load_cursos_disponibles_view(current_user:dict):
                     ft.DataCell(ft.Text((datos_curso[indice]['descripcion']), weight="bold")),
                     ft.DataCell(ft.Text((datos_curso[indice]['duracion_horas']), weight="bold")),
                     ft.DataCell(ft.Text(recuento[indice], weight="bold")),
+                    ft.DataCell(ft.IconButton(ft.Icons.EDIT, on_click=lambda e, info=datos_fila_edit: mostrar_modificar_curso(info)))
                 ]
             )
         )
@@ -42,6 +44,8 @@ def load_cursos_disponibles_view(current_user:dict):
             ft.DataColumn(ft.Text("Descripción")),
             ft.DataColumn(ft.Text("Horas")),
             ft.DataColumn(ft.Text("Alumnos")),
+            ft.DataColumn(ft.Text("Editar curso")),
+
         ],
         rows=rows,
         border=ft.Border(ft.BorderSide(1, "grey200"), ft.BorderSide(1, "grey200"), ft.BorderSide(1, "grey200"), ft.BorderSide(1, "grey200")),
@@ -104,7 +108,39 @@ def show_add_course_dialog_docente():
     page.overlay.append(dlg)
     dlg.open = True
     page.update() 
+def mostrar_modificar_curso():
+    def modificar_curso(e, datos):
+        print(datos)
 
+        '''[
+        {
+            "_id": "curso_001",
+            "titulo": "Introducción a Java",
+            "descripcion": "Curso básico para aprender los fundamentos del lenguaje Java.",
+            "duracion_horas": 40,
+            "precio": 34.99,
+            "instructor": {
+            "docente_id": "docente_001",
+            "nombre": "Juan Jiménez García"
+            }
+        },'''
+    titulo = ft.TextField(label="Título del curso")
+    descripcion = ft.TextField(label="Descripción", multiline=True)
+    precio = ft.TextField(label="Precio", keyboard_type=ft.KeyboardType.NUMBER)
+    duracion = ft.TextField(label="Duración (horas)", keyboard_type=ft.KeyboardType.NUMBER)
+    dlg = ft.AlertDialog(title=ft.Text("Modificar curso"),
+    content=ft.Column([
+        titulo,
+        descripcion,
+        precio,
+        duracion,
+    ], tight=True),
+    actions=[
+        ft.Button("Guardar", on_click=modificar_curso),
+        ft.Button("Cancelar", on_click=lambda _: setattr(dlg, "open", False))
+    ]
+    )
+    
 # def show_add_course_dialog():
 #     from utils.elements import AutocompletarCampo
 #     titulo = ft.TextField(label="Título del curso")
