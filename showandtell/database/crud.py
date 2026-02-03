@@ -333,7 +333,7 @@ def obtener_informacion_curso(lista_ids:list[str])->list[dict]:
     db = client['academia']
     info_completa = []
     for id_curso in lista_ids:
-        info = db.cursos.find_one({"_id":id_curso}, {"_id":0, "titulo":0, "precio":0, "instructor":0})
+        info = db.cursos.find_one({"_id":id_curso}, {"_id":0, "titulo":0, "instructor":0})
         info_completa.append(info)
     return info_completa
 
@@ -441,6 +441,24 @@ def obtener_mail_docente_nombre(nombre:str)->str:
     return (mail['email'])
     # return mail
 
+def modificar_curso(datos_nuevos:list)->bool:
+    '''Obtiene los datos, los recopila'''
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+    db = client['academia']
+    id_curso = datos_nuevos[4]
+    titulo = datos_nuevos[0]
+    descripcion = datos_nuevos[1]
+    duracion = datos_nuevos[2]
+    precio = datos_nuevos[3]
+
+    resultado = db.cursos.update_one({"_id":id_curso}, {"$set": {"titulo": titulo, "descripcion": descripcion, "duracion_horas":duracion, "precio":precio}})
+
+    return True
+    # print(f"Documentos encontrados: {resultado.matched_count}")
+    # print(f"Documentos modificados: {resultado.modified_count}")
+        
+
+
 # obtener_informacion_perfil_usuario_alumno(mail="masangialumno005@shndtel.com")
 
 
@@ -452,5 +470,5 @@ def obtener_mail_docente_nombre(nombre:str)->str:
 # obtener_cursos_de_alumno("anlopalumno001@shndtel.com")
 # obtener_titulos_cursos([{'curso': 'curso_001'}, {'curso': 'curso_002'}])
 # obtener_cursos_disponibles_plataforma(['curso_001', 'curso_002'])
-obtener_informacion_docente_curso("Introducción a Java")
-obtener_mail_docente_nombre("Juan Jiménez García")
+# obtener_informacion_docente_curso("Introducción a Java")
+# obtener_mail_docente_nombre("Juan Jiménez García")
