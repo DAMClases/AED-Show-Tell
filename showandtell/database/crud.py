@@ -441,7 +441,7 @@ def obtener_mail_docente_nombre(nombre:str)->str:
     return (mail['email'])
     # return mail
 
-def modificar_curso(datos_nuevos:list)->bool:
+def modificar_curso_vista_docente(datos_nuevos:list)->bool:
     '''Obtiene los datos, los recopila'''
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
     db = client['academia']

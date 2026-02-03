@@ -110,16 +110,16 @@ def show_add_course_dialog_docente():
     dlg.open = True
     page.update() 
 def mostrar_modificar_curso(datos):
-    def modificar_curso(e, datos):
-        modificar_curso(datos)
-        return
-
     print(datos)
     titulo = ft.TextField(label="Título del curso", value=datos[0])
     descripcion = ft.TextField(label="Descripción", value=datos[1], multiline=True)
     duracion = ft.TextField(label="Duración (horas)", value=datos[2], keyboard_type=ft.KeyboardType.NUMBER)
     precio = ft.TextField(label="Precio", value=datos[3], keyboard_type=ft.KeyboardType.NUMBER)
-    datos_crud = [titulo.value, descripcion.value, duracion.value, precio.value, datos[4]]
+    def modificar_curso(e):
+        datos_crud = [titulo.value, descripcion.value, int(duracion.value), float(precio.value.replace(",", ".")), datos[4]]
+        modificar_curso_vista_docente(datos_crud)
+        dlg.open = False
+        page.update()
     dlg = ft.AlertDialog(title=ft.Text("Modificar curso"),
     content=ft.Column([
         titulo,
@@ -129,7 +129,7 @@ def mostrar_modificar_curso(datos):
 
     ], tight=True),
     actions=[
-            ft.Button("Guardar", on_click=lambda e, d=datos_crud: modificar_curso(e, d)),
+            ft.Button("Guardar", on_click=modificar_curso),
             ft.Button("Cancelar", on_click=lambda _: setattr(dlg, "open", False))
     ]
     )
