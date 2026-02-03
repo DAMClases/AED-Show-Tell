@@ -31,7 +31,7 @@ def load_cursos_disponibles_view(current_user:dict):
                     ft.DataCell(ft.Text((datos_curso[indice]['descripcion']), weight="bold")),
                     ft.DataCell(ft.Text((datos_curso[indice]['duracion_horas']), weight="bold")),
                     ft.DataCell(ft.Text(recuento[indice], weight="bold")),
-                    ft.DataCell(ft.IconButton(ft.Icons.EDIT, on_click=lambda e, info=datos_fila_edit: mostrar_modificar_curso(info)))
+                    ft.DataCell(ft.IconButton(ft.Icons.EDIT, on_click=lambda e, info=datos_fila_edit: mostrar_modificar_curso(info, current_user)))
                 ]
             )
         )
@@ -109,17 +109,18 @@ def show_add_course_dialog_docente():
     page.overlay.append(dlg)
     dlg.open = True
     page.update() 
-def mostrar_modificar_curso(datos):
+def mostrar_modificar_curso(datos, current_user):
     print(datos)
     titulo = ft.TextField(label="Título del curso", value=datos[0])
     descripcion = ft.TextField(label="Descripción", value=datos[1], multiline=True)
     duracion = ft.TextField(label="Duración (horas)", value=datos[2], keyboard_type=ft.KeyboardType.NUMBER)
     precio = ft.TextField(label="Precio", value=datos[3], keyboard_type=ft.KeyboardType.NUMBER)
     def modificar_curso(e):
-        datos_crud = [titulo.value, descripcion.value, int(duracion.value), float(precio.value.replace(",", ".")), datos[4]]
+        datos_crud = [titulo.value, descripcion.value, int(duracion.value), float(precio.value), datos[4]]
         modificar_curso_vista_docente(datos_crud)
         dlg.open = False
         page.update()
+        load_cursos_disponibles_view(current_user)
     dlg = ft.AlertDialog(title=ft.Text("Modificar curso"),
     content=ft.Column([
         titulo,
