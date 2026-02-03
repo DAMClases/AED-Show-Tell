@@ -520,5 +520,5 @@ def obtener_mail_docente_nombre(nombre:str)->str:
 # obtener_cursos_de_alumno("anlopalumno001@shndtel.com")
 # obtener_titulos_cursos([{'curso': 'curso_001'}, {'curso': 'curso_002'}])
 # obtener_cursos_disponibles_plataforma(['curso_001', 'curso_002'])
-obtener_informacion_docente_curso("Introducción a Java")
-obtener_mail_docente_nombre("Juan Jiménez García")
+# obtener_informacion_docente_curso("Introducción a Java")
+# obtener_mail_docente_nombre("Juan Jiménez García")

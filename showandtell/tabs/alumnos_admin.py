@@ -124,7 +124,7 @@ def mostrar_detalles_alumno(alumno_id):
     direccion = ft.Text(f"Dirección {alumno["direccion"]}")
     estado = ft.Text(f"Estado {alumno["estado"]}")
     fecha_alta = ft.Text(f"Fecha de alta {alumno["fecha_alta"]}")
-    password = ft.Text(f"Contraseña {"*" * len(alumno["password"])}", password=True)
+    password = ft.Text(f"Contraseña {"*" * len(alumno["password"])}")
 
     dlg = ft.AlertDialog(
         title = ft.Text(f"Detalle de Alumno: {alumno['nombre']} {alumno['apellidos']}"),
