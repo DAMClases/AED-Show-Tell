@@ -96,6 +96,20 @@ def obtener_datos_cursos() -> list:
         cursos.append(curso)
     
     return cursos
+def obtener_datos_cursos_concretos(cursos:list)-> list:
+    '''Función que obtiene todos los cursos de la colección "cursos".
+    Function that retrieves all courses from the "cursos" collection.'''
+    
+    print("debug",cursos)
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        
+        # 3. Seleccionar la base de datos
+    db = client['academia']
+    datos_cursos = []
+    for curso in cursos:
+        valor = db.cursos.find_one({'_id': curso}, {'_id':0})
+        datos_cursos.append(valor)
+    return datos_cursos
 
 def actualizar_estado_curso(alumno_id, curso_id, nuevo_estado):
     
@@ -157,6 +171,13 @@ def obtener_informacion_perfil_usuario_docente(mail:str):
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
     db = client['academia']
     usuario = db.docentes.find_one({"email": mail})
+    return usuario
+
+def obtener_informacion_perfil_usuario_alumno(mail:str):
+    '''Encuentra la información asociada al usuario alumno para utilizar en el menú "Perfil de usuario"'''
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+    db = client['academia']
+    usuario = db.alumnos.find_one({"email": mail})
     return usuario
 
 def crear_curso(id, titulo, descripcion, duracion, precio, docente_id, docente_nombre) -> str:
@@ -362,6 +383,8 @@ def obtener_todos_los_cursos_docente(mail:str):
     print(cursos)
     return cursos
 
+    
+
 def obtener_todos_los_cursos_asociados_alumno(lista_ids:list[str])->int:
     '''Para el dashboard del docente y que haga bien el recuento de alumnos.'''
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000) 
@@ -431,6 +454,20 @@ def obtener_titulo_curso(id_curso:str)->str:
     db = client['academia']
     datos_curso = db.cursos.find_one({"_id": id_curso})
     return datos_curso['titulo']
+def obtener_titulos_cursos(lista_cursos:list[dict])->list[str]:
+    '''Obtiene el título de varios cursos dado el ID recibiendo una lista de strings.'''
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000) 
+    db = client['academia']
+    titulos_cursos = []
+    for curso in lista_cursos:
+        print(curso)
+        curso_id = curso['curso']
+        titulo = db.cursos.find_one({"_id":curso_id}, {"_id":0, "titulo":1})
+        titulos_cursos.append(titulo["titulo"])
+    return titulos_cursos
+
+    # datos_curso = db.cursos.find_one({"_id": id_curso})
+    # return datos_curso['titulo']
 
 def obtener_informacion_alumno(id_alumno:str)->str:
     '''Obtiene el título de un curso dado el ID.'''
@@ -438,10 +475,50 @@ def obtener_informacion_alumno(id_alumno:str)->str:
     db = client['academia']
     datos_alumno = db.alumnos.find_one({"_id": id_alumno})
     return datos_alumno
+def obtener_cursos_de_alumno(email:str)->list:
+    '''Obtiene los cursos de un alumno'''
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000) 
+    db = client['academia']
+    info = db.alumnos.find_one({"email": email},{"cursos.curso": 1, "_id": 0})
+    print(info)  
+    return info
+    
+def obtener_cursos_disponibles_plataforma(lista_cursos:dict[list[dict]])->list:
+    '''Devuelve el listado de cursos disponibles (TITULOS).'''
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+    db = client['academia']
+    ids_cursos_alumno = [c['curso'] for c in lista_cursos.get('cursos', [])]
+    cursos_disponibles = list(db.cursos.find({"_id": {"$nin": ids_cursos_alumno}},{"titulo": 1, "_id": 0}))
+    listado_de_nombres_cursos_disponibles = []
+    for curso_d in cursos_disponibles:
+        listado_de_nombres_cursos_disponibles.append(curso_d["titulo"])
+    return listado_de_nombres_cursos_disponibles
+
+def obtener_informacion_docente_curso(titulo:str)->str:
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+    db = client['academia']
+    docente = db.cursos.find_one({"titulo": titulo}, {'_id':0, 'instructor.nombre':1})
+    return (docente['instructor']['nombre'])
+    # return docente
+
+def obtener_mail_docente_nombre(nombre:str)->str:
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+    db = client['academia']
+    nombre = nombre.split(' ')
+    mail = db.docentes.find_one({'nombre': nombre[0]}, {"_id":0, "email":1})
+    return (mail['email'])
+    # return mail
+
 # obtener_informacion_perfil_usuario_alumno(mail="masangialumno005@shndtel.com")
-# obtener_informacion_perfil_usuario_docente(mail="jujimgardocente001@shndtel.com")
+
+
 # obtener_informacion_perfil_usuario_admin(mail="cristophermc@gmail.com")
 # obtener_todos_los_cursos_docente(mail="jujimgardocente001@shndtel.com")
 # obtener_informacion_curso(["curso_001", "curso_002"])
 # obtener_alumnos_de_un_curso(["curso_001", "curso_002"])
 # obtener_titulo_curso("curso_001")
+# obtener_cursos_de_alumno("anlopalumno001@shndtel.com")
+# obtener_titulos_cursos([{'curso': 'curso_001'}, {'curso': 'curso_002'}])
+# obtener_cursos_disponibles_plataforma(['curso_001', 'curso_002'])
+obtener_informacion_docente_curso("Introducción a Java")
+obtener_mail_docente_nombre("Juan Jiménez García")

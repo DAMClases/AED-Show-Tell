@@ -118,7 +118,8 @@ def mostrar_editar_curso_dialog(curso_id, dlg_detalles_curso):
             ft.Text(f"Descripción: {descripcion.value}"),
             ft.Text(f"Precio: ${precio_valor:.2f}"),
             ft.Text(f"Duración: {duracion.value} horas"),
-            ft.Text(f"Instructor: {obtener_docente_por_id(docente_id_seleccionado)['nombre'] + " " + obtener_docente_por_id(docente_id_seleccionado)['apellidos']}"),
+            ft.Text(f"Instructor: {obtener_docente_por_id(docente_id_seleccionado)['nombre'] + ' ' + obtener_docente_por_id(docente_id_seleccionado)['apellidos']}"
+            ),
         ]
         dlg_detalles_curso.title = ft.Text(f"Detalles del Curso: {titulo.value}")
         load_cursos_view()
