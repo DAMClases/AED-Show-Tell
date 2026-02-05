@@ -452,7 +452,7 @@ def modificar_curso_vista_docente(datos_nuevos:list)->bool:
     precio = datos_nuevos[3]
 
     resultado = db.cursos.update_one({"_id":id_curso}, {"$set": {"titulo": titulo, "descripcion": descripcion, "duracion_horas":duracion, "precio":precio}})
-
+    actualizacion_docente = db.docentes.update_many({"cursos.curso_id": id_curso}, {"$set": {"cursos.$.titulo": titulo}})
     return True
     # print(f"Documentos encontrados: {resultado.matched_count}")
     # print(f"Documentos modificados: {resultado.modified_count}")
