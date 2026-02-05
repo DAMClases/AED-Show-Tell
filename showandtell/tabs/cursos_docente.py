@@ -116,6 +116,24 @@ def mostrar_modificar_curso(datos, current_user):
     duracion = ft.TextField(label="Duración (horas)", value=datos[2], keyboard_type=ft.KeyboardType.NUMBER)
     precio = ft.TextField(label="Precio", value=datos[3], keyboard_type=ft.KeyboardType.NUMBER)
     def modificar_curso(e):
+        '''Acción cuando se clica modificar curso'''
+        titulo = titulo.value
+        descripcion = descripcion.value
+        duracion = duracion.value
+        precio = precio.value
+        if not titulo:
+            pass
+        if not descripcion:
+            pass
+        if not duracion:
+            pass
+        if not precio: 
+            pass
+
+        try:
+            pass
+        except:
+            pass
         datos_crud = [titulo.value, descripcion.value, int(duracion.value), float(precio.value), datos[4]]
         modificar_curso_vista_docente(datos_crud)
         dlg.open = False
