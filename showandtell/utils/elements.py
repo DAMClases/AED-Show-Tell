@@ -131,3 +131,50 @@ def CursoCard(page, curso):
             ], spacing=10)
         )
     )
+
+import flet as ft
+
+def mostrar_mensaje(page: ft.Page, mensaje: str, grado: str = "advertencia"):    
+    '''Componente reutilizable para generar un texto de error/advertencia'''
+    
+    color = ft.Colors.BLUE_400
+    mensaje_pantalla = "Información"
+    icono_popup = "info"
+
+    match grado:
+        case 'advertencia':
+            color = ft.Colors.ORANGE_400
+            mensaje_pantalla = "¡Advertencia!"
+            print("entre por aqui")
+            icono_popup = "warning"
+        
+        case 'error':
+            color = ft.Colors.RED_400
+            mensaje_pantalla = "¡Error!"
+            print("entre por aqui")
+            icono_popup = "error_outline"
+
+        case 'info':
+            color = ft.Colors.BLUE_400
+            mensaje_pantalla = "¡Información!"
+            icono_popup = "info"
+
+    def cerrar_dialogo(e):
+        page.close(error_dialog)
+
+    error_dialog = ft.AlertDialog(
+        modal=True, 
+        title=ft.Row([
+            ft.Icon(icono_popup, color=color, size=30),
+            ft.Text(mensaje_pantalla, size=20, weight=ft.FontWeight.BOLD)
+        ], alignment=ft.MainAxisAlignment.START, vertical_alignment=ft.CrossAxisAlignment.CENTER),
+        content=ft.Text(mensaje, size=16),
+        actions=[
+            ft.TextButton("Entendido", on_click=cerrar_dialogo)
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+        title_padding=ft.Padding(20, 20, 20, 10),
+        content_padding=ft.Padding(20, 0, 20, 20),
+    )
+
+    page.open(error_dialog)
