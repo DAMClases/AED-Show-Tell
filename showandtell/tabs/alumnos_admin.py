@@ -128,7 +128,7 @@ def mostrar_detalles_alumno(alumno_id):
 
     dlg = ft.AlertDialog(
         title = ft.Text(f"Detalle de Alumno: {alumno['nombre']} {alumno['apellidos']}"),
-       content = ft.Column([
+        content = ft.Column([
         alumno,
         nombre,
         apellidos,
