@@ -317,6 +317,8 @@ def actualizar_docente(docente_id, nombre, apellidos, telefono, email, direccion
 def registrar_nuevo_alumno(datos_alumno:dict)->bool:
     '''Registra un nuevo alumno desde el panel de administración.'''
     try:
+        id_alumno = obtener_ultimo_id_alumno()
+        datos_alumno["_id"] = id_alumno
         client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
         db = client['academia']
         insercion = db.alumnos.insert_one(datos_alumno)
@@ -431,6 +433,29 @@ def obtener_ultimo_id_curso():
         print(siguiente_num)
     print(f"curso_{siguiente_num:03d}")
     return f"curso_{siguiente_num:03d}"
+
+def obtener_ultimo_id_alumno():
+    '''Función similar a la anterior pero para alumnos.'''
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000) 
+    db = client['academia']
+    pipeline = [
+        {"$match": {"_id": {"$regex": "^alumno_"}}},
+        {"$addFields": {
+            "numero": {"$toInt": {"$substr": ["$_id", 7, -1]}}
+        }},
+        {"$group": {"_id": None, "max_num": {"$max": "$numero"}}}]
+    
+    resultado = list(db.alumnos.aggregate(pipeline))
+    
+    if resultado:
+        ultimo_num = resultado[0]["max_num"]
+        siguiente_num = ultimo_num + 1
+        print(siguiente_num)
+    else:
+        siguiente_num = 1
+        print(siguiente_num)
+    print(f"alumno_{siguiente_num:03d}")
+    return f"alumno_{siguiente_num:03d}"
 
 def obtener_alumnos_de_un_curso(lista_ids:list[str])->list[dict]:
     '''Devuelve una lista de diccionarios con los alumnos de un curso.'''

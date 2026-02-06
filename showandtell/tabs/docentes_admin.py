@@ -30,7 +30,7 @@ def load_docentes_view():
                         ft.IconButton(
                             ft.Icons.EDIT,
                             on_click=lambda e, d_id=docente["_id"]: 
-                                show_edit_docente_dialog(d_id)
+                                mostrar_detalles_docente(d_id)
                         )
                     ),
                 ]
@@ -100,6 +100,30 @@ def show_add_docente_dialog():
 
 def cerrar_dialog(dialog):
     dialog.open = False
+    page.update()
+
+def mostrar_detalles_docente(docente_id):
+    docente = obtener_docente_por_id(docente_id)
+    dlg = ft.AlertDialog(
+        title = ft.Text(f"Detalle de Docente: {docente['nombre']} {docente['apellidos']}"),
+        content = ft.Column([
+            ft.Text(f"Nombre: {docente['nombre']}"),
+            ft.Text(f"Apellidos: {docente['apellidos']}"),
+            ft.Text(f"Teléfono: {docente['telefono']}"),
+            ft.Text(f"Email: {docente['email']}"),
+            ft.Text(f"Dirección: {docente['direccion']}"),
+            ft.Text(f"Estado: {docente['estado']}"),
+            ft.Text(f"Fecha de alta: {docente['fecha_alta']}"),
+            ft.Text(f"Contraseña: {"*" * len(docente['password'])}")
+        ], spacing=10),
+        actions=[
+            ft.Button("Editar", icon=ft.Icons.EDIT, on_click=lambda e: show_edit_docente_dialog(docente_id)),
+            ft.Button("Cerrar", on_click=lambda e: cerrar_dialog(dlg))
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+    )
+    page.overlay.append(dlg)
+    dlg.open = True
     page.update()
 
 def show_edit_docente_dialog(docente_id):

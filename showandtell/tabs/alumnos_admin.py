@@ -29,8 +29,8 @@ def load_alumnos_view():
                     ft.DataCell(
                         ft.IconButton(
                             ft.Icons.EDIT,
-                            on_click=lambda e, d_id=alumno["_id"]: 
-                                mostrar_detalles_alumno(d_id)
+                            on_click=lambda e, a_id=alumno["_id"]: 
+                                mostrar_detalles_alumno(a_id)
                         )
                     ),
                 ]
@@ -117,31 +117,22 @@ def cerrar_dialog(dialog):
 
 def mostrar_detalles_alumno(alumno_id):
     alumno = obtener_alumno_por_id(alumno_id)
-    nombre = ft.Text(f"Nombre {alumno["nombre"]}")
-    apellidos = ft.Text(f"Apellidos {alumno["apellidos"]}")
-    telefono = ft.Text(f"Teléfono {alumno["telefono"]}")
-    email = ft.Text(f"Email {alumno["email"]}")
-    direccion = ft.Text(f"Dirección {alumno["direccion"]}")
-    estado = ft.Text(f"Estado {alumno["estado"]}")
-    fecha_alta = ft.Text(f"Fecha de alta {alumno["fecha_alta"]}")
-    password = ft.Text(f"Contraseña {"*" * len(alumno["password"])}")
-
+    print(alumno)
     dlg = ft.AlertDialog(
         title = ft.Text(f"Detalle de Alumno: {alumno['nombre']} {alumno['apellidos']}"),
         content = ft.Column([
-        alumno,
-        nombre,
-        apellidos,
-        telefono,
-        email,
-        direccion,
-        estado,
-        fecha_alta,
-        password
+        ft.Text(f"Nombre {alumno['nombre']}"),
+        ft.Text(f"Apellidos {alumno['apellidos']}"),
+        ft.Text(f"Teléfono {alumno['telefono']}"),
+        ft.Text(f"Email {alumno['email']}"),
+        ft.Text(f"Dirección {alumno['direccion']}"),
+        ft.Text(f"Estado {alumno['estado']}"),
+        ft.Text(f"Fecha de alta {alumno['fecha_alta']}"),
+        ft.Text(f"Contraseña {"*" * len(alumno['password'])}")
         ], spacing=10),
         actions=[
-            ft.Button("Editar", icon=ft.Icons.EDIT, on_click=lambda e: mostrar_editar_alumno_dialog(alumno_id,dlg)),
-            ft.Button("Borrar", icon=ft.Icons.DELETE, bgcolor=ft.Colors.RED, color=ft.Colors.WHITE, on_click=lambda e: (mostrar_confirmacion_eliminar_curso(curso_id), setattr(dlg, "open", False), page.update())),
+            ft.Button("Editar", icon=ft.Icons.EDIT, on_click=lambda e: mostrar_editar_alumno_dialog(alumno_id)),
+            ft.Button("Borrar", icon=ft.Icons.DELETE, bgcolor=ft.Colors.RED, color=ft.Colors.WHITE, on_click=lambda e: (mostrar_confirmacion_eliminar_alumno(alumno_id), setattr(dlg, "open", False), page.update())),
             ft.Button("CERRAR", on_click=lambda _: (setattr(dlg, "open", False), page.update()))
         ],
     )
@@ -149,25 +140,8 @@ def mostrar_detalles_alumno(alumno_id):
     dlg.open = True
     page.update()
 
-    def guardar_cambios(e):
-        actualizar_alumno(
-            alumno_id,
-            nombre=nombre.value,
-            apellidos=apellidos.value,
-            telefono=telefono.value,
-            email=email.value,
-            direccion=direccion.value,
-            estado=estado.value,
-            fecha_alta=fecha_alta.value,
-            password=password.value
-        )
-        # dlg.open = False
-        load_alumnos_view()
-        page.update()
-    
 
-
-def mostrar_editar_alumno_dialog(alumno_id, dlg_detalles_alumno):
+def mostrar_editar_alumno_dialog(alumno_id):
     alumno = obtener_alumno_por_id(alumno_id)
     nombre = ft.TextField(label="Nombre", value=alumno["nombre"])
     apellidos = ft.TextField(label="Apellidos", value=alumno["apellidos"])
@@ -177,47 +151,55 @@ def mostrar_editar_alumno_dialog(alumno_id, dlg_detalles_alumno):
     estado = ft.TextField(label="Estado", value=alumno["estado"])
     fecha_alta = ft.TextField(label="Fecha de alta", value=alumno["fecha_alta"])
     password = ft.TextField(label="Contraseña", value=alumno["password"], password=True)
-
-    nombre.value = alumno['nombre']
-    apellidos.value = alumno['apellidos']
-    telefono.value = alumno['telefono']
-    email.value = alumno['email']
-    direccion.value = alumno['direccion']
-    estado.value = alumno['estado']
-    fecha_alta.value = alumno['fecha_alta']
-    password.value = alumno['password']
+    def guardar_cambios(e):
+            actualizar_alumno(
+                alumno_id,
+                nombre=nombre.value,
+                apellidos=apellidos.value,
+                telefono=telefono.value,
+                email=email.value,
+                direccion=direccion.value,
+                estado=estado.value,
+                fecha_alta=fecha_alta.value,
+                password=password.value
+            )
+            # dlg.open = False
+            load_alumnos_view()
+            page.update()
 
     dlg = ft.AlertDialog(
         title = ft.Text(f"Detalle de Alumno: {alumno['nombre']} {alumno['apellidos']}"),
-       content = ft.Column([
-        alumno,
-        nombre,
-        apellidos,
-        telefono,
-        email,
-        direccion,
-        estado,
-        fecha_alta,
-        password
-        ], spacing=10)
+        content = ft.Column([
+            alumno,
+            nombre,
+            apellidos,
+            telefono,
+            email,
+            direccion,
+            estado,
+            fecha_alta,
+            password
+        ], spacing=10),
+        actions=[
+            ft.Button("Guardar", on_click=lambda e: guardar_cambios(e)),
+            ft.Button("CERRAR", on_click=lambda _: cerrar_dialog(dlg))
+        ],
     )
     page.overlay.append(dlg)
     dlg.open = True
     page.update()
 
-    def guardar_cambios(e):
-        actualizar_alumno(
-            alumno_id,
-            nombre=nombre.value,
-            apellidos=apellidos.value,
-            telefono=telefono.value,
-            email=email.value,
-            direccion=direccion.value,
-            estado=estado.value,
-            fecha_alta=fecha_alta.value,
-            password=password.value
-        )
-        # dlg.open = False
-        load_alumnos_view()
-        page.update()
     
+def mostrar_confirmacion_eliminar_alumno(alumno_id):
+    dlg = ft.AlertDialog(
+        title=ft.Text("Confirmar eliminación"),
+        content=ft.Text("¿Estás seguro de que deseas eliminar este alumno? Esta acción no se puede deshacer."),
+        actions=[
+            ft.Button("Cancelar", on_click=lambda e: cerrar_dialog(dlg)),
+            ft.Button("Eliminar", bgcolor=ft.Colors.RED, color=ft.Colors.WHITE, on_click=lambda e: (eliminar_alumno(alumno_id), cerrar_dialog(dlg), load_alumnos_view()))
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+    )
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update()
