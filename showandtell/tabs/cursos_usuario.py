@@ -66,9 +66,10 @@ def load_cursos_disponibles_view(current_user:dict):
 
 def show_course_information(datos):
     '''Abre la tarjeta individual de la información de cada curso.'''
-    datos_de_docente = obtener_informacion_docente_curso(datos['titulo'])
-    profesor = ft.Text(f"Instructor: {datos_de_docente}")
-    email_instructor = ft.Text(f"Correo electrónico adjunto: {obtener_mail_docente_nombre(datos_de_docente)}")
+    datos_de_docente = obtener_docente_por_id(datos['instructor']['docente_id'])
+    print(datos)
+    profesor = ft.Text(f"Instructor: {datos['instructor']['nombre']}")
+    email_instructor = ft.Text(f"Correo electrónico adjunto: {datos_de_docente['email']}")
     titulo = ft.Text(f"Título: {datos['titulo']}", size=20)
     descripcion = ft.Text(f"Descripcion: {datos['descripcion']}")
     precio = ft.Text(f"Precio: {datos['precio']}")

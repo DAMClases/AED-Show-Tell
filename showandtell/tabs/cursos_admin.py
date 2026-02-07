@@ -77,7 +77,7 @@ def mostrar_añadir_curso_dialog():
     dlg.open = True
     page.update()
 
-def mostrar_editar_curso_dialog(curso_id, dlg_detalles_curo):
+def mostrar_editar_curso_dialog(curso_id, dlg_detalles_curso):
     curso = obtener_curso_por_id(curso_id)
     from utils.elements import AutocompletarCampo
     titulo = ft.TextField(label="Título del curso")
@@ -113,7 +113,7 @@ def mostrar_editar_curso_dialog(curso_id, dlg_detalles_curo):
         )
         dlg.open = False
         detalles_col = dlg_detalles_curso.content
-        dlg_detalles_curo.content.controls = [
+        dlg_detalles_curso.content.controls = [
             ft.Text(f"ID: {id_curso_correlativo}"),
             ft.Text(f"Descripción: {descripcion.value}"),
             ft.Text(f"Precio: ${precio_valor:.2f}"),
@@ -123,7 +123,7 @@ def mostrar_editar_curso_dialog(curso_id, dlg_detalles_curo):
         ]
         dlg_detalles_curso.title = ft.Text(f"Detalles del Curso: {titulo.value}")
         load_cursos_view()
-        dlg_detalles_curo.update()
+        dlg_detalles_curso.update()
         page.update()
 
     dlg = ft.AlertDialog(
@@ -136,7 +136,7 @@ def mostrar_editar_curso_dialog(curso_id, dlg_detalles_curo):
             docente_id
         ], tight=True),
         actions=[
-            ft.Button("Actualizar", on_click=lambda e: editar_curso_info(e, dlg_detalles_curo)),
+            ft.Button("Actualizar", on_click=lambda e: editar_curso_info(e, dlg_detalles_curso)),
             ft.Button("Cancelar", on_click=lambda _: setattr(dlg, "open", False))
         ]
     )
