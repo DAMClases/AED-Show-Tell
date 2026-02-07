@@ -65,17 +65,26 @@ def load_docentes_view():
 
 def show_add_docente_dialog():
     nombre = ft.TextField(label="Nombre")
-    email = ft.TextField(label="Email")
+    apellidos = ft.TextField(label="Apellidos")
     telefono = ft.TextField(label="Teléfono")
-    especialidad = ft.TextField(label="Especialidad")
+    email = ft.TextField(label="Email")
+    direccion = ft.TextField(label="Dirección")
+    estado = ft.TextField(label="Estado")
+    fecha_alta = ft.TextField(label="Fecha de alta")
+    password = ft.TextField(label="Contraseña", password=True)
 
     def guardar_docente(e):
-        crear_docente(
-            nombre=nombre.value,
-            email=email.value,
-            telefono=telefono.value,
-            especialidad=especialidad.value
-        )
+        datos = {
+            "nombre": nombre.value,
+            "apellidos": apellidos.value,
+            "telefono": telefono.value,
+            "email": email.value,
+            "direccion": direccion.value,
+            "estado": estado.value,
+            "fecha_alta": fecha_alta.value,
+            "password": password.value
+        }
+        crear_docente(datos)
         dlg.open = False
         load_docentes_view()
         page.update()
@@ -84,9 +93,13 @@ def show_add_docente_dialog():
         title=ft.Text("Agregar Nuevo Docente"),
         content=ft.Column([
             nombre,
-            email,
+            apellidos,
             telefono,
-            especialidad
+            email,
+            direccion,
+            estado,
+            fecha_alta,
+            password
         ]),
         actions=[
             ft.TextButton("Cancelar", on_click=lambda e: cerrar_dialog(dlg)),
@@ -94,7 +107,7 @@ def show_add_docente_dialog():
         ],
         actions_alignment=ft.MainAxisAlignment.END,
     )
-    page.dialog = dlg
+    page.overlay.append(dlg)
     dlg.open = True
     page.update()
 
@@ -114,10 +127,11 @@ def mostrar_detalles_docente(docente_id):
             ft.Text(f"Dirección: {docente['direccion']}"),
             ft.Text(f"Estado: {docente['estado']}"),
             ft.Text(f"Fecha de alta: {docente['fecha_alta']}"),
-            ft.Text(f"Contraseña: {"*" * len(docente['password'])}")
+            ft.Text(f"Contraseña: {'*' * len(docente['password'])}")
         ], spacing=10),
         actions=[
-            ft.Button("Editar", icon=ft.Icons.EDIT, on_click=lambda e: show_edit_docente_dialog(docente_id)),
+            ft.Button("Editar", icon=ft.Icons.EDIT, on_click=lambda e: mostrar_editar_docente_dialog(docente_id)),
+            ft.Button("Borrar", icon=ft.Icons.DELETE, bgcolor=ft.Colors.RED, color=ft.Colors.WHITE, on_click=lambda e: (mostrar_confirmacion_eliminar_docente(docente_id), setattr(dlg, "open", False), page.update())),
             ft.Button("Cerrar", on_click=lambda e: cerrar_dialog(dlg))
         ],
         actions_alignment=ft.MainAxisAlignment.END,
@@ -126,7 +140,7 @@ def mostrar_detalles_docente(docente_id):
     dlg.open = True
     page.update()
 
-def show_edit_docente_dialog(docente_id):
+def mostrar_editar_docente_dialog(docente_id):
     docente = obtener_docente_por_id(docente_id)
     nombre = ft.TextField(label="Nombre", value=docente["nombre"])
     apellidos = ft.TextField(label="Apellidos", value=docente["apellidos"])
@@ -168,6 +182,26 @@ def show_edit_docente_dialog(docente_id):
         actions=[
             ft.TextButton("Cancelar", on_click=lambda e: cerrar_dialog(dlg)),
             ft.ElevatedButton("Guardar Cambios", on_click=guardar_cambios)
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+    )
+    page.overlay.append(dlg)
+    dlg.open = True
+    page.update()
+
+def mostrar_confirmacion_eliminar_docente(docente_id):
+    def eliminar(e):
+        eliminar_docente(docente_id)
+        dlg.open = False
+        load_docentes_view()
+        page.update()
+
+    dlg = ft.AlertDialog(
+        title=ft.Text("Confirmar Eliminación"),
+        content=ft.Text("¿Estás seguro de que deseas eliminar este docente? Esta acción no se puede deshacer."),
+        actions=[
+            ft.TextButton("Cancelar", on_click=lambda e: cerrar_dialog(dlg)),
+            ft.ElevatedButton("Eliminar", bgcolor=ft.Colors.RED, color=ft.Colors.WHITE, on_click=eliminar)
         ],
         actions_alignment=ft.MainAxisAlignment.END,
     )

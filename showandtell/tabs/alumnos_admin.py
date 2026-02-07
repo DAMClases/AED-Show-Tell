@@ -55,8 +55,8 @@ def load_alumnos_view():
 
     content_area.content = ft.Column([
         ft.Row([
-            ft.Text("Gestión de Docentes", size=30, weight="bold"),
-            ft.Button("Agregar Docente", icon=ft.Icons.ADD,on_click=lambda e: show_add_alumno_dialog()) 
+            ft.Text("Gestión de Alumnos", size=30, weight="bold"),
+            ft.Button("Agregar Alumno", icon=ft.Icons.ADD,on_click=lambda e: show_add_alumno_dialog()) 
         ], alignment="spaceBetween"),
         ft.Divider(),
         table
@@ -117,7 +117,6 @@ def cerrar_dialog(dialog):
 
 def mostrar_detalles_alumno(alumno_id):
     alumno = obtener_alumno_por_id(alumno_id)
-    print(alumno)
     dlg = ft.AlertDialog(
         title = ft.Text(f"Detalle de Alumno: {alumno['nombre']} {alumno['apellidos']}"),
         content = ft.Column([
@@ -128,7 +127,7 @@ def mostrar_detalles_alumno(alumno_id):
         ft.Text(f"Dirección {alumno['direccion']}"),
         ft.Text(f"Estado {alumno['estado']}"),
         ft.Text(f"Fecha de alta {alumno['fecha_alta']}"),
-        ft.Text(f"Contraseña {"*" * len(alumno['password'])}")
+        ft.Text(f"Contraseña {'*' * len(alumno['password'])}")
         ], spacing=10),
         actions=[
             ft.Button("Editar", icon=ft.Icons.EDIT, on_click=lambda e: mostrar_editar_alumno_dialog(alumno_id)),
@@ -163,14 +162,13 @@ def mostrar_editar_alumno_dialog(alumno_id):
                 fecha_alta=fecha_alta.value,
                 password=password.value
             )
-            # dlg.open = False
+            dlg.open = False
             load_alumnos_view()
             page.update()
 
     dlg = ft.AlertDialog(
         title = ft.Text(f"Detalle de Alumno: {alumno['nombre']} {alumno['apellidos']}"),
         content = ft.Column([
-            alumno,
             nombre,
             apellidos,
             telefono,
@@ -179,11 +177,12 @@ def mostrar_editar_alumno_dialog(alumno_id):
             estado,
             fecha_alta,
             password
-        ], spacing=10),
+        ]),
         actions=[
-            ft.Button("Guardar", on_click=lambda e: guardar_cambios(e)),
+            ft.Button("Guardar", on_click=guardar_cambios),
             ft.Button("CERRAR", on_click=lambda _: cerrar_dialog(dlg))
         ],
+        actions_alignment=ft.MainAxisAlignment.END,
     )
     page.overlay.append(dlg)
     dlg.open = True

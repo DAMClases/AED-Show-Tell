@@ -240,6 +240,19 @@ def eliminar_curso(curso_id) -> None:
         {"$pull": {"cursos": {"curso": curso_id}}}
     )
 
+def eliminar_alumno(alumno_id) -> None:
+    
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        
+    db = client['academia']
+    db.alumnos.delete_one({"_id": alumno_id})
+
+def eliminar_docente(docente_id) -> None:
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        
+    db = client['academia']
+    db.docentes.delete_one({"_id": docente_id})
+
 def crear_matricula(alumno_id, curso_id, status, fecha_matricula=None) -> None:
     
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
@@ -274,24 +287,19 @@ def obtener_docente_por_id(docente_id) -> dict:
     docente = db.docentes.find_one({"_id": docente_id})
     return docente
 
-def crear_docente(nombre, apellidos, telefono, email, direccion, estado, fecha_alta, password) -> str:
+def crear_docente(datos_docente) -> str:
     
-    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
-        
-    db = client['academia']
-    nuevo_docente = {
-        "nombre": nombre,
-        "apellidos": apellidos,
-        "telefono": telefono,
-        "email": email,
-        "direccion": direccion,
-        "cursos": [],
-        "estado": estado,
-        "fecha_alta": fecha_alta,
-        "password": password
-    }
-    resultado = db.docentes.insert_one(nuevo_docente)
-    return resultado.inserted_id
+    try:
+        id_docente = obtener_ultimo_id_docente()
+        datos_docente["_id"] = id_docente
+        client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
+        db = client['academia']
+        insercion = db.docentes.insert_one(datos_docente)
+        if insercion.inserted_id:
+            return True
+        return False
+    except errors.PyMongoError:
+        return False
 
 def actualizar_docente(docente_id, nombre, apellidos, telefono, email, direccion, estado, fecha_alta, password) -> None:
     
@@ -435,7 +443,6 @@ def obtener_ultimo_id_curso():
     return f"curso_{siguiente_num:03d}"
 
 def obtener_ultimo_id_alumno():
-    '''Función similar a la anterior pero para alumnos.'''
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000) 
     db = client['academia']
     pipeline = [
@@ -456,6 +463,28 @@ def obtener_ultimo_id_alumno():
         print(siguiente_num)
     print(f"alumno_{siguiente_num:03d}")
     return f"alumno_{siguiente_num:03d}"
+
+def obtener_ultimo_id_docente():
+    client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000) 
+    db = client['academia']
+    pipeline = [
+        {"$match": {"_id": {"$regex": "^docente_"}}},
+        {"$addFields": {
+            "numero": {"$toInt": {"$substr": ["$_id", 8, -1]}}
+        }},
+        {"$group": {"_id": None, "max_num": {"$max": "$numero"}}}]
+    
+    resultado = list(db.docentes.aggregate(pipeline))
+    
+    if resultado:
+        ultimo_num = resultado[0]["max_num"]
+        siguiente_num = ultimo_num + 1
+        print(siguiente_num)
+    else:
+        siguiente_num = 1
+        print(siguiente_num)
+    print(f"docente_{siguiente_num:03d}")
+    return f"docente_{siguiente_num:03d}"
 
 def obtener_alumnos_de_un_curso(lista_ids:list[str])->list[dict]:
     '''Devuelve una lista de diccionarios con los alumnos de un curso.'''
