@@ -85,6 +85,16 @@ def mostrar_popup_añadir_docente():
             "fecha_alta": fecha_alta.value,
             "password": password.value
         }
+        if not datos["nombre"] or not datos["apellidos"] or not datos["telefono"] or not datos["email"] or not datos["direccion"] or not datos["estado"] or not datos["fecha_alta"] or not datos["password"]:
+            mostrar_mensaje(page, "Alguno de los campos se encuentran vacíos. Por favor, rellénelos previamente antes de continuar.", "advertencia")
+            return
+        if not validar_entrada_telefono(datos["telefono"]):
+            mostrar_mensaje(page, "Formato de teléfono inválido. El teléfono introducido debe tener 9 dígitos enteros.")
+            return
+        if not validar_entrada_fecha(datos["fecha_alta"]):
+            mostrar_mensaje(page, "Formato de fecha inválido. La fecha introducida debe estar en el formato Año-Mes-día y el año de nacimiento debe ser mayor o igual a 1940.")
+            return
+
         crear_docente(datos)
         dlg.open = False
         cargar_vista_docentes_admin()
@@ -154,10 +164,10 @@ def mostrar_editar_docente_dialog(docente_id):
 
     def guardar_cambios(e):
         if not nombre.value or not apellidos.value or not telefono.value or not email.value or not estado.value or not fecha_altsa.value or not password.value:
-            mostrar_mensaje()
+            mostrar_mensaje(page, "Alguno de los campos se encuentran vacíos. Por favor, rellénelos previamente antes de continuar.", "advertencia")
             return
         if not validar_entrada_telefono(telefono.value):
-            mostrar_mensaje(page,"","")
+            mostrar_mensaje(page, "Formato de teléfono inválido. El teléfono introducido debe tener 9 dígitos enteros.")
             return
         if not validar_entrada_fecha(fecha_altsa.value):
             mostrar_mensaje(page, "Formato de fecha inválido. La fecha introducida debe estar en el formato Año-Mes-día y el año de nacimiento debe ser mayor o igual a 1940.")
