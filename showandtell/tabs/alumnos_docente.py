@@ -90,26 +90,3 @@ def mostrar_detalles_alumno(id_alumno):
     page.overlay.append(dlg)
     dlg.open = True
     page.update()
-# def show_course_details(curso_id):
-#     curso = obtener_curso_por_id(curso_id)
-#     if not curso:
-#         print(f"Curso con ID {curso_id} no encontrado.")
-#         return
-
-#     dlg = ft.AlertDialog(
-#         title=ft.Text(f"Detalles del Curso: {curso['titulo']}"),
-#         content=ft.Column([
-#             ft.Text(f"ID: {curso['_id']}"),
-#             ft.Text(f"Descripción: {curso['descripcion']}"),
-#             ft.Text(f"Precio: ${curso['precio']:.2f}"),
-#             ft.Text(f"Duración: {curso['duracion_horas']} horas"),
-#             ft.Text(f"Instructor: {curso['instructor']['nombre']}"),
-#         ], spacing=10),
-#         actions=[
-#             ft.Button("CERRAR", on_click=lambda _: (setattr(dlg, "open", False), page.update()))
-#         ],
-#     )
-
-#     page.overlay.append(dlg)
-#     dlg.open = True
-#     page.update()

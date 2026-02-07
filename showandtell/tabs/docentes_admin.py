@@ -2,6 +2,7 @@ from datetime import datetime
 import flet as ft
 from database.crud import *
 from utils.elements import *
+from utils.validaciones import *
 
 content_area: ft.Container
 page: ft.Page
@@ -166,6 +167,7 @@ def mostrar_editar_docente_dialog(docente_id):
             docente_id,
             datos_dict
         )
+        mostrar_mensaje(page, "Docente actualizado correctamente en el sistema.", "info")
         dlg.open = False
         cargar_vista_docentes_admin()
         page.update()
