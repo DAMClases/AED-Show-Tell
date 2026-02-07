@@ -7,7 +7,7 @@ from tabs.login import pantalla_login, configuracion as setup_login
 # --- APLICACIÓN PRINCIPAL ---
 
 def main(page: ft.Page):
-    page.title = "Panel Admin - Matrículas"
+    page.title = "Show & Tell"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.padding = 0
 
@@ -23,6 +23,5 @@ def main(page: ft.Page):
     setup_login(content_area, page)
     pantalla_login(current_user)
 
-# Ajuste: ft.run() es el estándar actual sobre ft.app()
 if __name__ == "__main__":
     ft.run(main)
