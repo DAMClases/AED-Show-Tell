@@ -86,6 +86,8 @@ def obtener_curso_por_id(curso_id) -> dict:
 def editar_curso(id, titulo, descripcion, duracion, precio, docente_id, docente_nombre) -> None:
     
     curso = obtener_curso_por_id(id)
+    if not curso:
+        raise ValueError("Curso no encontrado")
     update_fields = {}
     if titulo != curso['titulo']:
         update_fields["titulo"] = titulo
@@ -279,7 +281,7 @@ def obtener_cursos_de_alumno(email:str)->list:
     print(info)  
     return info
 
-def obtener_todos_los_cursos_asociados_alumno(lista_ids:list[str])->int:
+def obtener_todos_los_cursos_asociados_alumno(lista_ids:list[str])->list[int]:
     '''Para el dashboard del docente y que haga bien el recuento de alumnos.'''
     recuento_alumnos = []
     for id_curso in lista_ids:
@@ -341,7 +343,7 @@ def obtener_todas_las_matriculas():
                     'alumno_id': alumno['_id'],
                     'curso_nombre': curso_info['titulo'] if curso_info else 'Desconocido',
                     'fecha_matricula': curso['fecha_matricula'],
-                    'status': curso['estado']
+                    'estado': curso['estado']
                 })
     
     return matriculas
@@ -349,7 +351,18 @@ def obtener_todas_las_matriculas():
 ### DOCENTES
 
 def eliminar_docente(docente_id) -> None:
+
+    ids_cursos_docente = [c["_id"] for c in db.cursos.find({"instructor.docente_id": docente_id}, {"_id": 1})]
+
+    db.alumnos.update_many(
+        {},
+        {"$pull": {"cursos": {"curso": {"$in": ids_cursos_docente}}}}
+    )
+    db.cursos.delete_many({"instructor.docente_id": docente_id})
+
+
     db.docentes.delete_one({"_id": docente_id})
+    
 
 def obtener_docentes() -> list:
     docentes = []
@@ -427,14 +440,12 @@ def obtener_informacion_docente_curso(titulo:str)->str:
 
     docente = db.cursos.find_one({"titulo": titulo}, {'_id':0, 'instructor.nombre':1})
     return (docente['instructor']['nombre'])
-    # return docente
 
 def obtener_mail_docente_nombre(nombre:str)->str:
 
     nombre = nombre.split(' ')
     mail = db.docentes.find_one({'nombre': nombre[0]}, {"_id":0, "email":1})
     return (mail['email'])
-    # return mail
 
 def modificar_curso_vista_docente(datos_nuevos:list)->bool:
     '''Obtiene los datos, los recopila'''
