@@ -2,6 +2,7 @@ from datetime import datetime
 import flet as ft
 from database.crud import *
 from utils.elements import *
+from utils.validaciones import *
 
 content_area: ft.Container
 page: ft.Page
@@ -152,6 +153,17 @@ def mostrar_editar_docente_dialog(docente_id):
     password = ft.TextField(label="Contraseña", value=docente["password"], password=True)
 
     def guardar_cambios(e):
+        if not nombre.value or not apellidos.value or not telefono.value or not email.value or not estado.value or not fecha_altsa.value or not password.value:
+            mostrar_mensaje()
+            return
+        if not validar_entrada_telefono(telefono.value):
+            mostrar_mensaje(page,"","")
+            return
+        if not validar_entrada_fecha(fecha_altsa.value):
+            mostrar_mensaje(page, "Formato de fecha inválido. La fecha introducida debe estar en el formato Año-Mes-día y el año de nacimiento debe ser mayor o igual a 1940.")
+            return
+        
+            ########################################################
         actualizar_docente(
             docente_id,
             nombre=nombre.value,
@@ -163,6 +175,7 @@ def mostrar_editar_docente_dialog(docente_id):
             fecha_alta=fecha_altsa.value,
             password=password.value
         )
+        mostrar_mensaje(page, "Nuevo curso implementado correctamente en el sistema.", "info")
         dlg.open = False
         cargar_vista_docentes_admin()
         page.update()

@@ -2,7 +2,7 @@ from datetime import datetime
 import flet as ft
 from database.crud import *
 from utils.elements import *
-
+from utils.validaciones import *
 contenedor: ft.Container
 page: ft.Page
 
@@ -75,32 +75,55 @@ def mostrar_popup_añadir_curso_docente():
 
 
     def guardar_nuevo_curso():
+        '''Guarda en la base de datos un nuevo apunte
+        para la colección de cursos y otro para la del docente implicado'''
 
-        if not titulo.value:
-            pass
-        if not descripcion.value:
-            pass
-        if not precio.value:
-            pass
-        titulo = titulo.value
-        descripcion = descripcion.value
-        
-        precio_str = precio.value.replace(',', '.')
-        precio_valor = float(precio_str)
-        id_curso_correlativo = obtener_ultimo_id_curso()
-        docente_id_seleccionado = obtener_informacion_perfil_usuario_docente(page.login_data["user_email"])['_id']
+        if not titulo.value.strip() or not descripcion.value.strip() or not precio.value or not duracion.value:
+            mostrar_mensaje(page, "Alguno de los campos se encuentran vacíos. Por favor, rellénelos previamente antes de continuar.", "advertencia")
+            return
+        precio_valor = 0.0
+        duracion_valor = 0
 
-        crear_curso(
-            id = id_curso_correlativo,
-            titulo=titulo.value,
-            descripcion=descripcion.value,
-            precio=precio_valor,
-            duracion=int(duracion.value),
-            docente_id=docente_id_seleccionado,
-            docente_nombre=obtener_docente_por_id(docente_id_seleccionado)['nombre'] + " " + obtener_docente_por_id(docente_id_seleccionado)['apellidos']
-        )
-        dlg.open = False
-        page.update()
+        try:
+            precio_str = precio.value.replace(',', '.')
+            precio_valor = float(precio_str)
+            duracion_valor = int(duracion.value)
+
+        except ValueError:
+            mostrar_mensaje(page, "El precio o la duración deben ser números válidos.", "error")
+            return
+    
+        try:
+            id_curso_correlativo = obtener_ultimo_id_curso()
+            if not page.login_data:
+                 mostrar_mensaje(page, "Error de sesión: No hay usuario logueado.", "error")
+                 return
+                 
+            info_docente = obtener_informacion_perfil_usuario_docente(page.login_data["user_email"])
+            docente_id_seleccionado = info_docente['_id']
+            
+            datos_docente = obtener_docente_por_id(docente_id_seleccionado)
+            nombre_docente = datos_docente['nombre'] + " " + datos_docente['apellidos']
+
+            crear_curso(
+                id = id_curso_correlativo,
+                titulo=titulo.value,
+                descripcion=descripcion.value,
+                precio=precio_valor,      
+                duracion=duracion_valor,   
+                docente_id=docente_id_seleccionado,
+                docente_nombre=nombre_docente
+            )
+
+            mostrar_mensaje(page, "Se ha añadido y asignado un nuevo curso correctamente.", "info")
+            dlg.open = False
+            page.update()
+
+
+        except Exception as e:
+            print(f"Error detallado: {e}") # Útil para depurar en consola
+            mostrar_mensaje(page, "Ha ocurrido un error inesperado al guardar el curso.", "error")
+            return
 
     dlg = ft.AlertDialog(
             title=ft.Text("Añadir nuevo curso"),
@@ -128,17 +151,8 @@ def mostrar_modificar_curso(datos, usuario_actual):
 
     def modificar_curso(e):
         '''Acción cuando se clica modificar curso'''
-        if not titulo.value:
-            mostrar_mensaje(page, "El campo título se encuentra vacío.", "advertencia")
-            return
-        if not descripcion.value:
-            mostrar_mensaje(page, "El campo descripción se encuentra vacío.", "advertencia")
-            return
-        if not duracion.value:
-            mostrar_mensaje(page, "El campo duración se encuentra vacío.", "advertencia")
-            return
-        if not precio.value: 
-            mostrar_mensaje(page, "El campo precio se encuentra vacío.", "advertencia")
+        if not titulo.value.strip() or not descripcion.value.strip() or not duracion.value or not precio.value:
+            mostrar_mensaje(page, "Alguno de los campos se encuentran vacíos. Por favor, rellénelos previamente antes de continuar.", "advertencia")
             return
 
         duracion_val = 0

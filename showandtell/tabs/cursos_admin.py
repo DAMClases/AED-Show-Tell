@@ -1,7 +1,7 @@
 import flet as ft
 from database.crud import *
 from utils.elements import *
-
+from utils.validaciones import *
 
 contenedor: ft.Container
 page: ft.Page
@@ -42,6 +42,18 @@ def mostrar_añadir_curso_dialog():
     docente_id = autocompletar_campo(set_docente, "Docente")
 
     def guardar_curso(e):
+
+        if not titulo.value or not descripcion.value or not precio.value or not duracion.value:
+            mostrar_mensaje(page, "Alguno de los campos se encuentran vacíos. Por favor, rellénelos previamente antes de continuar.", "advertencia")
+            return
+        if not validar_entrada_precio(precio.value):
+            mostrar_mensaje(page, "El precio de un curso debe ser mayor que 0.", "advertencia")
+            return
+        if not validar_entrada_duracion(duracion.value):
+            mostrar_mensaje(page, "La duración de un curso debe ser mayor que 0.", "advertencia")
+            return
+            
+            
         precio_str = precio.value.replace(',', '.')
         precio_valor = float(precio_str)
         id_curso_correlativo = obtener_ultimo_id_curso()
@@ -54,6 +66,7 @@ def mostrar_añadir_curso_dialog():
             docente_id=docente_id_seleccionado,
             docente_nombre=obtener_docente_por_id(docente_id_seleccionado)['nombre'] + " " + obtener_docente_por_id(docente_id_seleccionado)['apellidos']
         )
+        mostrar_mensaje(page, "Nuevo curso implementado correctamente en el sistema.", "info")
         dlg.open = False
         cargar_vista_cursos_admin()
         page.update()
@@ -99,6 +112,16 @@ def mostrar_editar_curso_dialog(curso_id, dlg_detalles_curso):
     docente_id_seleccionado = curso['instructor']['docente_id']
 
     def editar_curso_info(e, dlg_detalles_curso):
+
+        if not titulo.value or not descripcion.value or not precio.value or not duracion.value:
+            mostrar_mensaje(page, "Alguno de los campos se encuentran vacíos. Por favor, rellénelos previamente antes de continuar.", "advertencia")
+            return
+        if not validar_entrada_precio(precio.value):
+            mostrar_mensaje(page, "El precio de un curso debe ser mayor que 0.", "advertencia")
+            return
+        if not validar_entrada_duracion(duracion.value):
+            mostrar_mensaje(page, "La duración de un curso debe ser mayor que 0.", "advertencia")
+            return
         precio_str = precio.value.replace(',', '.')
         precio_valor = float(precio_str)
         id_curso_correlativo = curso['_id']
@@ -111,6 +134,7 @@ def mostrar_editar_curso_dialog(curso_id, dlg_detalles_curso):
             docente_id=docente_id_seleccionado,
             docente_nombre=obtener_docente_por_id(docente_id_seleccionado)['nombre'] + " " + obtener_docente_por_id(docente_id_seleccionado)['apellidos']
         )
+        mostrar_mensaje(page, "Nuevo curso implementado correctamente en el sistema.", "info")
         dlg.open = False
         detalles_col = dlg_detalles_curso.content
         dlg_detalles_curso.content.controls = [
