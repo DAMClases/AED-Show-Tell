@@ -81,17 +81,13 @@ def mostrar_popup_añadir_curso_docente():
         if not titulo.value.strip() or not descripcion.value.strip() or not precio.value or not duracion.value:
             mostrar_mensaje(page, "Alguno de los campos se encuentran vacíos. Por favor, rellénelos previamente antes de continuar.", "advertencia")
             return
-        precio_valor = 0.0
-        duracion_valor = 0
-
-        try:
-            precio_str = precio.value.replace(',', '.')
-            precio_valor = float(precio_str)
-            duracion_valor = int(duracion.value)
-
-        except ValueError:
-            mostrar_mensaje(page, "El precio o la duración deben ser números válidos.", "error")
+        if not validar_entrada_precio(precio.value):
+            mostrar_mensaje(page, "El precio de un curso debe ser mayor que 0.", "advertencia")
             return
+        if not validar_entrada_duracion(duracion.value):
+            mostrar_mensaje(page, "La duración de un curso debe ser mayor que 0.", "advertencia")
+            return   
+
     
         try:
             id_curso_correlativo = obtener_ultimo_id_curso()
@@ -109,8 +105,8 @@ def mostrar_popup_añadir_curso_docente():
                 id = id_curso_correlativo,
                 titulo=titulo.value,
                 descripcion=descripcion.value,
-                precio=precio_valor,      
-                duracion=duracion_valor,   
+                precio=precio.value,      
+                duracion=duracion.value,   
                 docente_id=docente_id_seleccionado,
                 docente_nombre=nombre_docente
             )
@@ -154,19 +150,16 @@ def mostrar_modificar_curso(datos, usuario_actual):
         if not titulo.value.strip() or not descripcion.value.strip() or not duracion.value or not precio.value:
             mostrar_mensaje(page, "Alguno de los campos se encuentran vacíos. Por favor, rellénelos previamente antes de continuar.", "advertencia")
             return
-
-        duracion_val = 0
-        precio_val = 0.0
-
-        try:
-            precio_val = (str(precio.value).replace(',', '.'))
-            precio_val = float(precio_val)
-            duracion_val = int(duracion.value)
-        except ValueError:
-            mostrar_mensaje(page, "El precio o la duración deben ser números válidos.", "error")
+        if not validar_entrada_precio(precio.value):
+            mostrar_mensaje(page, "El precio de un curso debe ser mayor que 0.", "advertencia")
             return
+        if not validar_entrada_duracion(duracion.value):
+            mostrar_mensaje(page, "La duración de un curso debe ser mayor que 0.", "advertencia")
+            return
+        
 
-        datos_crud = [titulo.value, descripcion.value, duracion_val, precio_val, datos[4]]
+
+        datos_crud = [titulo.value, descripcion.value, duracion.value, precio.value, datos[4]]
         
         if modificar_curso_vista_docente(datos_crud):
             mostrar_mensaje(page, "Se ha cambiado la información del curso.", "info")
