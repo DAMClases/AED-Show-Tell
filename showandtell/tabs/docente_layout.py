@@ -1,11 +1,11 @@
 import flet as ft
 from database.crud import *
-from tabs.dashboard_docente import load_dashboard_docente_view, setup as setup_dashboard
-from tabs.matriculas_admin import load_matricula_view, setup as setup_matricula
-from tabs.login import login_screen
-from tabs.user_config import load_usuario_view, setup as setup_usuario
-from tabs.cursos_docente import load_cursos_disponibles_view, setup as setup_cursos
-from tabs.alumnos_docente import show_all_alumnos, setup as setup_alumnos
+from tabs.dashboard_docente import cargar_dashboard_docente, setup as setup_dashboard
+from tabs.matriculas_admin import cargar_vista_matriculas_admin, setup as setup_matricula
+from tabs.login import pantalla_login
+from tabs.user_config import cargar_vista_informacion_usuario, setup as setup_usuario
+from tabs.cursos_docente import cargar_vista_cursos_disponibles, setup as setup_cursos
+from tabs.alumnos_docente import mostrar_todos_los_alumnos, setup as setup_alumnos
 
 content_area: ft.Container
 page: ft.Page
@@ -25,11 +25,11 @@ def build_docente_layout(current_user: dict):
 
     def on_nav_change(e):
         idx = e.control.selected_index
-        if idx == 0: load_dashboard_docente_view(current_user)
-        elif idx == 1: load_cursos_disponibles_view(current_user)
-        elif idx == 2: show_all_alumnos(current_user)
-        elif idx == 3: load_usuario_view(current_user)
-        elif idx == 4:login_screen(current_user)
+        if idx == 0: cargar_dashboard_docente(current_user)
+        elif idx == 1: cargar_vista_cursos_disponibles(current_user)
+        elif idx == 2: mostrar_todos_los_alumnos(current_user)
+        elif idx == 3: cargar_vista_informacion_usuario(current_user)
+        elif idx == 4:pantalla_login(current_user)
 
 
 
@@ -51,4 +51,4 @@ def build_docente_layout(current_user: dict):
 
     layout = ft.Row([sidebar, ft.VerticalDivider(width=1), content_area], expand=True)
     page.add(layout)
-    load_dashboard_docente_view(current_user)
+    cargar_dashboard_docente(current_user)

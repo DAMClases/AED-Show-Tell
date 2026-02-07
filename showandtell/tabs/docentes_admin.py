@@ -11,7 +11,7 @@ def setup(container: ft.Container, pg: ft.Page):
     content_area = container
     page = pg
 
-def load_docentes_view():
+def cargar_vista_docentes_admin():
     rows = []
     docentes = obtener_docentes()
     
@@ -56,14 +56,14 @@ def load_docentes_view():
     content_area.content = ft.Column([
         ft.Row([
             ft.Text("Gestión de Docentes", size=30, weight="bold"),
-            ft.Button("Agregar Docente", icon=ft.Icons.ADD,on_click=lambda e: show_add_docente_dialog()) 
+            ft.Button("Agregar Docente", icon=ft.Icons.ADD,on_click=lambda e: mostrar_popup_añadir_docente()) 
         ], alignment="spaceBetween"),
         ft.Divider(),
         table
     ], scroll="auto")
     content_area.update()
 
-def show_add_docente_dialog():
+def mostrar_popup_añadir_docente():
     nombre = ft.TextField(label="Nombre")
     apellidos = ft.TextField(label="Apellidos")
     telefono = ft.TextField(label="Teléfono")
@@ -86,7 +86,7 @@ def show_add_docente_dialog():
         }
         crear_docente(datos)
         dlg.open = False
-        load_docentes_view()
+        cargar_vista_docentes_admin()
         page.update()
 
     dlg = ft.AlertDialog(
@@ -164,7 +164,7 @@ def mostrar_editar_docente_dialog(docente_id):
             password=password.value
         )
         dlg.open = False
-        load_docentes_view()
+        cargar_vista_docentes_admin()
         page.update()
 
     dlg = ft.AlertDialog(
@@ -193,7 +193,7 @@ def mostrar_confirmacion_eliminar_docente(docente_id):
     def eliminar(e):
         eliminar_docente(docente_id)
         dlg.open = False
-        load_docentes_view()
+        cargar_vista_docentes_admin()
         page.update()
 
     dlg = ft.AlertDialog(

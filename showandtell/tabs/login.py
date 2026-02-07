@@ -2,15 +2,15 @@ import flet as ft
 from database.crud import *
 
 
-content_area: ft.Container
+contenedor: ft.Container
 page: ft.Page
 
-def setup(container: ft.Container, pg: ft.Page):
-    global content_area, page
-    content_area = container
+def configuracion(container: ft.Container, pg: ft.Page):
+    global contenedor, page
+    contenedor = container
     page = pg
 
-def login_screen(current_user: dict):
+def pantalla_login(current_user: dict):
     page.overlay.clear()
     page.clean()
 
@@ -28,12 +28,12 @@ def login_screen(current_user: dict):
         # current_user["role"] = "admin"
         # page.clean()
         # from tabs.admin_layout import build_admin_layout, setup as setup_admin
-        # setup_admin(content_area, page)
+        # setup_admin(contenedor, page)
         # build_admin_layout(current_user)
         if resultado_login[0]:
-            from tabs.admin_layout import build_admin_layout, setup as setup_admin
+            from tabs.admin_layout import construir_ui_admin, setup as setup_admin
             from tabs.docente_layout import build_docente_layout, setup as setup_docente
-            from tabs.user_layout import build_user_layout, setup as setup_user
+            from tabs.user_layout import construir_vista_alumno, setup as setup_user
             page.login_data["user_email"]= user_input.value
             page.login_data["user_role"] = resultado_login[1]
             current_user["email"] = user_input.value
@@ -41,14 +41,14 @@ def login_screen(current_user: dict):
             page.clean()
             match resultado_login[1]:
                 case 'usuario':
-                    setup_user(content_area, page)
-                    build_user_layout(current_user)
+                    setup_user(contenedor, page)
+                    construir_vista_alumno(current_user)
                 case 'docente':
-                    setup_docente(content_area, page)
+                    setup_docente(contenedor, page)
                     build_docente_layout(current_user)
                 case 'admin':
-                    setup_admin(content_area, page)
-                    build_admin_layout(current_user)
+                    setup_admin(contenedor, page)
+                    construir_ui_admin(current_user)
         else:
             error_text.value = "Error: Usuario/Contraseña incorrectos."
             page.update()

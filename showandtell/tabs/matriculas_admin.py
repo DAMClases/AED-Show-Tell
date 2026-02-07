@@ -3,15 +3,15 @@ import flet as ft
 from database.crud import *
 from utils.elements import *
 
-content_area: ft.Container
+contenedor: ft.Container
 page: ft.Page
 
 def setup(container: ft.Container, pg: ft.Page):
-    global content_area, page
-    content_area = container
+    global contenedor, page
+    contenedor = container
     page = pg
 
-def load_matricula_view():
+def cargar_vista_matriculas_admin():
     rows = []
     matriculas = obtener_todas_las_matriculas()
     
@@ -25,14 +25,14 @@ def load_matricula_view():
                     ft.DataCell(ft.Text(matricula["curso_id"])),
                     ft.DataCell(ft.Text(matricula["estudiante"], weight="bold")),
                     ft.DataCell(ft.Text(matricula["curso_nombre"])),
-                    ft.DataCell(StatusBadge(matricula["status"])),
+                    ft.DataCell(etiqueta_estado(matricula["status"])),
                     ft.DataCell(ft.Text(matricula["fecha_matricula"])),
                     ft.DataCell(
                     ft.IconButton(
                         ft.Icons.EDIT,
                         # PASAMOS AMBOS IDs: Alumno y Curso
                         on_click=lambda e, a_id=id_alumno, c_id=cod_curso, s=estado_actual: 
-                            show_status_dialog(a_id, c_id, s)
+                            mostrar_popup_estado_matricula(a_id, c_id, s)
                     )
                 ),
                 ]
@@ -53,22 +53,22 @@ def load_matricula_view():
         heading_text_style=ft.TextStyle(weight="bold", color=ft.Colors.BLUE_GREY_900),
     )
 
-    content_area.content = ft.Column([
+    contenedor.content = ft.Column([
         ft.Row([
             ft.Text("Gestión de Matrículas", size=30, weight="bold"),
-            ft.Button("Nueva Matrícula Manual", icon=ft.Icons.ADD,on_click=lambda e: show_add_enrollment_dialog()) 
+            ft.Button("Nueva Matrícula Manual", icon=ft.Icons.ADD,on_click=lambda e: mostrar_popup_añadir_matricula()) 
         ], alignment="spaceBetween"),
         ft.Divider(),
         # Usamos una Column envuelta para permitir el scroll de la tabla
         ft.Column([table], scroll="auto", expand=True), 
     ], expand=True)
-    content_area.update()
+    contenedor.update()
 
-def show_status_dialog(alumno_id, curso_id, current_status):
+def mostrar_popup_estado_matricula(alumno_id, curso_id, current_status):
     print(f"Abriendo diálogo para Alumno: {alumno_id}, Curso: {curso_id}")
 
     def on_click_status(e, new_status):
-        change_enrollment_status(e, alumno_id, curso_id, new_status)
+        cambiar_estado_matricula(e, alumno_id, curso_id, new_status)
         dlg.open = False
         page.update()
 
@@ -87,14 +87,14 @@ def show_status_dialog(alumno_id, curso_id, current_status):
     dlg.open = True
     page.update()
 
-def change_enrollment_status(e, alumno_id, curso_id, new_status):
+def cambiar_estado_matricula(e, alumno_id, curso_id, new_status):
 
     actualizar_estado_curso(alumno_id, curso_id, new_status)
             
-    load_matricula_view()
+    cargar_vista_matriculas_admin()
     page.update()
 
-def show_add_enrollment_dialog():
+def mostrar_popup_añadir_matricula():
 
     curso_id_seleccionado = None
     alumno_id_seleccionado = None
@@ -107,8 +107,8 @@ def show_add_enrollment_dialog():
         nonlocal alumno_id_seleccionado
         alumno_id_seleccionado = alumno_id
 
-    curso_autocomplete = AutocompletarCampo(set_curso, "Curso")
-    alumno_autocomplete = AutocompletarCampo(set_alumno, "Alumno")
+    curso_autocomplete = autocompletar_campo(set_curso, "Curso")
+    alumno_autocomplete = autocompletar_campo(set_alumno, "Alumno")
 
     estado = ft.Dropdown(
         label="Estado",
@@ -128,7 +128,7 @@ def show_add_enrollment_dialog():
             fecha_matricula=datetime.now().strftime("%Y-%m-%d")
         )
         dlg.open = False
-        load_matricula_view()
+        cargar_vista_matriculas_admin()
         page.update()
 
     dlg = ft.AlertDialog(

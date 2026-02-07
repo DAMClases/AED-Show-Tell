@@ -7,26 +7,17 @@ from pymongo import MongoClient, errors
 
 CONNECTION_STRING = "mongodb://localhost:27017/"
 
-def get_database():
- 
-   # Provide the mongodb atlas url to connect python to mongodb using pymongo
-    
- 
+def conectar_base_datos():    
     try:
-        # 2. Inicializar el cliente
         client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
-        
-        # 3. Seleccionar la base de datos
         db = client['academia']
-        
-        # 4. Probar la conexión
         client.admin.command('ping')
         print("Conectado exitosamente al servidor LOCAL")
 
     except Exception as e:
         print(f"No se pudo conectar: {e}")
 
-get_database()
+conectar_base_datos()
 
 def buscar_usuario_por_email(email, password) -> tuple[bool, str]:
     '''Función que busca un usuario en la colección "alumnos" por su email.'''
@@ -57,8 +48,7 @@ def buscar_usuario_por_email(email, password) -> tuple[bool, str]:
     return (False,"")
 
 def obtener_todas_las_matriculas():
-    '''Función que obtiene todas las matrículas de la colección "matriculas".
-    Function that retrieves all enrollments from the "matriculas" collection.'''
+    '''Función que obtiene todas las matrículas de la colección "matriculas".'''
     
     
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
@@ -83,8 +73,7 @@ def obtener_todas_las_matriculas():
     return matriculas
 
 def obtener_datos_cursos() -> list:
-    '''Función que obtiene todos los cursos de la colección "cursos".
-    Function that retrieves all courses from the "cursos" collection.'''
+    '''Función que obtiene todos los cursos de la colección "cursos".'''
     
     
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)
@@ -97,8 +86,7 @@ def obtener_datos_cursos() -> list:
     
     return cursos
 def obtener_datos_cursos_concretos(cursos:list)-> list:
-    '''Función que obtiene todos los cursos de la colección "cursos".
-    Function that retrieves all courses from the "cursos" collection.'''
+    '''Función que obtiene todos los cursos de la colección "cursos".'''
     
     print("debug",cursos)
     client = MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)

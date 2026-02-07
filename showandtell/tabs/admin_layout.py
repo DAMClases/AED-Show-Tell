@@ -1,40 +1,40 @@
 import flet as ft
 from database.crud import *
-from tabs.dashboard_admin import load_dashboard_view, setup as setup_dashboard
-from tabs.matriculas_admin import load_matricula_view, setup as setup_matricula
-from tabs.login import login_screen
-from tabs.user_config import load_usuario_view, setup as setup_usuario
-from tabs.cursos_admin import load_cursos_view, setup as setup_cursos
-from tabs.docentes_admin import load_docentes_view, setup as setup_docentes
-from tabs.alumnos_admin import load_alumnos_view, setup as setup_alumnos
+from tabs.login import pantalla_login
+from tabs.dashboard_admin import cargar_dashboard_admin, setup as setup_dashboard
+from tabs.matriculas_admin import cargar_vista_matriculas_admin, setup as setup_matricula
+from tabs.user_config import cargar_vista_informacion_usuario, setup as setup_usuario
+from tabs.cursos_admin import cargar_vista_cursos_admin, setup as setup_cursos
+from tabs.docentes_admin import cargar_vista_docentes_admin, setup as setup_docentes
+from tabs.alumnos_admin import cargar_vista_alumnos_docente, setup as setup_alumnos
 
 
-content_area: ft.Container
+contenedor: ft.Container
 page: ft.Page
 
 def setup(container: ft.Container, pg: ft.Page):
-    global content_area, page
-    content_area = container
+    global contenedor, page
+    contenedor = container
     page = pg
 
-def build_admin_layout(current_user: dict):
+def construir_ui_admin(current_user: dict):
     
-    setup_dashboard(content_area, page)
-    setup_matricula(content_area, page)
-    setup_usuario(content_area, page)
-    setup_cursos(content_area, page)
-    setup_docentes(content_area, page)
-    setup_alumnos(content_area, page)
+    setup_dashboard(contenedor, page)
+    setup_matricula(contenedor, page)
+    setup_usuario(contenedor, page)
+    setup_cursos(contenedor, page)
+    setup_docentes(contenedor, page)
+    setup_alumnos(contenedor, page)
 
     def on_nav_change(e):
         idx = e.control.selected_index
-        if idx == 0: load_dashboard_view()
-        elif idx == 1: load_matricula_view()
-        elif idx == 2:load_cursos_view()
-        elif idx == 3:load_docentes_view()
-        elif idx == 4:load_alumnos_view()
-        elif idx == 5:load_usuario_view(current_user)
-        elif idx == 6:login_screen(current_user)
+        if idx == 0: cargar_dashboard_admin()
+        elif idx == 1: cargar_vista_matriculas_admin()
+        elif idx == 2:cargar_vista_cursos_admin()
+        elif idx == 3:cargar_vista_docentes_admin()
+        elif idx == 4:cargar_vista_alumnos_docente()
+        elif idx == 5:cargar_vista_informacion_usuario(current_user)
+        elif idx == 6:pantalla_login(current_user)
 
 
     sidebar = ft.NavigationRail(
@@ -55,6 +55,6 @@ def build_admin_layout(current_user: dict):
         on_change=on_nav_change
     )
 
-    layout = ft.Row([sidebar, ft.VerticalDivider(width=1), content_area], expand=True)
+    layout = ft.Row([sidebar, ft.VerticalDivider(width=1), contenedor], expand=True)
     page.add(layout)
-    load_dashboard_view()
+    cargar_dashboard_admin()

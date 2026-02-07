@@ -3,20 +3,20 @@ import flet as ft
 from database.crud import *
 from utils.elements import *
 
-content_area: ft.Container
+contenedor: ft.Container
 page: ft.Page
 
 def setup(container: ft.Container, pg: ft.Page):
-    global content_area, page
-    content_area = container
+    global contenedor, page
+    contenedor = container
     page = pg
 
-def load_cursos_disponibles_view(current_user:dict):
+def cargar_vista_cursos_disponibles(usuario_actual:dict):
     '''Carga la vista estilo tree de los datos de los cursos que tiene
     asociado un docente.'''
 
     rows = []
-    cursos = obtener_todos_los_cursos_docente(current_user['email'])
+    cursos = obtener_todos_los_cursos_docente(usuario_actual['email'])
     cursos_id = [curso["curso_id"] for curso in cursos]
     recuento = obtener_todos_los_cursos_asociados_alumno(cursos_id)
     datos_curso = obtener_informacion_curso(cursos_id)
@@ -31,7 +31,7 @@ def load_cursos_disponibles_view(current_user:dict):
                     ft.DataCell(ft.Text((datos_curso[indice]['descripcion']), weight="bold")),
                     ft.DataCell(ft.Text((datos_curso[indice]['duracion_horas']), weight="bold")),
                     ft.DataCell(ft.Text(recuento[indice], weight="bold")),
-                    ft.DataCell(ft.IconButton(ft.Icons.EDIT, on_click=lambda e, info=datos_fila_edit: mostrar_modificar_curso(info, current_user)))
+                    ft.DataCell(ft.IconButton(ft.Icons.EDIT, on_click=lambda e, info=datos_fila_edit: mostrar_modificar_curso(info, usuario_actual)))
                 ]
             )
         )
@@ -52,7 +52,7 @@ def load_cursos_disponibles_view(current_user:dict):
         heading_text_style=ft.TextStyle(weight="bold", color=ft.Colors.BLUE_GREY_900),
     )
 
-    content_area.content = ft.Column([
+    contenedor.content = ft.Column([
         ft.Row([
             ft.Text("Gestión de cursos", size=30, weight="bold"),
             ft.Button("Añadir un curso", icon=ft.Icons.ADD,on_click=lambda e: show_add_course_dialog_docente()) 
@@ -60,7 +60,7 @@ def load_cursos_disponibles_view(current_user:dict):
         ft.Divider(),
         ft.Column([table], scroll="auto", expand=True), 
     ], expand=True)
-    content_area.update()
+    contenedor.update()
 
 #################################### Añadir un curso nuevo #################################
 
@@ -109,7 +109,7 @@ def show_add_course_dialog_docente():
     page.overlay.append(dlg)
     dlg.open = True
     page.update() 
-def mostrar_modificar_curso(datos, current_user):
+def mostrar_modificar_curso(datos, usuario_actual):
     print(datos)
     titulo = ft.TextField(label="Título del curso", value=datos[0])
     descripcion = ft.TextField(label="Descripción", value=datos[1], multiline=True)
@@ -147,7 +147,7 @@ def mostrar_modificar_curso(datos, current_user):
         modificar_curso_vista_docente(datos_crud)
         dlg.open = False
         page.update()
-        load_cursos_disponibles_view(current_user)
+        cargar_vista_cursos_disponibles(usuario_actual)
     dlg = ft.AlertDialog(title=ft.Text("Modificar curso"),
     content=ft.Column([
         titulo,

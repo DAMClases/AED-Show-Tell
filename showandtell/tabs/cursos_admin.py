@@ -3,20 +3,20 @@ from database.crud import *
 from utils.elements import *
 
 
-content_area: ft.Container
+contenedor: ft.Container
 page: ft.Page
 
 def setup(container: ft.Container, pg: ft.Page):
-    global content_area, page
-    content_area = container
+    global contenedor, page
+    contenedor = container
     page = pg
 
-def load_cursos_view():
+def cargar_vista_cursos_admin():
     
     datos_cursos = obtener_datos_cursos()
-    from utils.elements import CursoCard
-    course_cards = [CursoCard(page,curso) for curso in datos_cursos]
-    content_area.content = ft.Column([
+    from utils.elements import tarjeta_curso
+    course_cards = [tarjeta_curso(page,curso) for curso in datos_cursos]
+    contenedor.content = ft.Column([
         ft.Row([
         ft.Text("Gestión de Cursos", size=30, weight="bold"),
         ft.Button("Agregar Nuevo Curso", icon=ft.Icons.ADD, on_click=lambda e: mostrar_añadir_curso_dialog())
@@ -24,10 +24,10 @@ def load_cursos_view():
         ft.Divider(),
         ft.Row(course_cards, wrap=True, spacing=20, run_spacing=20)
     ], scroll="auto")
-    content_area.update()
+    contenedor.update()
 
 def mostrar_añadir_curso_dialog():
-    from utils.elements import AutocompletarCampo
+    from utils.elements import autocompletar_campo
     titulo = ft.TextField(label="Título del curso")
     descripcion = ft.TextField(label="Descripción", multiline=True)
     precio = ft.TextField(label="Precio", keyboard_type=ft.KeyboardType.NUMBER)
@@ -39,7 +39,7 @@ def mostrar_añadir_curso_dialog():
         nonlocal docente_id_seleccionado
         docente_id_seleccionado = docente_id
     
-    docente_id = AutocompletarCampo(set_docente, "Docente")
+    docente_id = autocompletar_campo(set_docente, "Docente")
 
     def guardar_curso(e):
         precio_str = precio.value.replace(',', '.')
@@ -55,7 +55,7 @@ def mostrar_añadir_curso_dialog():
             docente_nombre=obtener_docente_por_id(docente_id_seleccionado)['nombre'] + " " + obtener_docente_por_id(docente_id_seleccionado)['apellidos']
         )
         dlg.open = False
-        load_cursos_view()
+        cargar_vista_cursos_admin()
         page.update()
 
     dlg = ft.AlertDialog(
@@ -79,7 +79,7 @@ def mostrar_añadir_curso_dialog():
 
 def mostrar_editar_curso_dialog(curso_id, dlg_detalles_curso):
     curso = obtener_curso_por_id(curso_id)
-    from utils.elements import AutocompletarCampo
+    from utils.elements import autocompletar_campo
     titulo = ft.TextField(label="Título del curso")
     descripcion = ft.TextField(label="Descripción", multiline=True)
     precio = ft.TextField(label="Precio", keyboard_type=ft.KeyboardType.NUMBER)
@@ -94,7 +94,7 @@ def mostrar_editar_curso_dialog(curso_id, dlg_detalles_curso):
         nonlocal docente_id_seleccionado
         docente_id_seleccionado = docente_id
 
-    docente_id = AutocompletarCampo(set_docente, "Docente", curso['instructor']['nombre'])
+    docente_id = autocompletar_campo(set_docente, "Docente", curso['instructor']['nombre'])
 
     docente_id_seleccionado = curso['instructor']['docente_id']
 
@@ -122,7 +122,7 @@ def mostrar_editar_curso_dialog(curso_id, dlg_detalles_curso):
             ),
         ]
         dlg_detalles_curso.title = ft.Text(f"Detalles del Curso: {titulo.value}")
-        load_cursos_view()
+        cargar_vista_cursos_admin()
         dlg_detalles_curso.update()
         page.update()
 
@@ -181,7 +181,7 @@ def mostrar_confirmacion_eliminar_curso(curso_id):
         title=ft.Text("Confirmar Eliminación"),
         content=ft.Text(f"¿Estás seguro de que deseas eliminar el curso '{curso['titulo']}'? Esta acción no se puede deshacer."),
         actions=[
-            ft.Button("Eliminar", bgcolor=ft.Colors.RED, color=ft.Colors.WHITE, on_click=lambda e: (eliminar_curso(curso_id), setattr(dlg, "open", False), load_cursos_view(), page.update())),
+            ft.Button("Eliminar", bgcolor=ft.Colors.RED, color=ft.Colors.WHITE, on_click=lambda e: (eliminar_curso(curso_id), setattr(dlg, "open", False), cargar_vista_cursos_admin(), page.update())),
             ft.Button("Cancelar", on_click=lambda _: (setattr(dlg, "open", False), page.update()))
         ],
     )

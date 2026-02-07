@@ -3,15 +3,15 @@ import flet as ft
 from database.crud import *
 from utils.elements import *
 
-content_area: ft.Container
+contenedor: ft.Container
 page: ft.Page
 
 def setup(container: ft.Container, pg: ft.Page):
-    global content_area, page
-    content_area = container
+    global contenedor, page
+    contenedor = container
     page = pg
 
-def load_alumnos_view():
+def cargar_vista_alumnos_docente():
     rows = []
     alumnos = obtener_todos_los_alumnos()
     
@@ -53,17 +53,17 @@ def load_alumnos_view():
         heading_text_style=ft.TextStyle(weight="bold", color=ft.Colors.BLUE_GREY_900),
     )
 
-    content_area.content = ft.Column([
+    contenedor.content = ft.Column([
         ft.Row([
             ft.Text("Gestión de Alumnos", size=30, weight="bold"),
-            ft.Button("Agregar Alumno", icon=ft.Icons.ADD,on_click=lambda e: show_add_alumno_dialog()) 
+            ft.Button("Agregar Alumno", icon=ft.Icons.ADD,on_click=lambda e: mostrar_popup_añadir_alumno()) 
         ], alignment="spaceBetween"),
         ft.Divider(),
         table
     ], scroll="auto")
-    content_area.update()
+    contenedor.update()
 
-def show_add_alumno_dialog():
+def mostrar_popup_añadir_alumno():
     nombre = ft.TextField(label="Nombre")
     apellidos = ft.TextField(label="Apellidos")
     telefono = ft.TextField(label="Teléfono")
@@ -86,7 +86,7 @@ def show_add_alumno_dialog():
         }
         registrar_nuevo_alumno(datos)
         dlg.open = False
-        load_alumnos_view()
+        cargar_vista_alumnos_docente()
         page.update()
 
     dlg = ft.AlertDialog(
@@ -163,7 +163,7 @@ def mostrar_editar_alumno_dialog(alumno_id):
                 password=password.value
             )
             dlg.open = False
-            load_alumnos_view()
+            cargar_vista_alumnos_docente()
             page.update()
 
     dlg = ft.AlertDialog(
@@ -195,7 +195,7 @@ def mostrar_confirmacion_eliminar_alumno(alumno_id):
         content=ft.Text("¿Estás seguro de que deseas eliminar este alumno? Esta acción no se puede deshacer."),
         actions=[
             ft.Button("Cancelar", on_click=lambda e: cerrar_dialog(dlg)),
-            ft.Button("Eliminar", bgcolor=ft.Colors.RED, color=ft.Colors.WHITE, on_click=lambda e: (eliminar_alumno(alumno_id), cerrar_dialog(dlg), load_alumnos_view()))
+            ft.Button("Eliminar", bgcolor=ft.Colors.RED, color=ft.Colors.WHITE, on_click=lambda e: (eliminar_alumno(alumno_id), cerrar_dialog(dlg), cargar_vista_alumnos_docente()))
         ],
         actions_alignment=ft.MainAxisAlignment.END,
     )

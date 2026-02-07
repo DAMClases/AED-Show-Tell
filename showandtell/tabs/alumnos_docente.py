@@ -3,16 +3,17 @@ from database.crud import *
 from utils.elements import *
 
 
-content_area: ft.Container
+contenedor: ft.Container
 page: ft.Page
 
 def setup(container: ft.Container, pg: ft.Page):
-    global content_area, page
-    content_area = container
+    global contenedor, page
+    contenedor = container
     page = pg
 
 
-def show_all_alumnos(current_user:dict):
+def mostrar_todos_los_alumnos(current_user:dict):
+    '''Muestra todos los alumnos que tiene un docente.'''
     rows = []
     cursos = obtener_todos_los_cursos_docente(current_user["email"])
     cursos_id = [curso["curso_id"] for curso in cursos]
@@ -32,7 +33,7 @@ def show_all_alumnos(current_user:dict):
                     ft.DataCell(
                     ft.IconButton(
                         ft.Icons.BADGE_OUTLINED,
-                        on_click=lambda e, a_id=informacion_alumnos[indice]['_id']:show_alumno_details(a_id)
+                        on_click=lambda e, a_id=informacion_alumnos[indice]['_id']:mostrar_detalles_alumno(a_id)
                     )
                 ),
                 ]
@@ -54,16 +55,17 @@ def show_all_alumnos(current_user:dict):
         heading_text_style=ft.TextStyle(weight="bold", color=ft.Colors.BLUE_GREY_900),
     )
 
-    content_area.content = ft.Column([
+    contenedor.content = ft.Column([
         ft.Row([
             ft.Text("Información del alumnado", size=30, weight="bold"),
         ], alignment="spaceBetween"),
         ft.Divider(),
         ft.Column([table], scroll="auto", expand=True), 
     ], expand=True)
-    content_area.update()
+    contenedor.update()
 
-def show_alumno_details(id_alumno):
+def mostrar_detalles_alumno(id_alumno):
+    '''Muestra los detalles de un alumno en profundidad.'''
     informacion_alumno = obtener_informacion_alumno(id_alumno)
     dlg = ft.AlertDialog(
         title=ft.Text(f"Ficha del alumno: {informacion_alumno['apellidos']}, {informacion_alumno['nombre']}"),

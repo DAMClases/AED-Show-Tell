@@ -3,18 +3,18 @@ import flet as ft
 from database.crud import *
 from utils.elements import *
 
-content_area: ft.Container
+contenedor: ft.Container
 page: ft.Page
 
 def setup(container: ft.Container, pg: ft.Page):
-    global content_area, page
-    content_area = container
+    global contenedor, page
+    contenedor = container
     page = pg
 
-def load_cursos_disponibles_view(current_user:dict):
+def cargar_vista_cursos_disponibles_alumno(usuario_actual:dict):
     '''Carga la vista estilo tree de los datos de los cursos que tiene
     asociado un alumno.'''
-    cursos = obtener_cursos_de_alumno(current_user['email'])
+    cursos = obtener_cursos_de_alumno(usuario_actual['email'])
     id_cursos = []
     for _, valor in cursos.items():
         for val in valor:
@@ -33,7 +33,7 @@ def load_cursos_disponibles_view(current_user:dict):
                     ft.DataCell(
                         ft.IconButton(
                             ft.Icons.INFO_ROUNDED,
-                            on_click=lambda e, info=curso: show_course_information(info)
+                            on_click=lambda e, info=curso: mostrar_informacion_curso_alumno(info)
                         )
                     ),
                 ]
@@ -56,15 +56,15 @@ def load_cursos_disponibles_view(current_user:dict):
         heading_text_style=ft.TextStyle(weight="bold", color=ft.Colors.BLUE_GREY_900),
     )
 
-    content_area.content = ft.Column([
+    contenedor.content = ft.Column([
         ft.Row([
             ft.Text("Gestión de cursos", size=30, weight="bold")], alignment="spaceBetween"),
         ft.Divider(),
         ft.Column([table], scroll="auto", expand=True), 
     ], expand=True)
-    content_area.update()
+    contenedor.update()
 
-def show_course_information(datos):
+def mostrar_informacion_curso_alumno(datos):
     '''Abre la tarjeta individual de la información de cada curso.'''
     datos_de_docente = obtener_docente_por_id(datos['instructor']['docente_id'])
     print(datos)

@@ -4,7 +4,7 @@ from tabs.cursos_admin import mostrar_detalles_curso
 
 # --- Componentes de UI Reutilizables ---
 
-def StatusBadge(status):
+def etiqueta_estado(status):
     """Crea una etiqueta de color según el estado"""
     colors = {
         "pagado": ft.Colors.GREEN_400,
@@ -21,7 +21,7 @@ def StatusBadge(status):
         alignment=ft.Alignment(0, 0)
     )
 
-def MetricCard(title, value, icon, color):
+def tarjeta_metrica(title, value, icon, color):
     """Tarjeta pequeña para el Dashboard"""
     return ft.Card(
         content=ft.Container(
@@ -37,7 +37,7 @@ def MetricCard(title, value, icon, color):
     )
 
 # Autocompletar
-def AutocompletarCampo(on_select, campo:str, valor_inicial=None):
+def autocompletar_campo(on_select, campo:str, valor_inicial=None):
     match campo:
         case "Curso":
             datos = obtener_datos_cursos()
@@ -117,7 +117,7 @@ def AutocompletarCampo(on_select, campo:str, valor_inicial=None):
     )
 
 
-def CursoCard(page, curso):
+def tarjeta_curso(page, curso):
     """Tarjeta para mostrar información del curso"""
     return ft.Card(
         content=ft.Container(

@@ -1,35 +1,35 @@
 import flet as ft
 from database.crud import *
-from tabs.dashboard_user import load_dashboard_user_view
-from tabs.login import login_screen
-from tabs.user_config import load_usuario_view
+from tabs.dashboard_user import cargar_dashboard_alumno
+from tabs.login import pantalla_login
+from tabs.user_config import cargar_vista_informacion_usuario
 from tabs.dashboard_user import setup as setup_dashboard
 from tabs.user_config import setup as setup_usuario
-from tabs.cursos_usuario import load_cursos_disponibles_view
+from tabs.cursos_usuario import cargar_vista_cursos_disponibles_alumno
 from tabs.cursos_usuario import setup as setup_cursos
 
-content_area: ft.Container
+contenedor: ft.Container
 page: ft.Page
 
 def setup(container: ft.Container, pg: ft.Page):
-    global content_area, page
-    content_area = container
+    global contenedor, page
+    contenedor = container
     page = pg
 
-def build_user_layout(current_user:dict):
-    setup_dashboard(content_area, page)
-    setup_usuario(content_area, page)
-    setup_cursos(content_area, page)
+def construir_vista_alumno(current_user:dict):
+    setup_dashboard(contenedor, page)
+    setup_usuario(contenedor, page)
+    setup_cursos(contenedor, page)
 
     def on_nav_change(e):
         idx = e.control.selected_index
-        if idx == 0: load_dashboard_user_view(current_user)
-        elif idx == 1: load_cursos_disponibles_view(current_user)
-        elif idx == 2: load_usuario_view(current_user)
-        elif idx == 3: login_screen(current_user)
+        if idx == 0: cargar_dashboard_alumno(current_user)
+        elif idx == 1: cargar_vista_cursos_disponibles_alumno(current_user)
+        elif idx == 2: cargar_vista_informacion_usuario(current_user)
+        elif idx == 3: pantalla_login(current_user)
 
-            # content_area.content = ft.Text("Vista     de Cursos...")
-            # content_area.update()
+            # contenedor.content = ft.Text("Vista     de Cursos...")
+            # contenedor.update()
 
     sidebar = ft.NavigationRail(
         selected_index=0,
@@ -46,6 +46,6 @@ def build_user_layout(current_user:dict):
         on_change=on_nav_change
     )
 
-    layout = ft.Row([sidebar, ft.VerticalDivider(width=1), content_area], expand=True)
+    layout = ft.Row([sidebar, ft.VerticalDivider(width=1), contenedor], expand=True)
     page.add(layout)
-    load_dashboard_user_view(current_user)
+    cargar_dashboard_alumno(current_user)

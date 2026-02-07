@@ -1,7 +1,7 @@
 import flet as ft
 from datetime import datetime
 from database.crud import *
-from tabs.login import login_screen, setup as setup_login
+from tabs.login import pantalla_login, configuracion as setup_login
 
 
 # --- APLICACIÓN PRINCIPAL ---
@@ -21,7 +21,7 @@ def main(page: ft.Page):
     
     
     setup_login(content_area, page)
-    login_screen(current_user)
+    pantalla_login(current_user)
 
 # Ajuste: ft.run() es el estándar actual sobre ft.app()
 if __name__ == "__main__":
