@@ -1,4 +1,4 @@
-
+import pytest
 from database import crud
 
 
@@ -44,6 +44,27 @@ def test_login_incorrecto(db):
 
     assert not resultado
     assert rol == ""
+
+# ---------------- PERFILES DE USUARIO ----------------
+
+def test_obtener_perfil_alumno(db, datos_base):
+    perfil = crud.obtener_informacion_perfil_usuario_alumno("alumno@test.com")
+    assert perfil is not None
+    assert perfil["nombre"] == "Pepe"
+
+def test_obtener_perfil_docente(db, datos_base):
+    perfil = crud.obtener_informacion_perfil_usuario_docente("docente@test.com")
+    assert perfil is not None
+    assert perfil["nombre"] == "Juan"
+
+def test_obtener_perfil_admin(db, datos_base):
+    perfil = crud.obtener_informacion_perfil_usuario_admin("admin@test.com")
+    assert perfil is not None
+    assert perfil["nombre"] == "Admin"
+
+def test_obtener_perfil_inexistente(db, datos_base):
+    perfil = crud.obtener_informacion_perfil_usuario_alumno("fantasma@test.com")
+    assert perfil is None
 
 # ---------------- CURSOS ----------------
 
@@ -111,6 +132,61 @@ def test_eliminar_curso(db, datos_base):
     crud.eliminar_curso("curso_001")
 
     assert db.cursos.find_one({"_id": "curso_001"}) is None
+    assert db.alumnos.find_one({"_id": "alumno_001"})["cursos"] == []
+
+# ---------------- UTILIDADES DE CURSOS ----------------
+
+def test_obtener_datos_cursos_concretos(db, datos_base):
+    # Pasamos una lista de IDs y esperamos los objetos completos
+    lista_ids = ["curso_001", "curso_002"]
+    resultado = crud.obtener_datos_cursos_concretos(lista_ids)
+    
+    assert len(resultado) == 2
+    assert resultado[0]["titulo"] == "Curso 1"
+    assert resultado[1]["titulo"] == "Curso 2"
+
+def test_actualizar_estado_curso(db, datos_base):
+    crud.actualizar_estado_curso("alumno_001", "curso_001", "aprobado")
+    
+    alumno = db.alumnos.find_one({"_id": "alumno_001"})
+    curso_alumno = next(c for c in alumno["cursos"] if c["curso"] == "curso_001")
+    
+    assert curso_alumno["estado"] == "aprobado"
+
+def test_obtener_alumnos_de_un_curso(db, datos_base):
+    lista_cursos = ["curso_001"]
+    alumnos = crud.obtener_alumnos_de_un_curso(lista_cursos)
+    
+    assert len(alumnos) > 0
+    assert alumnos[0]["email"] == "alumno@test.com"
+    assert alumnos[0]["curso_filtrado"] == "curso_001"
+
+def test_obtener_titulos_cursos(db, datos_base):
+    lista_cursos_alumno = [{"curso": "curso_001"}, {"curso": "curso_002"}]
+    titulos = crud.obtener_titulos_cursos(lista_cursos_alumno)
+    
+    assert "Curso 1" in titulos
+    assert "Curso 2" in titulos
+
+def test_obtener_informacion_curso_proyeccion(db, datos_base):
+    info = crud.obtener_informacion_curso(["curso_001"])
+    assert len(info) == 1
+    assert "precio" in info[0]
+    assert "titulo" not in info[0]
+
+def test_modificar_curso_vista_docente(db, datos_base):
+    datos_nuevos = ["Curso Modificado", "Desc Mod", 100, 99, "curso_001"]
+    
+    resultado = crud.modificar_curso_vista_docente(datos_nuevos)
+    
+    assert resultado is True
+    curso = db.cursos.find_one({"_id": "curso_001"})
+    assert curso["titulo"] == "Curso Modificado"
+    assert curso["precio"] == 99
+    
+    docente = db.docentes.find_one({"_id": "docente_001"})
+    curso_en_docente = next(c for c in docente["cursos"] if c["curso_id"] == "curso_001")
+    assert curso_en_docente["titulo"] == "Curso Modificado"
 
 # ---------------- ALUMNOS ----------------
 
@@ -143,6 +219,23 @@ def test_actualizar_alumno(db, datos_base):
     alumno = db.alumnos.find_one({"_id": "alumno_001"})
 
     assert alumno["email"] == "nuevo@test.com"
+
+def test_registrar_nuevo_alumno(db, datos_base):
+    nuevo_alumno = {
+        "nombre": "Nuevo",
+        "apellidos": "Alumno",
+        "email": "nuevo.alumno@test.com",
+        "password": "123"
+    }
+    exito = crud.registrar_nuevo_alumno(nuevo_alumno)
+    
+    assert exito is True
+    assert db.alumnos.find_one({"email": "nuevo.alumno@test.com"})
+
+def test_obtener_recuento_alumnos_por_curso(db, datos_base):
+    recuento = crud.obtener_todos_los_cursos_asociados_alumno(["curso_001", "curso_002"])
+    
+    assert recuento == [1, 0]
 
 # ---------------- MATRICULAS ----------------
 
@@ -184,6 +277,9 @@ def test_eliminar_docente(db, datos_base):
     crud.eliminar_docente("docente_001")
 
     assert db.docentes.find_one({"_id": "docente_001"}) is None
+    assert db.cursos.find_one({"instructor.docente_id": "docente_001"}) is None
+    alumno = db.alumnos.find_one({"_id": "alumno_001"})
+    assert alumno["cursos"] == []
 
 def test_actualizar_docente(db, datos_base):
     datos_actualizados = {
@@ -262,6 +358,14 @@ def test_obtener_todos_los_cursos_docente(db, datos_base):
     assert cursos[0]["titulo"] == "Curso 1"
     assert cursos[1]["curso_id"] == "curso_002"
     assert cursos[1]["titulo"] == "Curso 2"
+
+def test_obtener_informacion_docente_curso(db, datos_base):
+    nombre_profe = crud.obtener_informacion_docente_curso("Curso 1")
+    assert nombre_profe == "Juan Perez"
+
+def test_obtener_mail_docente_nombre(db, datos_base):
+    email = crud.obtener_mail_docente_nombre("Juan Perez")
+    assert email == "docente@test.com"
 # ---------------- UTILS ----------------
 
 def test_get_titulo(db, datos_base):
@@ -277,3 +381,47 @@ def test_cursos_disponibles(db, datos_base):
     disponibles = crud.obtener_cursos_disponibles_plataforma(cursos)
 
     assert len(disponibles) == 1
+
+
+# ---------------- ERRORES Y REFERENCIAS INEXISTENTES ----------------
+
+def test_crear_matricula_curso_inexistente(db, datos_base):
+    with pytest.raises(ValueError) as excinfo:
+        crud.crear_matricula("alumno_001", "curso_FALSO", "activo")
+    
+    assert "Curso no existe" in str(excinfo.value)
+
+def test_crear_matricula_alumno_inexistente(db, datos_base):
+    with pytest.raises(ValueError) as excinfo:
+        crud.crear_matricula("alumno_FALSO", "curso_001", "activo")
+    
+    assert "Alumno no existe" in str(excinfo.value)
+
+def test_obtener_curso_id_inexistente(db, datos_base):
+    curso = crud.obtener_curso_por_id("id_falso")
+    assert curso is None
+
+def test_editar_curso_inexistente(db, datos_base):
+    
+    with pytest.raises(ValueError) as excinfo:
+        crud.editar_curso("id_falso", "T", "D", 10, 10, "d1", "n1")
+
+    assert "Curso no encontrado" in str(excinfo.value)
+
+def test_eliminar_entidad_inexistente(db, datos_base):
+    # MongoDB no lanza error si borras algo que no existe, simplemente retorna count 0.
+    # Verificamos que no rompa la ejecución.
+    try:
+        crud.eliminar_curso("curso_falso_123")
+        crud.eliminar_alumno("alumno_falso_123")
+        crud.eliminar_docente("docente_falso_123")
+    except Exception as e:
+        pytest.fail(f"La eliminación de inexistentes lanzó error: {e}")
+
+def test_actualizar_estado_curso_inexistente(db, datos_base):
+    # Intentar actualizar un curso que el alumno no tiene
+    crud.actualizar_estado_curso("alumno_001", "curso_002", "aprobado")
+    # No debería haber cambios, verificamos que sigue igual
+    alumno = db.alumnos.find_one({"_id": "alumno_001"})
+    # El alumno solo tiene curso_001, curso_002 no debería haberse añadido mágicamente
+    assert len(alumno["cursos"]) == 1

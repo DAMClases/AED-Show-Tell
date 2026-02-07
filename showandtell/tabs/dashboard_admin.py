@@ -15,8 +15,8 @@ def cargar_dashboard_admin():
     matriculas = obtener_todas_las_matriculas()
     total_enrollments = len(matriculas)
     datos_cursos = obtener_datos_cursos()
-    pending_count = sum(1 for e in matriculas if e['status'] == "pendiente")
-    revenue = sum(next(c['precio'] for c in datos_cursos if c['_id'] == e['curso_id']) for e in matriculas if e['status'] == "pagado")
+    pending_count = sum(1 for e in matriculas if e['estado'] == "pendiente")
+    revenue = sum(next(c['precio'] for c in datos_cursos if c['_id'] == e['curso_id']) for e in matriculas if e['estado'] == "pagado")
 
     contenedor.content = ft.Column([
         ft.Text("Dashboard", size=30, weight="bold"),

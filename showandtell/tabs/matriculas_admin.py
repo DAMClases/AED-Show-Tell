@@ -2,6 +2,7 @@ from datetime import datetime
 import flet as ft
 from database.crud import *
 from utils.elements import *
+from utils.validaciones import mostrar_mensaje
 
 contenedor: ft.Container
 page: ft.Page
@@ -18,14 +19,14 @@ def cargar_vista_matriculas_admin():
     for matricula in matriculas:
         id_alumno = matricula.get("alumno_id")
         cod_curso = matricula.get("curso_id")
-        estado_actual = matricula.get("status")
+        estado_actual = matricula.get("estado")
         rows.append(
             ft.DataRow(
                 cells=[
                     ft.DataCell(ft.Text(matricula["curso_id"])),
                     ft.DataCell(ft.Text(matricula["estudiante"], weight="bold")),
                     ft.DataCell(ft.Text(matricula["curso_nombre"])),
-                    ft.DataCell(etiqueta_estado(matricula["status"])),
+                    ft.DataCell(etiqueta_estado(matricula["estado"])),
                     ft.DataCell(ft.Text(matricula["fecha_matricula"])),
                     ft.DataCell(
                     ft.IconButton(
@@ -64,11 +65,11 @@ def cargar_vista_matriculas_admin():
     ], expand=True)
     contenedor.update()
 
-def mostrar_popup_estado_matricula(alumno_id, curso_id, current_status):
+def mostrar_popup_estado_matricula(alumno_id, curso_id, current_estado):
     print(f"Abriendo diálogo para Alumno: {alumno_id}, Curso: {curso_id}")
 
-    def on_click_status(e, new_status):
-        cambiar_estado_matricula(e, alumno_id, curso_id, new_status)
+    def on_click_estado(e, new_estado):
+        cambiar_estado_matricula(e, alumno_id, curso_id, new_estado)
         dlg.open = False
         page.update()
 
@@ -76,9 +77,9 @@ def mostrar_popup_estado_matricula(alumno_id, curso_id, current_status):
         title=ft.Text(f"Editar: {curso_id}"),
         content=ft.Text(f"Alumno: {alumno_id}"),
         actions=[
-            ft.Button("PAGADO", on_click=lambda e: on_click_status(e, "pagado"), bgcolor="green", color="white"),
-            ft.Button("PENDIENTE", on_click=lambda e: on_click_status(e, "pendiente"), bgcolor="orange", color="white"),
-            ft.Button("CANCELADO", on_click=lambda e: on_click_status(e, "cancelado"), bgcolor="red", color="white"),
+            ft.Button("PAGADO", on_click=lambda e: on_click_estado(e, "pagado"), bgcolor="green", color="white"),
+            ft.Button("PENDIENTE", on_click=lambda e: on_click_estado(e, "pendiente"), bgcolor="orange", color="white"),
+            ft.Button("CANCELADO", on_click=lambda e: on_click_estado(e, "cancelado"), bgcolor="red", color="white"),
             ft.Button("CERRAR", on_click=lambda _: (setattr(dlg, "open", False), page.update()))
         ],
     )
@@ -87,9 +88,9 @@ def mostrar_popup_estado_matricula(alumno_id, curso_id, current_status):
     dlg.open = True
     page.update()
 
-def cambiar_estado_matricula(e, alumno_id, curso_id, new_status):
+def cambiar_estado_matricula(e, alumno_id, curso_id, new_estado):
 
-    actualizar_estado_curso(alumno_id, curso_id, new_status)
+    actualizar_estado_curso(alumno_id, curso_id, new_estado)
             
     cargar_vista_matriculas_admin()
     page.update()
@@ -121,15 +122,20 @@ def mostrar_popup_añadir_matricula():
     )
 
     def guardar_matricula(e):
-        crear_matricula(
-            alumno_id=alumno_id_seleccionado,
-            curso_id=curso_id_seleccionado,
-            status=estado.value,
-            fecha_matricula=datetime.now().strftime("%Y-%m-%d")
-        )
-        dlg.open = False
-        cargar_vista_matriculas_admin()
-        page.update()
+        try:
+            crear_matricula(
+                alumno_id=alumno_id_seleccionado,
+                curso_id=curso_id_seleccionado,
+                estado=estado.value,
+                fecha_matricula=datetime.now().strftime("%Y-%m-%d")
+            )
+        except ValueError as e:
+            mostrar_mensaje(page, f"Error al crear matrícula: {e}", "error")
+            print(f"Error al crear matrícula: {e}")
+        else:
+            dlg.open = False
+            cargar_vista_matriculas_admin()
+            page.update()
 
     dlg = ft.AlertDialog(
         title=ft.Text("Nueva Matrícula Manual"),
