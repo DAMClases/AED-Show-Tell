@@ -7,10 +7,10 @@ from tabs.login import pantalla_login, configuracion as setup_login
 # --- APLICACIÓN PRINCIPAL ---
 
 def main(page: ft.Page):
+    init_db(MongoClient(CONNECTION_STRING, serverSelectionTimeoutMS=5000)["academia"])
     page.title = "Show & Tell"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.padding = 0
-
     current_user = { ####
         "email": None,
         "role": None,

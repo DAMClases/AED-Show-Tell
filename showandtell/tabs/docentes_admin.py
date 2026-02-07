@@ -152,16 +152,19 @@ def mostrar_editar_docente_dialog(docente_id):
     password = ft.TextField(label="Contraseña", value=docente["password"], password=True)
 
     def guardar_cambios(e):
+        datos_dict = {
+            "nombre": nombre.value,
+            "apellidos": apellidos.value,
+            "telefono": telefono.value,
+            "email": email.value,
+            "direccion": direccion.value,
+            "estado": estado.value,
+            "fecha_alta": fecha_altsa.value,
+            "password": password.value
+        }
         actualizar_docente(
             docente_id,
-            nombre=nombre.value,
-            apellidos=apellidos.value,
-            telefono=telefono.value,
-            email=email.value,
-            direccion=direccion.value,
-            estado=estado.value,
-            fecha_alta=fecha_altsa.value,
-            password=password.value
+            datos_dict
         )
         dlg.open = False
         cargar_vista_docentes_admin()
