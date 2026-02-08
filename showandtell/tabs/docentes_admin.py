@@ -140,7 +140,7 @@ def mostrar_detalles_docente(docente_id):
             ft.Text(f"Contraseña: {'*' * len(docente['password'])}")
         ], spacing=10),
         actions=[
-            ft.Button("Editar", icon=ft.Icons.EDIT, on_click=lambda e: mostrar_editar_docente_dialog(docente_id)),
+            ft.Button("Editar", icon=ft.Icons.EDIT, on_click=lambda e: mostrar_editar_docente_dialog(docente_id, dlg)),
             ft.Button("Borrar", icon=ft.Icons.DELETE, bgcolor=ft.Colors.RED, color=ft.Colors.WHITE, on_click=lambda e: (mostrar_confirmacion_eliminar_docente(docente_id), setattr(dlg, "open", False), page.update())),
             ft.Button("Cerrar", on_click=lambda e: cerrar_dialog(dlg))
         ],
@@ -150,7 +150,7 @@ def mostrar_detalles_docente(docente_id):
     dlg.open = True
     page.update()
 
-def mostrar_editar_docente_dialog(docente_id):
+def mostrar_editar_docente_dialog(docente_id, dlg_detalles_docente):
     docente = obtener_docente_por_id(docente_id)
     nombre = ft.TextField(label="Nombre", value=docente["nombre"])
     apellidos = ft.TextField(label="Apellidos", value=docente["apellidos"])
@@ -166,7 +166,7 @@ def mostrar_editar_docente_dialog(docente_id):
             ft.dropdown.Option("Pendiente")
         ]
     )
-    fecha_altsa = ft.TextField(label="Fecha de alta", value=docente["fecha_alta"])
+    fecha_alta = ft.TextField(label="Fecha de alta", value=docente["fecha_alta"])
     password = ft.TextField(label="Contraseña", value=docente["password"], password=True)
 
     def guardar_cambios(e):
@@ -177,15 +177,29 @@ def mostrar_editar_docente_dialog(docente_id):
             "email": email.value,
             "direccion": direccion.value,
             "estado": estado.value,
-            "fecha_alta": fecha_altsa.value,
+            "fecha_alta": fecha_alta.value,
             "password": password.value
         }
+        if not validar_datos(datos_dict, page, email_original=docente["email"]):
+            return
         actualizar_docente(
             docente_id,
             datos_dict
         )
         mostrar_mensaje(page, "Docente actualizado correctamente en el sistema.", "info")
+
         dlg.open = False
+        dlg_detalles_docente.content.controls = [
+            ft.Text(f"Nombre: {nombre.value}"),
+            ft.Text(f"Apellidos: {apellidos.value}"),
+            ft.Text(f"Teléfono: {telefono.value}"),
+            ft.Text(f"Email: {email.value}"),
+            ft.Text(f"Dirección: {direccion.value}"),
+            ft.Text(f"Estado: {estado.value}"),
+            ft.Text(f"Fecha de alta: {fecha_alta.value}"),
+            ft.Text(f"Contraseña: {'*' * len(password.value)}")
+        ]
+        dlg_detalles_docente.content.update()
         cargar_vista_docentes_admin()
         page.update()
 
@@ -198,7 +212,7 @@ def mostrar_editar_docente_dialog(docente_id):
             email,
             direccion,
             estado,
-            fecha_altsa,
+            fecha_alta,
             password
         ]),
         actions=[

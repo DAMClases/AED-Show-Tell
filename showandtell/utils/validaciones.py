@@ -99,7 +99,7 @@ def validar_entrada_email(email:str)->bool:
         return True
     return False
 
-def validar_datos(datos: dict, page) -> bool:
+def validar_datos(datos: dict, page, email_original=None) -> bool:
     '''Valida que los datos de un formulario no estén vacíos y cumplan con los formatos esperados.
     
     Devuelve True solo si todos los campos requeridos están presentes, no están vacíos y cumplen con los formatos específicos (como email, teléfono, fecha, etc.).
@@ -115,7 +115,7 @@ def validar_datos(datos: dict, page) -> bool:
         if campo == "email" and not validar_entrada_email(valor):
             mostrar_mensaje(page, f"El campo '{campo}' tiene un formato de email inválido.", "advertencia")
             return False
-        if campo == "email" and not comprobar_email_unico(valor):
+        if campo == "email" and not comprobar_email_unico(valor, email_original):
             mostrar_mensaje(page, f"El email '{valor}' ya existe en el sistema. Por favor, ingrese un email diferente.", "advertencia")
             return False
         if campo == "telefono" and not validar_entrada_telefono(valor):

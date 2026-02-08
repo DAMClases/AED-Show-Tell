@@ -127,17 +127,17 @@ def mostrar_detalles_alumno(alumno_id):
     dlg = ft.AlertDialog(
         title = ft.Text(f"Detalle de Alumno: {alumno['nombre']} {alumno['apellidos']}"),
         content = ft.Column([
-        ft.Text(f"Nombre {alumno['nombre']}"),
-        ft.Text(f"Apellidos {alumno['apellidos']}"),
-        ft.Text(f"Teléfono {alumno['telefono']}"),
-        ft.Text(f"Email {alumno['email']}"),
-        ft.Text(f"Dirección {alumno['direccion']}"),
-        ft.Text(f"Estado {alumno['estado']}"),
-        ft.Text(f"Fecha de alta {alumno['fecha_alta']}"),
-        ft.Text(f"Contraseña {'*' * len(alumno['password'])}")
+        ft.Text(f"Nombre: {alumno['nombre']}"),
+        ft.Text(f"Apellidos: {alumno['apellidos']}"),
+        ft.Text(f"Teléfono: {alumno['telefono']}"),
+        ft.Text(f"Email: {alumno['email']}"),
+        ft.Text(f"Dirección: {alumno['direccion']}"),
+        ft.Text(f"Estado: {alumno['estado']}"),
+        ft.Text(f"Fecha de alta: {alumno['fecha_alta']}"),
+        ft.Text(f"Contraseña: {'*' * len(alumno['password'])}")
         ], spacing=10),
         actions=[
-            ft.Button("Editar", icon=ft.Icons.EDIT, on_click=lambda e: mostrar_editar_alumno_dialog(alumno_id)),
+            ft.Button("Editar", icon=ft.Icons.EDIT, on_click=lambda e: mostrar_editar_alumno_dialog(alumno_id, dlg)),
             ft.Button("Borrar", icon=ft.Icons.DELETE, bgcolor=ft.Colors.RED, color=ft.Colors.WHITE, on_click=lambda e: (mostrar_confirmacion_eliminar_alumno(alumno_id), setattr(dlg, "open", False), page.update())),
             ft.Button("CERRAR", on_click=lambda _: (setattr(dlg, "open", False), page.update()))
         ],
@@ -147,7 +147,7 @@ def mostrar_detalles_alumno(alumno_id):
     page.update()
 
 
-def mostrar_editar_alumno_dialog(alumno_id):
+def mostrar_editar_alumno_dialog(alumno_id, dlg_detalles_alumno):
     alumno = obtener_alumno_por_id(alumno_id)
     nombre = ft.TextField(label="Nombre", value=alumno["nombre"])
     apellidos = ft.TextField(label="Apellidos", value=alumno["apellidos"])
@@ -172,7 +172,7 @@ def mostrar_editar_alumno_dialog(alumno_id):
             "fecha_alta": fecha_alta.value,
             "password": password.value
             }
-            if not validar_datos(datos, page):
+            if not validar_datos(datos, page, email_original=alumno["email"]):
                 return
             fecha_obj = datetime.strptime(fecha_alta.value, '%Y-%m-%d')
             fecha_limpia = fecha_obj.strftime('%Y-%m-%d')
@@ -190,6 +190,17 @@ def mostrar_editar_alumno_dialog(alumno_id):
             )
             mostrar_mensaje(page, "Se ha editado correctamente la información personal del alumno.", "info")
             dlg.open = False
+            dlg_detalles_alumno.content.controls = [
+                ft.Text(f"Nombre: {nombre.value}"),
+                ft.Text(f"Apellidos: {apellidos.value}"),
+                ft.Text(f"Teléfono: {telefono.value}"),
+                ft.Text(f"Email: {email.value}"),
+                ft.Text(f"Dirección: {direccion.value}"),
+                ft.Text(f"Estado: {estado.value}"),
+                ft.Text(f"Fecha de alta: {fecha_alta.value}"),
+                ft.Text(f"Contraseña: {'*' * len(password.value)}")
+            ]
+            dlg_detalles_alumno.content.update()
             cargar_vista_alumnos_docente()
             page.update()
 

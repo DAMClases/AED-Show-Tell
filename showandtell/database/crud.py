@@ -476,8 +476,10 @@ def modificar_curso_vista_docente(datos_nuevos:list)->bool:
         return True
     return False
         
-def comprobar_email_unico(email:str)-> bool:
+def comprobar_email_unico(email:str, email_original=None)-> bool:
     '''Función que comprueba si un email ya existe en la base de datos.'''
+    if email == email_original:
+        return True
     if db.admin.find_one({"email": email}):
         return False
     if db.docentes.find_one({"email": email}):

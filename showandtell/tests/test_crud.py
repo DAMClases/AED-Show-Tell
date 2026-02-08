@@ -189,7 +189,6 @@ def test_eliminar_curso(db, datos_base):
 # ---------------- UTILIDADES DE CURSOS ----------------
 
 def test_obtener_datos_cursos_concretos(db, datos_base):
-    # Pasamos una lista de IDs y esperamos los objetos completos
     lista_ids = ["curso_001", "curso_002"]
     resultado = crud.obtener_datos_cursos_concretos(lista_ids)
     
