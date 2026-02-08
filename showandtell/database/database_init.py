@@ -5,6 +5,9 @@
 import pymongo
 import json
 import os
+
+from showandtell.utils.validaciones import mostrar_mensaje
+
 def crear_base_de_datos()->object:
     '''Crea la base de datos.'''
     direccion_conexion_base_datos = pymongo.MongoClient("mongodb://localhost:27017")
@@ -39,26 +42,32 @@ def cargar_datos(col:tuple[object])->None:
     '''Carga datos de ejemplo en las diferentes colecciones de la base de datos.'''
 
     colecciones = ('alumnos', 'cursos', 'docentes', 'usuarios', 'admin')
-    indice = 0
     try:
         print(os.getcwd())
-        for c in colecciones:
-            col = col[indice]
-            indice +=1
-            with open(f'../data/datos_{c}.json', 'r', encoding='UTF-8') as f:
+        for indice, c in enumerate(colecciones):
+            coleccion = col[indice]
+            with open(f'data/datos_{c}.json', 'r', encoding='UTF-8') as f:
                 data = json.load(f)
             if isinstance(data, list):
-                col.insert_many(data)
+                coleccion.insert_many(data)
             elif isinstance(data, dict):
-                col.insert_one(data)
+                coleccion.insert_one(data)
             else:
                 print(f"Formato de datos no válido en datos_{c}.json.\nInvalid  for datos_{c}.json")
         print("Los datos fueron cargados correctamente.\nAll data was loaded successfully.")
 
     except FileNotFoundError as e:
-        print("No se ha encontrado el archivo de datos asociado.\nNo data file was found. ", e)
+        print("No se ha encontrado el archivo de datos asociado.", e)
         return
+
+def resetear_base_de_datos(page):
+    '''Función que resetea la base de datos a su estado inicial, con los datos de ejemplo.'''
+    objeto_conexion = crear_base_de_datos()
+    col = crear_colecciones(objeto_conexion)
+    cargar_datos(col)
     
+    mostrar_mensaje(page, "La base de datos ha sido reseteada a su estado inicial con los datos de ejemplo.", "info")
+
 if __name__ == '__main__':
     objeto_conexion = crear_base_de_datos()
     col = crear_colecciones(objeto_conexion)

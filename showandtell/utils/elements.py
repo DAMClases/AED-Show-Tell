@@ -75,7 +75,7 @@ def autocompletar_campo(on_select, campo:str, valor_inicial=None):
     def on_change(e):
         texto = input.value.lower().strip()
         list_view.controls.clear()
-
+        on_select(None)
         if not texto:
             dropdown.visible = False
             input.page.update()

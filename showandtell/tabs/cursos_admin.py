@@ -52,7 +52,9 @@ def mostrar_añadir_curso_dialog():
         if not validar_entrada_duracion(duracion.value):
             mostrar_mensaje(page, "La duración de un curso debe ser mayor que 0.", "advertencia")
             return
-            
+        if obtener_docente_por_id(docente_id_seleccionado) is None:
+            mostrar_mensaje(page, "El docente seleccionado no existe. Por favor, seleccione un docente válido.", "advertencia")
+            return
             
         precio_str = precio.value.replace(',', '.')
         precio_valor = float(precio_str)

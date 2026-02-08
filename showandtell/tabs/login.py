@@ -1,5 +1,6 @@
 import flet as ft
 from database.crud import *
+from database.database_init import resetear_base_de_datos
 
 contenedor: ft.Container
 page: ft.Page
@@ -49,6 +50,24 @@ def pantalla_login(current_user: dict):
         else:
             error_text.value = "Error: Usuario/Contraseña incorrectos."
             page.update()
+    def mostrar_resetear_base_datos(e):
+        # Mostrar mensaje de confirmación antes de resetear la base de datos
+        dlg = ft.AlertDialog(
+            title=ft.Text("Confirmar acción"),
+            content=ft.Text("¿Estás seguro de que deseas resetear/crear la base de datos? Esta acción eliminará todos los datos actuales."),
+            actions=[
+                ft.TextButton("Cancelar", on_click=lambda e: cerrar_dialog(dlg)),
+                ft.ElevatedButton("Confirmar", bgcolor=ft.Colors.RED, color=ft.Colors.WHITE, on_click=lambda e: resetear_base_de_datos(page))
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+        )
+        page.overlay.append(dlg)
+        dlg.open = True
+        page.update()
+
+    def cerrar_dialog(dlg):
+        dlg.open = False
+        page.update()
 
 
     page.add(
@@ -70,7 +89,9 @@ def pantalla_login(current_user: dict):
                             user_input,
                             pass_input,
                             error_text,
-                            ft.ElevatedButton("Iniciar sesión", on_click=login_click, width=300, icon=ft.Icons.LOGIN)
+                            ft.ElevatedButton("Iniciar sesión", on_click=login_click, width=300, icon=ft.Icons.LOGIN),
+                            
+                            ft.ElevatedButton("Resetear/Crear base de datos", on_click=lambda e: mostrar_resetear_base_datos(page), width=300, icon=ft.Icons.RESTART_ALT)
                         ], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=20),
                         
                         bgcolor=ft.Colors.WHITE,

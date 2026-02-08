@@ -70,7 +70,11 @@ def mostrar_popup_añadir_alumno():
     telefono = ft.TextField(label="Teléfono")
     email = ft.TextField(label="Email")
     direccion = ft.TextField(label="Dirección")
-    estado = ft.TextField(label="Estado")
+    estado = ft.Dropdown(label="Estado", options=[
+        ft.dropdown.Option("Alta"),
+        ft.dropdown.Option("Baja"),
+        ft.dropdown.Option("Pendiente")
+    ])
     fecha_alta = ft.TextField(label="Fecha de alta")
     password = ft.TextField(label="Contraseña", password=True)
 
@@ -85,18 +89,7 @@ def mostrar_popup_añadir_alumno():
             "fecha_alta": fecha_alta.value,
             "password": password.value
         }
-        if not datos["nombre"] or not datos["apellidos"] or not datos["telefono"] or not datos["email"] or not datos["direccion"] or not datos["estado"] or not datos["fecha_alta"] or not datos["password"]:
-            mostrar_mensaje(page, "Alguno de los campos se encuentran vacíos. Por favor, rellénelos previamente antes de continuar.", "advertencia")
-            return
-        if not validar_entrada_fecha(datos["fecha_alta"]):
-            mostrar_mensaje(page, "Formato de fecha inválido. La fecha introducida debe estar en el formato Año-Mes-día y el año de nacimiento debe ser mayor o igual a 1940.")
-            return
-        if not validar_entrada_telefono(datos["telefono"]):
-            mostrar_mensaje(page, "Formato de teléfono inválido. El teléfono introducido debe tener 9 dígitos enteros.")
-            return
-        if not 'alta' in datos["estado"]:
-            datos["estado"] = "alta"
-            mostrar_mensaje(page, "Por defecto, el nuevo alumno registrado tiene alta en la institución.", "info")
+        if not validar_datos(datos, page):
             return
         registrar_nuevo_alumno(datos)
         dlg.open = False
@@ -161,33 +154,39 @@ def mostrar_editar_alumno_dialog(alumno_id):
     telefono = ft.TextField(label="Teléfono", value=alumno["telefono"])
     email = ft.TextField(label="Email", value=alumno["email"])
     direccion = ft.TextField(label="Dirección", value=alumno["direccion"])
-    estado = ft.TextField(label="Estado", value=alumno["estado"])
+    estado = ft.Dropdown(label="Estado", value=alumno['estado'], options=[
+        ft.dropdown.Option("Alta"),
+        ft.dropdown.Option("Baja"),
+        ft.dropdown.Option("Pendiente")
+    ])
     fecha_alta = ft.TextField(label="Fecha de alta", value=alumno["fecha_alta"])
     password = ft.TextField(label="Contraseña", value=alumno["password"], password=True)
     def guardar_cambios(e):
-            if not nombre.value or not apellidos.value or not telefono.value or not direccion.value or not estado.value or not fecha_alta.value or not password.value:
-                mostrar_mensaje(page, "Alguno de los campos se encuentran vacíos. Por favor, rellénelos previamente antes de continuar.", "advertencia")
-                return
-            if not validar_entrada_fecha(fecha_alta.value):
-                mostrar_mensaje(page, "Formato de fecha inválido. La fecha introducida debe estar en el formato Año-Mes-día y el año de nacimiento debe ser mayor o igual a 1940.")
+            datos = {
+            "nombre": nombre.value,
+            "apellidos": apellidos.value,
+            "telefono": telefono.value,
+            "email": email.value,
+            "direccion": direccion.value,
+            "estado": estado.value,
+            "fecha_alta": fecha_alta.value,
+            "password": password.value
+            }
+            if not validar_datos(datos, page):
                 return
             fecha_obj = datetime.strptime(fecha_alta.value, '%Y-%m-%d')
             fecha_limpia = fecha_obj.strftime('%Y-%m-%d')
-            
-            if not validar_entrada_telefono(telefono.value):
-                mostrar_mensaje(page, "Formato de teléfono inválido. El teléfono introducido debe tener 9 dígitos enteros.")
-                return
 
             actualizar_alumno(
                 alumno_id,
-                nombre=nombre.value,
-                apellidos=apellidos.value,
-                telefono=telefono.value,
-                email=email.value,
-                direccion=direccion.value,
-                estado=estado.value,
+                nombre=datos["nombre"],
+                apellidos=datos["apellidos"],
+                telefono=datos["telefono"],
+                email=datos["email"],
+                direccion=datos["direccion"],
+                estado=datos["estado"],
                 fecha_alta=fecha_limpia,
-                password=password.value
+                password=datos["password"]
             )
             mostrar_mensaje(page, "Se ha editado correctamente la información personal del alumno.", "info")
             dlg.open = False

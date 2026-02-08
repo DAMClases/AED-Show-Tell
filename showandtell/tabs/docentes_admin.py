@@ -70,7 +70,14 @@ def mostrar_popup_añadir_docente():
     telefono = ft.TextField(label="Teléfono")
     email = ft.TextField(label="Email")
     direccion = ft.TextField(label="Dirección")
-    estado = ft.TextField(label="Estado")
+    estado = ft.Dropdown(
+        label="Estado",
+        options=[
+            ft.dropdown.Option("Alta"),
+            ft.dropdown.Option("Baja"),
+            ft.dropdown.Option("Pendiente")
+        ]
+    )
     fecha_alta = ft.TextField(label="Fecha de alta")
     password = ft.TextField(label="Contraseña", password=True)
 
@@ -85,6 +92,8 @@ def mostrar_popup_añadir_docente():
             "fecha_alta": fecha_alta.value,
             "password": password.value
         }
+        if not validar_datos(datos, page):
+            return
         crear_docente(datos)
         dlg.open = False
         cargar_vista_docentes_admin()
@@ -148,7 +157,15 @@ def mostrar_editar_docente_dialog(docente_id):
     telefono = ft.TextField(label="Teléfono", value=docente["telefono"])
     email = ft.TextField(label="Email", value=docente["email"])
     direccion = ft.TextField(label="Dirección", value=docente["direccion"])
-    estado = ft.TextField(label="Estado", value=docente["estado"])
+    estado = ft.Dropdown(
+        label="Estado",
+        value=docente["estado"],
+        options=[
+            ft.dropdown.Option("Alta"),
+            ft.dropdown.Option("Baja"),
+            ft.dropdown.Option("Pendiente")
+        ]
+    )
     fecha_altsa = ft.TextField(label="Fecha de alta", value=docente["fecha_alta"])
     password = ft.TextField(label="Contraseña", value=docente["password"], password=True)
 

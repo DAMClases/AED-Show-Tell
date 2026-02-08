@@ -45,6 +45,58 @@ def test_login_incorrecto(db):
     assert not resultado
     assert rol == ""
 
+def test_actualizar_contraseña_admin(db, datos_base):
+    resultado, rol = crud.buscar_usuario_por_email(
+        "admin@test.com",
+        "1234"
+    )
+
+    assert resultado
+    assert rol == "admin"
+
+    crud.actualizar_contraseña("admin@test.com", "nueva123", "admin")
+    resultado, rol = crud.buscar_usuario_por_email(
+        "admin@test.com",
+        "nueva123"
+    )
+    assert resultado
+    assert rol == "admin"
+    assert db.admin.find_one({"email": "admin@test.com"})["password"] == "nueva123"
+
+def test_actualizar_contraseña_docente(db, datos_base):
+    resultado, rol = crud.buscar_usuario_por_email(
+        "docente@test.com",
+        "abcd"
+    )
+    assert resultado
+    assert rol == "docente"
+
+    crud.actualizar_contraseña("docente@test.com", "nueva123", "docente")
+    resultado, rol = crud.buscar_usuario_por_email(
+        "docente@test.com",
+        "nueva123"
+    )
+    assert resultado
+    assert rol == "docente"
+    assert db.docentes.find_one({"email": "docente@test.com"})["password"] == "nueva123"
+
+def test_actualizar_contraseña_alumno(db, datos_base):
+    resultado, rol = crud.buscar_usuario_por_email(
+        "alumno@test.com",
+        "pass"
+    )
+    assert resultado
+    assert rol == "usuario"
+
+    crud.actualizar_contraseña("alumno@test.com", "nueva123", "usuario")
+    resultado, rol = crud.buscar_usuario_por_email(
+        "alumno@test.com",
+        "nueva123"
+    )
+    assert resultado
+    assert rol == "usuario"
+    assert db.alumnos.find_one({"email": "alumno@test.com"})["password"] == "nueva123"
+    
 # ---------------- PERFILES DE USUARIO ----------------
 
 def test_obtener_perfil_alumno(db, datos_base):
@@ -146,7 +198,7 @@ def test_obtener_datos_cursos_concretos(db, datos_base):
     assert resultado[1]["titulo"] == "Curso 2"
 
 def test_actualizar_estado_curso(db, datos_base):
-    crud.actualizar_estado_curso("alumno_001", "curso_001", "aprobado")
+    crud.actualizar_estado_matricula("alumno_001", "curso_001", "aprobado")
     
     alumno = db.alumnos.find_one({"_id": "alumno_001"})
     curso_alumno = next(c for c in alumno["cursos"] if c["curso"] == "curso_001")
@@ -243,7 +295,7 @@ def test_crear_matricula(db, datos_base):
 
     crud.crear_matricula(
         "alumno_001",
-        "curso_001",
+        "curso_002",
         "activo",
         "2026-01-01"
     )
@@ -264,6 +316,30 @@ def test_get_matriculas(db, datos_base):
     data = crud.obtener_todas_las_matriculas()
 
     assert len(data) == 2
+
+def test_actualizar_estado_matricula(db, datos_base):
+
+    crud.actualizar_estado_matricula(
+        "alumno_001",
+        "curso_001",
+        "activo"
+    )
+
+    alumno = db.alumnos.find_one({"_id": "alumno_001"})
+    curso_alumno = next(c for c in alumno["cursos"] if c["curso"] == "curso_001")
+
+    assert curso_alumno["estado"] == "activo"
+
+def test_crear_matricula_duplicada(db, datos_base):
+    with pytest.raises(ValueError) as excinfo:
+        crud.crear_matricula(
+            "alumno_001",
+            "curso_001",
+            "activo",
+            "2026-01-01"
+        )
+    
+    assert "El alumno ya está matriculado en este curso" in str(excinfo.value)
 
 # ---------------- DOCENTES ----------------
 def test_obtener_todos_los_docentes(db, datos_base):
@@ -340,7 +416,7 @@ def test_obtener_docente_por_id(db, datos_base):
     assert docente["telefono"] == "987654321"
     assert docente["email"] == "docente@test.com"
     assert docente["direccion"] == "Avenida Falsa 456"
-    assert docente["estado"] == "alta"
+    assert docente["estado"] == "Alta"
     assert docente["fecha_alta"] == "2024-01-01"
     assert docente["password"] == "abcd"
     assert len(docente["cursos"]) == 2
@@ -420,7 +496,7 @@ def test_eliminar_entidad_inexistente(db, datos_base):
 
 def test_actualizar_estado_curso_inexistente(db, datos_base):
     # Intentar actualizar un curso que el alumno no tiene
-    crud.actualizar_estado_curso("alumno_001", "curso_002", "aprobado")
+    crud.actualizar_estado_matricula("alumno_001", "curso_002", "aprobado")
     # No debería haber cambios, verificamos que sigue igual
     alumno = db.alumnos.find_one({"_id": "alumno_001"})
     # El alumno solo tiene curso_001, curso_002 no debería haberse añadido mágicamente

@@ -57,7 +57,7 @@ def cargar_vista_matriculas_admin():
     contenedor.content = ft.Column([
         ft.Row([
             ft.Text("Gestión de Matrículas", size=30, weight="bold"),
-            ft.Button("Nueva Matrícula Manual", icon=ft.Icons.ADD,on_click=lambda e: mostrar_popup_añadir_matricula()) 
+            ft.Button("Nueva Matrícula", icon=ft.Icons.ADD,on_click=lambda e: mostrar_popup_añadir_matricula()) 
         ], alignment="spaceBetween"),
         ft.Divider(),
         # Usamos una Column envuelta para permitir el scroll de la tabla
@@ -90,7 +90,7 @@ def mostrar_popup_estado_matricula(alumno_id, curso_id, current_estado):
 
 def cambiar_estado_matricula(e, alumno_id, curso_id, new_estado):
 
-    actualizar_estado_curso(alumno_id, curso_id, new_estado)
+    actualizar_estado_matricula(alumno_id, curso_id, new_estado)
             
     cargar_vista_matriculas_admin()
     page.update()
@@ -138,7 +138,7 @@ def mostrar_popup_añadir_matricula():
             page.update()
 
     dlg = ft.AlertDialog(
-        title=ft.Text("Nueva Matrícula Manual"),
+        title=ft.Text("Nueva Matrícula"),
         content=ft.Column([
             alumno_autocomplete,
             curso_autocomplete,

@@ -45,7 +45,7 @@ def datos_base(db):
         "telefono": "987654321",
         "email": "docente@test.com",
         "direccion": "Avenida Falsa 456",
-        "estado": "alta",
+        "estado": "Alta",
         "fecha_alta": "2024-01-01",
         "password": "abcd",
         "cursos": [
@@ -85,7 +85,7 @@ def datos_base(db):
         "telefono": "555555555",
         "email": "alumno@test.com",
         "direccion": "Calle Falsa 789",
-        "estado": "alta",
+        "estado": "Alta",
         "fecha_alta": "2024-01-01",
         "password": "pass",
         "cursos": [

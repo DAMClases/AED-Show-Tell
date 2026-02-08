@@ -138,6 +138,7 @@ def mostrar_popup_añadir_curso_docente():
     page.overlay.append(dlg)
     dlg.open = True
     page.update() 
+
 def mostrar_modificar_curso(datos, usuario_actual):
     print(datos)
     titulo = ft.TextField(label="Título del curso", value=datos[0])
@@ -156,8 +157,6 @@ def mostrar_modificar_curso(datos, usuario_actual):
         if not validar_entrada_duracion(duracion.value):
             mostrar_mensaje(page, "La duración de un curso debe ser mayor que 0.", "advertencia")
             return
-        
-
 
         datos_crud = [titulo.value, descripcion.value, duracion.value, precio.value, datos[4]]
         

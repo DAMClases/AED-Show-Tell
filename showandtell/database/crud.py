@@ -130,7 +130,7 @@ def obtener_datos_cursos_concretos(cursos:list)-> list:
         datos_cursos.append(valor)
     return datos_cursos
 
-def actualizar_estado_curso(alumno_id, curso_id, nuevo_estado):
+def actualizar_estado_matricula(alumno_id, curso_id, nuevo_estado):
     '''Función que actualiza el estado de un curso específico en la lista de cursos de un alumno.'''
     # Conectamos a la colección de alumnos
     # Buscamos al alumno por su _id Y que tenga ese curso en su lista
@@ -222,6 +222,15 @@ def obtener_ultimo_id_curso():
         print(siguiente_num)
     print(f"curso_{siguiente_num:03d}")
     return f"curso_{siguiente_num:03d}"
+
+def actualizar_contraseña(email:str, nueva_contraseña:str, rol:str)->None:
+    '''Función que actualiza la contraseña de un usuario dado su email.'''
+    if rol == "admin":
+        db.admin.update_one({"email": email}, {"$set": {"password": nueva_contraseña}})
+    elif rol == "docente":
+        db.docentes.update_one({"email": email}, {"$set": {"password": nueva_contraseña}})
+    elif rol == "usuario":
+        db.alumnos.update_one({"email": email}, {"$set": {"password": nueva_contraseña}})
 
 ### ALUMNOS
 
@@ -318,6 +327,10 @@ def crear_matricula(alumno_id, curso_id, estado="en progreso", fecha_matricula=N
 
     if not db.alumnos.find_one({"_id": alumno_id}):
         raise ValueError("Alumno no existe")
+    
+    if db.alumnos.find_one({"_id": alumno_id, "cursos.curso": curso_id}):
+        raise ValueError("El alumno ya está matriculado en este curso")
+    
     nueva_matricula = {
         "curso": curso_id,
         "fecha_matricula": fecha_matricula,
@@ -327,6 +340,7 @@ def crear_matricula(alumno_id, curso_id, estado="en progreso", fecha_matricula=N
         {"_id": alumno_id},
         {"$push": {"cursos": nueva_matricula}}
     )
+
 
 def obtener_todas_las_matriculas():
     '''Función que obtiene todas las matrículas de la colección "matriculas".'''
@@ -462,3 +476,12 @@ def modificar_curso_vista_docente(datos_nuevos:list)->bool:
         return True
     return False
         
+def comprobar_email_unico(email:str)-> bool:
+    '''Función que comprueba si un email ya existe en la base de datos.'''
+    if db.admin.find_one({"email": email}):
+        return False
+    if db.docentes.find_one({"email": email}):
+        return False
+    if db.alumnos.find_one({"email": email}):
+        return False
+    return True
