@@ -1,5 +1,5 @@
 # AED-Show-Tell
-Proyecto de AED con Backend Python | BBDD Documental MongoDB | Frontend Flet
+Proyecto de AED con Backend Python/Pymongo | BBDD Documental MongoDB | Frontend Flet
 ## Índice
 - [Documentación oficial](#documentación-oficial)
   - [Instalación de dependencias](#instalación-de-dependencias)
