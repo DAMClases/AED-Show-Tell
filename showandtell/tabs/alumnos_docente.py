@@ -17,7 +17,6 @@ def mostrar_todos_los_alumnos(current_user:dict):
     rows = []
     cursos = obtener_todos_los_cursos_docente(current_user["email"])
     cursos_id = [curso["curso_id"] for curso in cursos]
-    print(cursos_id)
     informacion_alumnos = obtener_alumnos_de_un_curso(cursos_id)
     datos_curso_lista = obtener_informacion_curso(cursos_id)
     indice = 0
