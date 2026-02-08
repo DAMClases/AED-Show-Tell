@@ -1,6 +1,20 @@
 # AED-Show-Tell
 Proyecto de AED con Backend Python | BBDD Documental MongoDB | Frontend Flet
-
+## Índice
+- [Documentación oficial](#documentación-oficial)
+  - [Instalación de dependencias](#instalación-de-dependencias)
+  - [Explicación del proyecto](#explicación-del-proyecto)
+  - [Tecnologías, técnicas y métodos empleados para el desarrollo](#tecnologías-técnicas-y-métodos-empleados-para-el-desarrollo)
+  - [Colecciones y documentos](#colecciones-y-documentos)
+    - [Colección admin](#colección-admin)
+    - [Colección docentes](#colección-docentes)
+    - [Colección alumnos](#colección-alumnos)
+    - [Colección cursos](#colección-cursos)
+  - [Vistas](#vistas)
+    - [Capa del Login](#capa-del-login)
+    - [Vista del admin](#vista-del-admin)
+    - [Vista del docente](#vista-del-docente)
+    - [Vista del alumno](#vista-del-alumno)
 # Documentación oficial
 
 ## Instalación de dependencias 
@@ -262,18 +276,12 @@ El dashboard del alumno mide rápidamente los 2 KPIs más importantes para él:
 
 <h4>Cursos</h4>
 
-![Vista de cursos del docente](./demos/demoDocenteCursos.jpg)
+![Vista de cursos del alumno](./demos/demoAlumnoCursos.jpg)
 
-Los cursos que imparte un docente se presentan organizados en una vista estilo tree o list. El docente puede ver sus cursos, crear nuevos e incluso editarlos a posteriori.
-
-<h4>Alumnos</h4>
-
-![Vista de alumnos del docente](./demos/demoDocenteAlumnos.jpg)
-
-Los alumnos que tiene asignado un docente se presentan organizados en una vista estilo tree o list. El docente puede ver información adicional sobre sus alumnos (la clásica ficha de alumno).
+Los cursos en los que está apuntado un alumno se presentan organizados en una vista estilo tree o list. El alumno puede ver sus cursos y detalles más profundos sobre éste.
 
 <h4>Perfil de usuario</h4>
 
-![Perfil de usuario del docente](./demos/demoDocentePerfil.jpg)
+![Perfil de usuario del alumno](./demos/demoAlumnoPerfil.jpg)
 
-El perfil de usuario del docente organiza su propia información y la muestra en pantalla. Además, es posible resetear en cualquier momento su contraseña si lo necesita.
+El perfil de usuario del alumno organiza su propia información y la muestra en pantalla. Además, es posible resetear en cualquier momento su contraseña si lo necesita.
