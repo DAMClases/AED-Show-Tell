@@ -242,7 +242,7 @@ El perfil de usuario del administrador organiza su propia información y la mues
 
 ![Dashboard del docente](./demos/demoDocenteDashboard.jpg)
 
-El dashboard del administrador mide rápidamente los 2 KPIs más importantes para él: 
+El dashboard del docente mide rápidamente los 2 KPIs más importantes para él: 
 1. El total de cursos que imparte.
 2. Cuántos alumnos tiene asignado.
 
