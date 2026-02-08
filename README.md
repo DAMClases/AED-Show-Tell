@@ -222,3 +222,58 @@ Los alumnos adscritos a la institución se presentan organizados en una vista de
 
 El perfil de usuario del administrador organiza su propia información y la muestra en pantalla. Además, es posible resetear en cualquier momento su contraseña si lo necesita.
 
+### Vista del docente
+
+<h4>Dashboard del docente</h4>
+
+![Dashboard del administrador](./demos/demoDocenteDashboard.jpg)
+
+El dashboard del administrador mide rápidamente los 2 KPIs más importantes para él: 
+1. El total de cursos que imparte.
+2. Cuántos alumnos tiene asignado.
+
+<h4>Cursos</h4>
+
+![Vista de cursos del docente](./demos/demoDocenteCursos.jpg)
+
+Los cursos que imparte un docente se presentan organizados en una vista estilo tree o list. El docente puede ver sus cursos, crear nuevos e incluso editarlos a posteriori.
+
+<h4>Alumnos</h4>
+
+![Vista de alumnos del docente](./demos/demoDocenteAlumnos.jpg)
+
+Los alumnos que tiene asignado un docente se presentan organizados en una vista estilo tree o list. El docente puede ver información adicional sobre sus alumnos (la clásica ficha de alumno).
+
+<h4>Perfil de usuario</h4>
+
+![Perfil de usuario del docente](./demos/demoDocentePerfil.jpg)
+
+El perfil de usuario del docente organiza su propia información y la muestra en pantalla. Además, es posible resetear en cualquier momento su contraseña si lo necesita.
+
+### Vista del alumno
+
+<h4>Dashboard del alumno</h4>
+
+![Dashboard del alumno](./demos/demoAlumnoDashboard.jpg)
+
+El dashboard del alumno mide rápidamente los 2 KPIs más importantes para él: 
+1. El total de cursos en los que está apuntado.
+2. El total de cursos que aún quedan y no tiene asignado en la academia.
+
+<h4>Cursos</h4>
+
+![Vista de cursos del docente](./demos/demoDocenteCursos.jpg)
+
+Los cursos que imparte un docente se presentan organizados en una vista estilo tree o list. El docente puede ver sus cursos, crear nuevos e incluso editarlos a posteriori.
+
+<h4>Alumnos</h4>
+
+![Vista de alumnos del docente](./demos/demoDocenteAlumnos.jpg)
+
+Los alumnos que tiene asignado un docente se presentan organizados en una vista estilo tree o list. El docente puede ver información adicional sobre sus alumnos (la clásica ficha de alumno).
+
+<h4>Perfil de usuario</h4>
+
+![Perfil de usuario del docente](./demos/demoDocentePerfil.jpg)
+
+El perfil de usuario del docente organiza su propia información y la muestra en pantalla. Además, es posible resetear en cualquier momento su contraseña si lo necesita.
