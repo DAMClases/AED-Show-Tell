@@ -170,5 +170,9 @@ Recoge los campos _id, titulo, descripcion, duracion_horas, precio e instructor.
 
 Tal y como se había explicado en la capa del frontend, tenemos 3 vistas principales en nuestro aplicativo:
 
+### Vista del admin
+
+[![Demo](./demos/login.png)](./demos/demoAdmin.mp4)
+
 
 En resumidas cuentas, utilizamos cuantro colecciones para dar vida a nuestra aplicación, bastando así para poder realizar las operaciones esenciales descritas en el epígrafe "Explicación del proyecto". 
