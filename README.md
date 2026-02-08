@@ -168,10 +168,57 @@ Recoge los campos _id, titulo, descripcion, duracion_horas, precio e instructor.
 ```
 ## Vistas
 
-Tal y como se había explicado en la capa del frontend, tenemos 3 vistas principales en nuestro aplicativo:
+Tal y como se había explicado en la capa del frontend, tenemos 3 vistas principales en nuestro aplicativo, todas ellas trifucardas gracias a la capa del login.
+
+### Capa del Login
+
+La capa del Login es la primera interacción del usuario frente al aplicativo. Se trata de un menú de acceso rápido que permite a los usuarios acceder a sus perfiles personales y ejecutar operaciones sobre la base de datos.
+
+![Dashboard del administrador](./demos/demoLogin.jpg)
+
+Se puede observar un menú armonioso, centrado, vibrante y accesible para todo tipo de usuarios. Hemos cuidado la usabilidad y hemos facilitado la capacidad de concentración del usuario combinando agrupamiento de elementos UIX y diseño. 
+
+El usuario introduce su correo institucional y su contraseña para poder acceder a su perfil.
+
+**Nota**: Se observa un botón "Resetear / Crear base de datos". Este botón lo hemos implementado al final de la práctica solo para fines demostrativos. Para nada tiene que ver con la seguridad de la aplicación, pues sabemos de antemano que dicha opción solo pertenecería al administrador de la base de datos y no al resto de usuarios. 
 
 ### Vista del admin
+<h4>Dashboard del administrador</h4>
 
 ![Dashboard del administrador](./demos/demoAdminDashboard.jpg)
 
-En resumidas cuentas, utilizamos cuantro colecciones para dar vida a nuestra aplicación, bastando así para poder realizar las operaciones esenciales descritas en el epígrafe "Explicación del proyecto". 
+El dashboard del administrador mide rápidamente los 3 KPIs más importantes para él: 
+1. El total de matrículas.
+2. Cuántas matrículas hay pendientes de pago.
+3. Cuántos ingresos han supuesto para la academia en su histórico.
+
+<h4>Matrículas</h4>
+
+![Dashboard del administrador](./demos/demoAdminMatriculas.jpg)
+
+Las matrículas se presentan organizadas en una vista de estilo tree o list. El administrador puede formalizar una nueva matrícula o editar una existente.
+
+<h4>Cursos</h4>
+
+![Dashboard del administrador](./demos/demoAdminCursos.jpg)
+
+Los cursos de la institución se presentan organizados en una vista de tarjetas distribuidas sobre el eje x/y. El administrador puede ver, crear, editar y borrar un nuevo curso.
+
+<h4>Docentes</h4>
+
+![Dashboard del administrador](./demos/demoAdminDocentes.jpg)
+
+Los docentes adscritos a la institución se presentan organizados en una vista de estilo tree o list. El administrador puede ver, dar de alta, editar y dar de baja a un docente.
+
+<h4>Alumnos</h4>
+
+![Dashboard del administrador](./demos/demoAdminAlumnos.jpg)
+
+Los alumnos adscritos a la institución se presentan organizados en una vista de estilo tree o list. El administrador puede ver, dar de alta, editar y dar de baja a un alumno.
+
+<h4>Perfil de usuario</h4>
+
+![Dashboard del administrador](./demos/demoAdminPerfil.jpg)
+
+El perfil de usuario del administrador organiza su propia información y la muestra en pantalla. Además, es posible resetear en cualquier momento su contraseña si lo necesita.
+
