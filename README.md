@@ -208,31 +208,31 @@ El dashboard del administrador mide rápidamente los 3 KPIs más importantes par
 
 <h4>Matrículas</h4>
 
-![Dashboard del administrador](./demos/demoAdminMatriculas.jpg)
+![Vista de matriculas del administrador](./demos/demoAdminMatriculas.jpg)
 
 Las matrículas se presentan organizadas en una vista de estilo tree o list. El administrador puede formalizar una nueva matrícula o editar una existente.
 
 <h4>Cursos</h4>
 
-![Dashboard del administrador](./demos/demoAdminCursos.jpg)
+![Vista de cursos del administrador](./demos/demoAdminCursos.jpg)
 
 Los cursos de la institución se presentan organizados en una vista de tarjetas distribuidas sobre el eje x/y. El administrador puede ver, crear, editar y borrar un nuevo curso.
 
 <h4>Docentes</h4>
 
-![Dashboard del administrador](./demos/demoAdminDocentes.jpg)
+![Vista de docentes del administrador](./demos/demoAdminDocentes.jpg)
 
 Los docentes adscritos a la institución se presentan organizados en una vista de estilo tree o list. El administrador puede ver, dar de alta, editar y dar de baja a un docente.
 
 <h4>Alumnos</h4>
 
-![Dashboard del administrador](./demos/demoAdminAlumnos.jpg)
+![Vista de alumnos del administrador](./demos/demoAdminAlumnos.jpg)
 
 Los alumnos adscritos a la institución se presentan organizados en una vista de estilo tree o list. El administrador puede ver, dar de alta, editar y dar de baja a un alumno.
 
 <h4>Perfil de usuario</h4>
 
-![Dashboard del administrador](./demos/demoAdminPerfil.jpg)
+![Perfil de usuario del administrador](./demos/demoAdminPerfil.jpg)
 
 El perfil de usuario del administrador organiza su propia información y la muestra en pantalla. Además, es posible resetear en cualquier momento su contraseña si lo necesita.
 
@@ -240,7 +240,7 @@ El perfil de usuario del administrador organiza su propia información y la mues
 
 <h4>Dashboard del docente</h4>
 
-![Dashboard del administrador](./demos/demoDocenteDashboard.jpg)
+![Dashboard del docente](./demos/demoDocenteDashboard.jpg)
 
 El dashboard del administrador mide rápidamente los 2 KPIs más importantes para él: 
 1. El total de cursos que imparte.
