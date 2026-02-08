@@ -172,7 +172,6 @@ Tal y como se había explicado en la capa del frontend, tenemos 3 vistas princip
 
 ### Vista del admin
 
-[![Demo](./demos/login.png)](./demos/demoAdmin.mp4)
-
+![Dashboard del administrador](./demos/demoAdminDashboard.jpg)
 
 En resumidas cuentas, utilizamos cuantro colecciones para dar vida a nuestra aplicación, bastando así para poder realizar las operaciones esenciales descritas en el epígrafe "Explicación del proyecto". 
